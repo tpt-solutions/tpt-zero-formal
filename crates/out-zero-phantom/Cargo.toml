@@ -1,0 +1,23 @@
+[package]
+name = "out-zero-phantom"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Zero-cost phantom-type markers and variance patterns for no_std."
+readme = "README.md"
+keywords = ["no-std", "phantom", "marker", "variance", "zero-cost"]
+categories = ["no-std", "rust-patterns", "data-structures"]
+publish = false
+
+[lib]
+name = "out_zero_phantom"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true

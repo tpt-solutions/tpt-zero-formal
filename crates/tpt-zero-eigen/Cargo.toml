@@ -1,0 +1,32 @@
+[package]
+name = "tpt-zero-eigen"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Eigenvalue and eigenvector computation for small fixed-size matrices in no_std, with zero external dependencies."
+readme = "README.md"
+keywords = ["eigen", "eigenvalue", "no-std", "linear-algebra", "matrix"]
+categories = ["no-std", "algorithms", "mathematics", "science"]
+documentation = "https://docs.rs/tpt-zero-eigen"
+
+[lib]
+name = "tpt_zero_eigen"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[dependencies]
+tpt-zero-tensor = { path = "../tpt-zero-tensor" }
+tpt-zero-linalg = { path = "../tpt-zero-linalg" }
+tpt-zero-decomp = { path = "../tpt-zero-decomp" }
+tpt-zero-solver = { path = "../tpt-zero-solver" }
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }

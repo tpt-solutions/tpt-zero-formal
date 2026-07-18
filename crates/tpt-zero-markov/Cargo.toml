@@ -1,0 +1,32 @@
+[package]
+name = "tpt-zero-markov"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "no_std discrete-time Markov chains and transition-matrix operations over fixed-size tensors."
+readme = "README.md"
+keywords = ["markov", "no-std", "stochastic", "transition-matrix", "probability"]
+categories = ["no-std", "algorithms", "mathematics", "science"]
+documentation = "https://docs.rs/tpt-zero-markov"
+
+[lib]
+name = "tpt_zero_markov"
+
+[dependencies]
+tpt-zero-tensor = { path = "../tpt-zero-tensor" }
+tpt-zero-linalg = { path = "../tpt-zero-linalg" }
+tpt-zero-rand = { path = "../tpt-zero-rand" }
+tpt-zero-stats = { path = "../tpt-zero-stats" }
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }

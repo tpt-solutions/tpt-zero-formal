@@ -1,0 +1,24 @@
+[package]
+name = "out-zero-contract"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Design-by-contract precondition and postcondition macros for no_std, with a `checked` mode for always-on assertions."
+readme = "README.md"
+keywords = ["contract", "no-std", "precondition", "postcondition", "design-by-contract"]
+categories = ["no-std", "development-tools", "rust-patterns"]
+publish = false
+
+[lib]
+name = "out_zero_contract"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+checked = []
+
+[lints]
+workspace = true

@@ -1,0 +1,26 @@
+[package]
+name = "tpt-zero-stats"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "no_std descriptive statistics (mean, variance, std dev, percentiles) over f64 slices and iterators."
+readme = "README.md"
+keywords = ["stats", "no-std", "statistics", "mean", "percentile"]
+categories = ["no-std", "algorithms", "science"]
+documentation = "https://docs.rs/tpt-zero-stats"
+
+[lib]
+name = "tpt_zero_stats"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }

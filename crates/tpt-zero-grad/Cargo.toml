@@ -1,0 +1,30 @@
+[package]
+name = "tpt-zero-grad"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Forward-mode automatic differentiation via dual numbers for no_std, with zero external dependencies."
+readme = "README.md"
+keywords = ["autodiff", "dual-number", "gradient", "no-std", "differentiation"]
+categories = ["no-std", "mathematics", "algorithms", "science"]
+documentation = "https://docs.rs/tpt-zero-grad"
+
+[lib]
+name = "tpt_zero_grad"
+
+[dependencies]
+tpt-zero-tensor = { path = "../tpt-zero-tensor" }
+tpt-zero-linalg = { path = "../tpt-zero-linalg" }
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }

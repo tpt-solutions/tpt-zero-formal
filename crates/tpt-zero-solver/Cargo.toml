@@ -1,0 +1,31 @@
+[package]
+name = "tpt-zero-solver"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "no_std linear system solvers: Gaussian elimination, LU/Cholesky direct solves, and Jacobi/Gauss-Seidel iteration over fixed-size tensors."
+readme = "README.md"
+keywords = ["no-std", "linalg", "solver", "linear-system", "numerical"]
+categories = ["no-std", "algorithms", "mathematics", "science"]
+documentation = "https://docs.rs/tpt-zero-solver"
+
+[lib]
+name = "tpt_zero_solver"
+
+[dependencies]
+tpt-zero-tensor = { path = "../tpt-zero-tensor" }
+tpt-zero-linalg = { path = "../tpt-zero-linalg" }
+tpt-zero-decomp = { path = "../tpt-zero-decomp" }
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }

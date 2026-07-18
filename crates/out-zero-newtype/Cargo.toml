@@ -1,0 +1,23 @@
+[package]
+name = "out-zero-newtype"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Macro-driven, no_std newtype wrappers with safe inner-type access and trait derivation."
+readme = "README.md"
+keywords = ["newtype", "no-std", "macro", "wrapper", "type-safety"]
+categories = ["no-std", "rust-patterns", "data-structures"]
+publish = false
+
+[lib]
+name = "out_zero_newtype"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true

@@ -1,0 +1,29 @@
+[package]
+name = "tpt-zero-prob"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "no_std probability building blocks: a Distribution trait and generic empirical-sample container over f64, built on tpt-zero-stats."
+readme = "README.md"
+keywords = ["prob", "no-std", "probability", "distribution", "statistics"]
+categories = ["no-std", "algorithms", "science"]
+documentation = "https://docs.rs/tpt-zero-prob"
+
+[lib]
+name = "tpt_zero_prob"
+
+[dependencies]
+tpt-zero-stats = { path = "../tpt-zero-stats" }
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }

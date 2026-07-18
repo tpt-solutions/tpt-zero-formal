@@ -1,0 +1,31 @@
+[package]
+name = "tpt-zero-dist"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "no_std concrete probability distributions (Normal, Uniform, Bernoulli, Poisson) with PDF/PMF, CDF, moments, and RNG sampling."
+readme = "README.md"
+keywords = ["distribution", "no-std", "sampling", "normal", "poisson"]
+categories = ["no-std", "algorithms", "science"]
+documentation = "https://docs.rs/tpt-zero-dist"
+
+[lib]
+name = "tpt_zero_dist"
+
+[dependencies]
+tpt-zero-rand = { path = "../tpt-zero-rand" }
+tpt-zero-stats = { path = "../tpt-zero-stats" }
+tpt-zero-prob = { path = "../tpt-zero-prob" }
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }

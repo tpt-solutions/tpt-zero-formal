@@ -1,0 +1,26 @@
+[package]
+name = "tpt-zero-smt-lite"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "no_std boolean/integer constraint helpers and a tiny SMT-lite solver for checking satisfiability at runtime."
+readme = "README.md"
+keywords = ["smt", "constraint", "satisfiability", "no-std", "solver"]
+categories = ["no-std", "algorithms", "rust-patterns"]
+documentation = "https://docs.rs/tpt-zero-smt-lite"
+
+[lib]
+name = "tpt_zero_smt_lite"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }

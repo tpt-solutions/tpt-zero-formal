@@ -1,0 +1,29 @@
+[package]
+name = "out-zero-refinement"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Refinement types: a value known to satisfy a compile-time-named predicate, for no_std."
+readme = "README.md"
+keywords = ["refinement", "no-std", "predicate", "invariant", "type-level"]
+categories = ["no-std", "rust-patterns", "data-structures"]
+publish = false
+
+[lib]
+name = "out_zero_refinement"
+
+[dependencies]
+tpt-zero-witness = { path = "../tpt-zero-witness" }
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }

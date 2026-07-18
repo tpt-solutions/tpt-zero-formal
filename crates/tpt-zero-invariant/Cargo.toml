@@ -1,0 +1,23 @@
+[package]
+name = "tpt-zero-invariant"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "State-machine invariant traits and zero-cost assertion macros for no_std."
+readme = "README.md"
+keywords = ["invariant", "no-std", "state-machine", "assert", "validation"]
+categories = ["no-std", "development-tools", "rust-patterns"]
+documentation = "https://docs.rs/tpt-zero-invariant"
+
+[lib]
+name = "tpt_zero_invariant"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true

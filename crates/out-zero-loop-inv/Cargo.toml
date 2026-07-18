@@ -1,0 +1,29 @@
+[package]
+name = "out-zero-loop-inv"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Loop-invariant checking helpers: zero-cost per-iteration assertions for no_std."
+readme = "README.md"
+keywords = ["loop", "invariant", "no-std", "debug-assert", "verification"]
+categories = ["no-std", "development-tools", "rust-patterns"]
+publish = false
+
+[dependencies]
+tpt-zero-invariant = { path = "../tpt-zero-invariant" }
+
+[lib]
+name = "out_zero_loop_inv"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }

@@ -1,0 +1,26 @@
+[package]
+name = "tpt-zero-tensor"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Fixed-rank, const-generic tensor types backed by fixed-size arrays for no_std with zero allocation."
+readme = "README.md"
+keywords = ["tensor", "matrix", "no-std", "const-generic", "linear-algebra"]
+categories = ["no-std", "data-structures", "mathematics", "rust-patterns"]
+documentation = "https://docs.rs/tpt-zero-tensor"
+
+[lib]
+name = "tpt_zero_tensor"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }

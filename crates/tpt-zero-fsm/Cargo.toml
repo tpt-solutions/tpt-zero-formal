@@ -1,0 +1,29 @@
+[package]
+name = "tpt-zero-fsm"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Zero-allocation, strongly-typed finite state machine builder with compile-time transition checking for no_std."
+readme = "README.md"
+keywords = ["fsm", "no-std", "state-machine", "type-level", "zero-cost"]
+categories = ["no-std", "development-tools", "rust-patterns"]
+documentation = "https://docs.rs/tpt-zero-fsm"
+
+[lib]
+name = "tpt_zero_fsm"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[dependencies]
+tpt-zero-invariant = { path = "../tpt-zero-invariant" }
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }

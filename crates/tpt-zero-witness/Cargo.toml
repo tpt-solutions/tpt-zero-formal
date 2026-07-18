@@ -1,0 +1,23 @@
+[package]
+name = "tpt-zero-witness"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "A value paired with a proof that some property holds, for no_std dependently-typed-style APIs."
+readme = "README.md"
+keywords = ["witness", "proof", "no-std", "type-level", "invariant"]
+categories = ["no-std", "rust-patterns", "data-structures"]
+documentation = "https://docs.rs/tpt-zero-witness"
+
+[lib]
+name = "tpt_zero_witness"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true

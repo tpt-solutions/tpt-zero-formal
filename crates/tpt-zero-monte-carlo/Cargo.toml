@@ -1,0 +1,31 @@
+[package]
+name = "tpt-zero-monte-carlo"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Monte Carlo integration and variance reduction for no_std, zero-dependency simulations."
+readme = "README.md"
+keywords = ["monte-carlo", "no-std", "simulation", "variance-reduction", "integration"]
+categories = ["no-std", "algorithms", "mathematics", "science"]
+documentation = "https://docs.rs/tpt-zero-monte-carlo"
+
+[lib]
+name = "tpt_zero_monte_carlo"
+
+[dependencies]
+tpt-zero-rand = { path = "../tpt-zero-rand" }
+tpt-zero-sampler = { path = "../tpt-zero-sampler" }
+tpt-zero-stats = { path = "../tpt-zero-stats" }
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }

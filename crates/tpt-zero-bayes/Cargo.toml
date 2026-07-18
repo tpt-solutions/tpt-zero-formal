@@ -1,0 +1,31 @@
+[package]
+name = "tpt-zero-bayes"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Bayesian inference primitives and conjugate priors for no_std."
+readme = "README.md"
+keywords = ["bayesian", "no-std", "conjugate-prior", "statistics", "inference"]
+categories = ["no-std", "science", "algorithms"]
+documentation = "https://docs.rs/tpt-zero-bayes"
+
+[lib]
+name = "tpt_zero_bayes"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dependencies]
+tpt-zero-dist = { path = "../tpt-zero-dist" }
+tpt-zero-prob = { path = "../tpt-zero-prob" }
+tpt-zero-stats = { path = "../tpt-zero-stats" }
+
+[dev-dependencies]
+proptest = { workspace = true }

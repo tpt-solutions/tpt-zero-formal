@@ -1,0 +1,23 @@
+[package]
+name = "out-zero-assert-const"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Compile-time assertion macros and const-fn helpers for no_std const contexts."
+readme = "README.md"
+keywords = ["const", "no-std", "assert", "static-assert", "compile-time"]
+categories = ["no-std", "development-tools", "rust-patterns"]
+publish = false
+
+[lib]
+name = "out_zero_assert_const"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true

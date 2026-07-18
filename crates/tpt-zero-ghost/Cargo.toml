@@ -1,0 +1,26 @@
+[package]
+name = "tpt-zero-ghost"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Separation-logic-style ghost-state markers (Proven/Unproven) for no_std."
+readme = "README.md"
+keywords = ["no-std", "ghost", "phantom", "separation-logic", "zero-cost"]
+categories = ["no-std", "rust-patterns", "data-structures"]
+documentation = "https://docs.rs/tpt-zero-ghost"
+
+[lib]
+name = "tpt_zero_ghost"
+
+[features]
+default = ["dep:tpt-zero-witness"]
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dependencies]
+tpt-zero-witness = { path = "../tpt-zero-witness", version = "0.1.0", optional = true }

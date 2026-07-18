@@ -1,0 +1,29 @@
+[package]
+name = "tpt-zero-linalg"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "no_std linear algebra over fixed-size tensors: dot/cross products, vector norms, normalization, and matrix helpers."
+readme = "README.md"
+keywords = ["linalg", "no-std", "linear-algebra", "vector", "matrix"]
+categories = ["no-std", "algorithms", "mathematics", "science"]
+documentation = "https://docs.rs/tpt-zero-linalg"
+
+[lib]
+name = "tpt_zero_linalg"
+
+[dependencies]
+tpt-zero-tensor = { path = "../tpt-zero-tensor" }
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }

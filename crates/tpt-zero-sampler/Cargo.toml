@@ -1,0 +1,30 @@
+[package]
+name = "tpt-zero-sampler"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "no_std sampling algorithms for probabilistic inference: rejection, inverse-transform, and Metropolis-Hastings."
+readme = "README.md"
+keywords = ["sampler", "no-std", "probability", "monte-carlo", "inference"]
+categories = ["no-std", "algorithms", "science"]
+documentation = "https://docs.rs/tpt-zero-sampler"
+
+[lib]
+name = "tpt_zero_sampler"
+
+[dependencies]
+tpt-zero-rand = { path = "../tpt-zero-rand" }
+tpt-zero-prob = { path = "../tpt-zero-prob" }
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }

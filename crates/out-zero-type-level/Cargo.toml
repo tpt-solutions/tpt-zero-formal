@@ -1,0 +1,23 @@
+[package]
+name = "out-zero-type-level"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Type-level unsigned integer arithmetic and constraints via const generics, for no_std."
+readme = "README.md"
+keywords = ["type-level", "no-std", "const-generics", "arithmetic", "compile-time"]
+categories = ["no-std", "rust-patterns", "embedded"]
+publish = false
+
+[lib]
+name = "out_zero_type_level"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true

@@ -1,0 +1,26 @@
+[package]
+name = "out-zero-safe-cast"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Panic-free, explicitly verified numeric casting traits for no_std."
+readme = "README.md"
+keywords = ["cast", "no-std", "numeric", "conversion", "safe"]
+categories = ["no-std", "development-tools", "rust-patterns"]
+publish = false
+
+[lib]
+name = "out_zero_safe_cast"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }

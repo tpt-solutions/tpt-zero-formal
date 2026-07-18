@@ -1,0 +1,23 @@
+[package]
+name = "out-zero-postcond"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Postcondition checking helpers for no_std, with error-returning checks and debug-only assertions."
+readme = "README.md"
+keywords = ["postcondition", "no-std", "contract", "validation", "design-by-contract"]
+categories = ["no-std", "development-tools", "rust-patterns"]
+publish = false
+
+[lib]
+name = "out_zero_postcond"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true

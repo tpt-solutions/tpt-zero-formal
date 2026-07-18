@@ -1,0 +1,26 @@
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/tpt-solutions/tpt-zero-formal"
+authors = ["TPT Solutions <opensource@tptsolutions.co.nz>"]
+
+[workspace.dependencies]
+# Intentionally empty to enforce ZERO external production dependencies.
+# Shared dev-only dependencies live here so member crates can inherit them
+# via `{ workspace = true }` in their own [dev-dependencies] tables --
+# Cargo has no [workspace.dev-dependencies] table.
+proptest = "1.0"
+criterion = "0.5"
+
+[workspace.lints.rust]
+missing_docs = "warn"
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+all = "warn"
+pedantic = "warn"

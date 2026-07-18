@@ -1,0 +1,30 @@
+[package]
+name = "out-zero-bounded"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Zero-cost const-generic bounds-checked integers for no_std, built on safe-cast and assert-const."
+readme = "README.md"
+keywords = ["no-std", "bounded", "range", "integer", "const-generic"]
+categories = ["no-std", "rust-patterns", "data-structures"]
+publish = false
+
+[lib]
+name = "out_zero_bounded"
+
+[dependencies]
+out-zero-safe-cast = { path = "../out-zero-safe-cast" }
+out-zero-assert-const = { path = "../out-zero-assert-const" }
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }

@@ -1,0 +1,26 @@
+[package]
+name = "tpt-zero-rand"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Self-contained, seedable Xorshift and PCG pseudo-random number generators for no_std."
+readme = "README.md"
+keywords = ["random", "no-std", "prng", "xorshift", "pcg"]
+categories = ["no-std", "algorithms", "rust-patterns"]
+documentation = "https://docs.rs/tpt-zero-rand"
+
+[lib]
+name = "tpt_zero_rand"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }
