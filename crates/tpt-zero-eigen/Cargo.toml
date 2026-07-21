@@ -20,10 +20,10 @@ alloc = []
 std = ["alloc"]
 
 [dependencies]
-tpt-zero-tensor = { path = "../tpt-zero-tensor" }
-tpt-zero-linalg = { path = "../tpt-zero-linalg" }
-tpt-zero-decomp = { path = "../tpt-zero-decomp" }
-tpt-zero-solver = { path = "../tpt-zero-solver" }
+tpt-zero-tensor = { path = "../tpt-zero-tensor", version = "0.1.0" }
+tpt-zero-linalg = { path = "../tpt-zero-linalg", version = "0.1.0" }
+tpt-zero-decomp = { path = "../tpt-zero-decomp", version = "0.1.0" }
+tpt-zero-solver = { path = "../tpt-zero-solver", version = "0.1.0" }
 
 [lints]
 workspace = true

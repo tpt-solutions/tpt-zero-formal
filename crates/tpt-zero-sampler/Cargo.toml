@@ -15,8 +15,8 @@ documentation = "https://docs.rs/tpt-zero-sampler"
 name = "tpt_zero_sampler"
 
 [dependencies]
-tpt-zero-rand = { path = "../tpt-zero-rand" }
-tpt-zero-prob = { path = "../tpt-zero-prob" }
+tpt-zero-rand = { path = "../tpt-zero-rand", version = "0.1.0" }
+tpt-zero-prob = { path = "../tpt-zero-prob", version = "0.1.0" }
 
 [features]
 default = []

@@ -20,7 +20,7 @@ alloc = []
 std = ["alloc"]
 
 [dependencies]
-tpt-zero-invariant = { path = "../tpt-zero-invariant" }
+tpt-zero-invariant = { path = "../tpt-zero-invariant", version = "0.1.0" }
 
 [lints]
 workspace = true

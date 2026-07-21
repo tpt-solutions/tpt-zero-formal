@@ -15,10 +15,10 @@ documentation = "https://docs.rs/tpt-zero-markov"
 name = "tpt_zero_markov"
 
 [dependencies]
-tpt-zero-tensor = { path = "../tpt-zero-tensor" }
-tpt-zero-linalg = { path = "../tpt-zero-linalg" }
-tpt-zero-rand = { path = "../tpt-zero-rand" }
-tpt-zero-stats = { path = "../tpt-zero-stats" }
+tpt-zero-tensor = { path = "../tpt-zero-tensor", version = "0.1.0" }
+tpt-zero-linalg = { path = "../tpt-zero-linalg", version = "0.1.0" }
+tpt-zero-rand = { path = "../tpt-zero-rand", version = "0.1.0" }
+tpt-zero-stats = { path = "../tpt-zero-stats", version = "0.1.0" }
 
 [features]
 default = []

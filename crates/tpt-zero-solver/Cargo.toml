@@ -15,9 +15,9 @@ documentation = "https://docs.rs/tpt-zero-solver"
 name = "tpt_zero_solver"
 
 [dependencies]
-tpt-zero-tensor = { path = "../tpt-zero-tensor" }
-tpt-zero-linalg = { path = "../tpt-zero-linalg" }
-tpt-zero-decomp = { path = "../tpt-zero-decomp" }
+tpt-zero-tensor = { path = "../tpt-zero-tensor", version = "0.1.0" }
+tpt-zero-linalg = { path = "../tpt-zero-linalg", version = "0.1.0" }
+tpt-zero-decomp = { path = "../tpt-zero-decomp", version = "0.1.0" }
 
 [features]
 default = []

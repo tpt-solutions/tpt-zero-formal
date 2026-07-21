@@ -15,7 +15,7 @@ documentation = "https://docs.rs/tpt-zero-linalg"
 name = "tpt_zero_linalg"
 
 [dependencies]
-tpt-zero-tensor = { path = "../tpt-zero-tensor" }
+tpt-zero-tensor = { path = "../tpt-zero-tensor", version = "0.1.0" }
 
 [features]
 default = []

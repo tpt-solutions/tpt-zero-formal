@@ -15,9 +15,9 @@ documentation = "https://docs.rs/tpt-zero-dist"
 name = "tpt_zero_dist"
 
 [dependencies]
-tpt-zero-rand = { path = "../tpt-zero-rand" }
-tpt-zero-stats = { path = "../tpt-zero-stats" }
-tpt-zero-prob = { path = "../tpt-zero-prob" }
+tpt-zero-rand = { path = "../tpt-zero-rand", version = "0.1.0" }
+tpt-zero-stats = { path = "../tpt-zero-stats", version = "0.1.0" }
+tpt-zero-prob = { path = "../tpt-zero-prob", version = "0.1.0" }
 
 [features]
 default = []

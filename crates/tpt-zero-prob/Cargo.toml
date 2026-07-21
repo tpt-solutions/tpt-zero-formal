@@ -15,7 +15,7 @@ documentation = "https://docs.rs/tpt-zero-prob"
 name = "tpt_zero_prob"
 
 [dependencies]
-tpt-zero-stats = { path = "../tpt-zero-stats" }
+tpt-zero-stats = { path = "../tpt-zero-stats", version = "0.1.0" }
 
 [features]
 default = []
