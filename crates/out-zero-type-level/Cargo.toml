@@ -18,8 +18,6 @@ name = "out_zero_type_level"
 
 [features]
 default = []
-alloc = []
-std = ["alloc"]
 
 [lints]
 workspace = true

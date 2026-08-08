@@ -29,8 +29,6 @@ out-zero-float = { path = "../out-zero-float", version = "0.1.0" }
 
 [features]
 default = []
-alloc = []
-std = ["alloc"]
 
 [lints]
 workspace = true

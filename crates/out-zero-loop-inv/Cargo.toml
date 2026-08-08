@@ -21,8 +21,6 @@ name = "out_zero_loop_inv"
 
 [features]
 default = []
-alloc = []
-std = ["alloc"]
 
 [lints]
 workspace = true

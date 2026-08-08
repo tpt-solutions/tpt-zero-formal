@@ -23,8 +23,6 @@ name = "tpt_zero_bayes"
 
 [features]
 default = []
-alloc = []
-std = ["alloc"]
 
 [lints]
 workspace = true

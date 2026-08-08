@@ -18,8 +18,6 @@ name = "out_zero_precond"
 
 [features]
 default = []
-alloc = []
-std = ["alloc"]
 
 [lints]
 workspace = true

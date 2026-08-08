@@ -4,9 +4,6 @@
 #![warn(missing_docs)]
 #![forbid(unsafe_code)]
 
-#[cfg(feature = "std")]
-extern crate std;
-
 use core::fmt;
 use core::marker::PhantomData;
 use core::ops::Deref;
@@ -129,8 +126,7 @@ impl<T> fmt::Display for RefinementError<T> {
     }
 }
 
-#[cfg(feature = "std")]
-impl<T> std::error::Error for RefinementError<T> {}
+impl<T> core::error::Error for RefinementError<T> {}
 
 /// A value `T` refined by a [`Predicate`] `P`: it is guaranteed that
 /// `P::check` returned `true` for the wrapped value at construction time.

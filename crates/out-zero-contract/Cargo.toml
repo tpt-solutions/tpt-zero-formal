@@ -18,8 +18,6 @@ name = "out_zero_contract"
 
 [features]
 default = []
-alloc = []
-std = ["alloc"]
 checked = []
 
 [lints]

@@ -6,9 +6,6 @@
 
 use core::fmt;
 
-#[cfg(feature = "std")]
-extern crate std;
-
 /// Error returned when a precondition is violated.
 ///
 /// The error holds a `&'static str` message describing the failed condition,
@@ -57,8 +54,7 @@ impl fmt::Display for PreconditionError {
     }
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for PreconditionError {}
+impl core::error::Error for PreconditionError {}
 
 /// Checks a precondition, returning [`PreconditionError`] if it fails.
 ///

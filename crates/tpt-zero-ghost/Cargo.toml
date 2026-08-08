@@ -19,8 +19,6 @@ name = "tpt_zero_ghost"
 [features]
 default = ["witness"]
 witness = ["dep:tpt-zero-witness"]
-alloc = []
-std = ["alloc"]
 
 [lints]
 workspace = true

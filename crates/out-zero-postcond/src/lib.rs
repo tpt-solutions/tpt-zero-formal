@@ -34,11 +34,7 @@ impl core::fmt::Display for PostconditionError {
     }
 }
 
-#[cfg(feature = "std")]
-extern crate std;
-
-#[cfg(feature = "std")]
-impl std::error::Error for PostconditionError {}
+impl core::error::Error for PostconditionError {}
 
 /// Checks a postcondition, returning [`Err`] if it does not hold.
 ///

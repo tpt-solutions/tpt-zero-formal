@@ -18,8 +18,6 @@ name = "tpt_zero_formal"
 
 [features]
 default = ["layer0", "layer1", "layer2", "layer3"]
-alloc = []
-std = ["alloc"]
 
 # Per-crate opt-in features (namespaced re-exports below).
 safe-cast = ["dep:out-zero-safe-cast"]

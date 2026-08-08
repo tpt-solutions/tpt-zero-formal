@@ -303,9 +303,9 @@ Severity: 🔴 = ship-blocker, 🟠 = should-fix, 🟡 = nice-to-have.
       `# extern crate alloc;` to the `from_vec` doctest.
 
 ### Macro hygiene — double evaluation
-- [ ] **invariant** + **loop-inv**: `check_invariant!`/loop-inv macros evaluate
-      `$value` twice in debug, once in release. Bind once into a `let` (affects
-      `read_sensor()`-style side effects and debug≠release behaviour).
+- [x] **invariant** + **loop-inv**: `check_invariant!`/loop-inv macros evaluate
+       `$value` twice in debug, once in release. Bind once into a `let` (affects
+       `read_sensor()`-style side effects and debug≠release behaviour).
 
 ## P1 — Before announcing
 
@@ -315,8 +315,11 @@ Severity: 🔴 = ship-blocker, 🟠 = should-fix, 🟡 = nice-to-have.
 - [x] **ghost README**: remove false "builds with `--no-default-features`" / "`std`
       enables `Ghost::prove`" claims.
 - [x] **tensor README**: delete lines 1–24 (raw `//!` doc-comment source pasted in).
-- [ ] **dead features**: drop inert `alloc`/`std` from the 21 crates whose `src/`
-      never reads them (use `core::error::Error` instead of a `std` gate).
+- [x] **dead features**: drop inert `alloc`/`std` from the crates whose `src/`
+       never reads them (use `core::error::Error` instead of a `std` gate). The 4
+       crates with genuine `alloc` usage (`newtype`, `dist`, `markov`, `prob`) keep
+       their feature; the 3 `std`-gated `Error` impls (`postcond`, `precond`,
+       `refinement`) now use `core::error::Error`.
 - [x] Add `tpt-zero-formal` **facade crate** (feature groups + prelude) and claim
       the name on crates.io; namespace away `Distribution`/`Normal`/`Witness` collisions.
 - [x] Rewrite root README around one runnable end-to-end example; move the two
@@ -328,23 +331,28 @@ Severity: 🔴 = ship-blocker, 🟠 = should-fix, 🟡 = nice-to-have.
        do178c_altitude_monitor, baremetal_thumbv7, telos_transpile_target,
        type_state_protocol, refinement_vs_witness_vs_ghost, kalman_filter_nostd,
        migrating_from_rand).
-       - **examples/**: 3 added so far — `migrating_from_rand`, `bayesian_update`,
-         `tensor_linalg_solve` (all build + run). Remaining: contracts_basics,
-         do178c_altitude_monitor, baremetal_thumbv7, telos_transpile_target,
-         type_state_protocol, refinement_vs_witness_vs_ghost, kalman_filter_nostd.
-       - **cargo-generate templates**: not started.
+        - **examples/**: all 10 added — `migrating_from_rand`, `bayesian_update`,
+          `tensor_linalg_solve`, `contracts_basics`, `do178c_altitude_monitor`,
+          `baremetal_thumbv7`, `telos_transpile_target`, `type_state_protocol`,
+          `refinement_vs_witness_vs_ghost`, `kalman_filter_nostd` (all build; the
+          4 std binaries run, the 3 no_std libs build + cross-compile to
+          `thumbv7em-none-eabihf`, `kalman_filter_nostd` has a convergence test).
+        - **cargo-generate templates**: not started.
 - [x] Add `docs/choosing.md` (problem→crate index), `docs/architecture.md`
       (layer diagram from `cargo metadata`), `docs/comparison.md` (vs contracts/nalgebra/rand).
 - [x] **CI**: `fmt`, `clippy -D`, `test`, `--no-default-features`, `--all-features`,
       bare-metal (`thumbv7em-none-eabihf`), `doc`; split proptest budget so `cargo test`
       isn't 10 min. (Direct cargo steps; `xtask check-readmes`/`check-consistency`
       are tracked under the xtask item below.)
-- [ ] **xtask**: `new-crate`, `check-consistency`, `check-readmes`, `check-nostd`,
-      `publish-order`, `publish`, `gen-graph`, `gen-type-level` (restore the missing
-      `out-zero-type-level/src/generated.rs` generator).
-- [ ] Reconsider publish decisions for `out-zero-contract`, `-precond`, `-postcond`,
-      `-refinement` (load-bearing for the `tpt-telos` transpile story; `contracts`
-      is not zero-dep).
+- [x] **xtask**: `new-crate`, `check-consistency`, `check-readmes`, `check-nostd`,
+       `publish-order`, `publish`, `gen-graph`, `gen-type-level` (the `gen-type-level`
+       generator regenerates `out-zero-type-level/src/generated.rs` and now emits
+       `AssertLe` impls only for `A <= B`, fixing the `compile_fail` doctest).
+- [x] Reconsider publish decisions for `out-zero-contract`, `-precond`, `-postcond`,
+       `-refinement`: decision is to **publish** all four (they are zero-dep or
+       low-dep and load-bearing for the `tpt-telos` transpile story; `contracts`
+       is not zero-dep, but these four are). Actual `cargo publish` is deferred to
+       the layered crates.io flow under "Deferred / stretch" below.
 - [x] Remove dead `criterion` dev-dep and the 4 unused `proptest` dev-deps
       (`safe-cast`, `fsm`, `prob`, `sampler`); fix `rustfmt.toml` (`imports_granularity`
       is nightly-only, silently ignored on stable). (`libt.rmeta` not present.)

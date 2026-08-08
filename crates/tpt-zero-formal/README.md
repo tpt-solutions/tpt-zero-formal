@@ -15,7 +15,7 @@ share a name across crates (for example `Distribution`, `Normal`, and
 ```rust
 use tpt_zero_formal::prelude::*;
 
-let v = Tensor::from_fn(|i| i as f64);
+let v = Tensor::<f64, 3>::from_fn(|i| i as f64);
 let _ = (v.get(0), Normal::standard());
 ```
 

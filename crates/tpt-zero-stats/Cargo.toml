@@ -23,8 +23,6 @@ name = "tpt_zero_stats"
 
 [features]
 default = []
-alloc = []
-std = ["alloc"]
 
 [dependencies]
 out-zero-float = { path = "../out-zero-float", version = "0.1.0" }

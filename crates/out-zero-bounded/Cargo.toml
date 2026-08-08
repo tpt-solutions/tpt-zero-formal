@@ -22,8 +22,6 @@ out-zero-assert-const = { path = "../out-zero-assert-const" }
 
 [features]
 default = []
-alloc = []
-std = ["alloc"]
 
 [lints]
 workspace = true

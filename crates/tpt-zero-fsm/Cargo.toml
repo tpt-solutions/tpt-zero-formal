@@ -23,8 +23,6 @@ name = "tpt_zero_fsm"
 
 [features]
 default = []
-alloc = []
-std = ["alloc"]
 
 [dependencies]
 tpt-zero-invariant = { path = "../tpt-zero-invariant", version = "0.1.0" }

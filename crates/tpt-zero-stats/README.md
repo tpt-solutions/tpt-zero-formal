@@ -25,7 +25,7 @@ assert_eq!(percentile(&data, 0.5, &mut scratch), Some(3.0));
 
 Order-based statistics (`median`, `percentile`, `quantile`) sort a
 *caller-owned* mutable scratch buffer in place, so no heap allocation is
-required in the `default` (no_std) configuration.
+required in the `default` (`no_std`) configuration.
 
 ## Features
 

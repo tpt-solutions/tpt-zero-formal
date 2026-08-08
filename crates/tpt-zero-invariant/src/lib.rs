@@ -85,16 +85,18 @@ macro_rules! invariant {
 #[macro_export]
 macro_rules! check_invariant {
     ($value:expr $(,)?) => {{
+        let __inv_value = $value;
         ::core::debug_assert!(
-            $crate::Invariant::check(&$value),
+            $crate::Invariant::check(&__inv_value),
             "invariant violated: {}",
             ::core::stringify!($value)
         );
-        $value
+        __inv_value
     }};
     ($value:expr, $($msg:tt)+) => {{
-        ::core::debug_assert!($crate::Invariant::check(&$value), $($msg)+);
-        $value
+        let __inv_value = $value;
+        ::core::debug_assert!($crate::Invariant::check(&__inv_value), $($msg)+);
+        __inv_value
     }};
 }
 
@@ -214,5 +216,20 @@ mod tests {
         let n: u32 = 3;
         invariant!(n < 10);
         invariant!(n < 10, "n should be small");
+    }
+
+    #[test]
+    fn check_invariant_evaluates_value_once() {
+        let calls = core::cell::Cell::new(0u32);
+        let make = || {
+            calls.set(calls.get() + 1);
+            Bounded {
+                value: 1,
+                min: 0,
+                max: 10,
+            }
+        };
+        let _ = check_invariant!(make());
+        assert_eq!(calls.get(), 1, "value must be evaluated exactly once");
     }
 }

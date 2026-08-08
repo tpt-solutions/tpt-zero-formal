@@ -21,8 +21,6 @@ tpt-zero-witness = { path = "../tpt-zero-witness" }
 
 [features]
 default = []
-alloc = []
-std = ["alloc"]
 
 [lints]
 workspace = true

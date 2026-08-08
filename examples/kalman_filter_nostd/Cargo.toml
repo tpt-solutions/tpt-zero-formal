@@ -1,0 +1,8 @@
+[package]
+name = "example-kalman-filter-nostd"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+tpt-zero-formal = { path = "../../crates/tpt-zero-formal", features = ["linalg", "tensor"] }

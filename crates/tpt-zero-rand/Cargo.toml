@@ -23,8 +23,6 @@ name = "tpt_zero_rand"
 
 [features]
 default = []
-alloc = []
-std = ["alloc"]
 
 [lints]
 workspace = true

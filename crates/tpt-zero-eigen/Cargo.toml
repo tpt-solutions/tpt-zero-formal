@@ -23,8 +23,6 @@ name = "tpt_zero_eigen"
 
 [features]
 default = []
-alloc = []
-std = ["alloc"]
 
 [dependencies]
 tpt-zero-tensor = { path = "../tpt-zero-tensor", version = "0.1.0" }

@@ -102,16 +102,18 @@ macro_rules! loop_invariant {
 #[macro_export]
 macro_rules! check_loop_invariant {
     ($value:expr $(,)?) => {{
+        let __inv_value = $value;
         ::core::debug_assert!(
-            $crate::LoopInvariant::maintain(&$value),
+            $crate::LoopInvariant::maintain(&__inv_value),
             "loop invariant violated: {}",
             ::core::stringify!($value)
         );
-        $value
+        __inv_value
     }};
     ($value:expr, $($msg:tt)+) => {{
-        ::core::debug_assert!($crate::LoopInvariant::maintain(&$value), $($msg)+);
-        $value
+        let __inv_value = $value;
+        ::core::debug_assert!($crate::LoopInvariant::maintain(&__inv_value), $($msg)+);
+        __inv_value
     }};
 }
 
@@ -142,16 +144,18 @@ macro_rules! check_loop_invariant {
 #[macro_export]
 macro_rules! check_loop_entry {
     ($value:expr $(,)?) => {{
+        let __inv_value = $value;
         ::core::debug_assert!(
-            $crate::LoopInvariant::establish(&$value),
+            $crate::LoopInvariant::establish(&__inv_value),
             "loop invariant not established on entry: {}",
             ::core::stringify!($value)
         );
-        $value
+        __inv_value
     }};
     ($value:expr, $($msg:tt)+) => {{
-        ::core::debug_assert!($crate::LoopInvariant::establish(&$value), $($msg)+);
-        $value
+        let __inv_value = $value;
+        ::core::debug_assert!($crate::LoopInvariant::establish(&__inv_value), $($msg)+);
+        __inv_value
     }};
 }
 
