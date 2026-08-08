@@ -1,45 +1,4 @@
-//! Probability building blocks for `no_std`: a [`Distribution`] trait that
-//! captures the analytic properties of a probability distribution, and a
-//! [`Dist`] container that holds a set of observed samples and derives
-//! empirical statistics from them. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! The crate depends only on [`tpt-zero-stats`](https://docs.rs/tpt-zero-stats)
-//! for its descriptive statistics, and is therefore `no_std` with zero
-//! external dependencies.
-//!
-//! A [`Distribution`] describes a *parametric* family (for example the
-//! standard normal) and exposes its probability density, cumulative
-//! distribution function, mean, and variance analytically where they exist.
-//! A [`Dist`] holds *observed* values — a view over `&[f64]` in the
-//! `default` configuration, or an owned `Vec<f64>` behind the `alloc`
-//! feature — and computes their empirical statistics with the helpers
-//! re-exported from `tpt-zero-stats`.
-//!
-//! ```
-//! use tpt_zero_prob::{Dist, Distribution};
-//!
-//! // An empirical sample viewed over a borrowed slice (no allocation).
-//! let samples = [0.1, 0.5, 0.9, 0.2, 0.8];
-//! let dist = Dist::new(&samples);
-//! assert!(dist.empirical_mean().is_some());
-//!
-//! // An analytic distribution.
-//! let u = tpt_zero_prob::distributions::Uniform::new(0.0, 1.0).unwrap();
-//! assert_eq!(u.mean(), Some(0.5));
-//! assert!((u.variance().unwrap() - 1.0 / 12.0).abs() < 1e-12);
-//! ```
-//!
-//! # Features
-//!
-//! | Feature | Default | Enables |
-//! |---|---|---|
-//! | `alloc` | off | owned [`Dist`] storage via `Vec<f64>` |
-//! | `std` | off | implies `alloc` |
-//!
-//! This crate builds with `--no-default-features` (pure `core`, samples held
-//! as a borrowed `&[f64]`).
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]
@@ -70,8 +29,8 @@ pub use sample::Sample;
 /// A probability distribution described analytically.
 ///
 /// Implementors expose the probability density function ([`pdf`](Self::pdf)),
-/// cumulative distribution function ([`cdf`](Self::cdf)), and — where closed
-/// forms exist — the [`mean`](Self::mean) and [`variance`](Self::variance).
+/// cumulative distribution function ([`cdf`](Self::cdf)), and â€” where closed
+/// forms exist â€” the [`mean`](Self::mean) and [`variance`](Self::variance).
 ///
 /// The trait is generic over the value type [`Value`](Self::Value) so that a
 /// distribution may describe scalars, vectors, or other outcomes, while the

@@ -1,41 +1,4 @@
-//! Descriptive statistics for `no_std`: mean, variance, standard deviation,
-//! min, max, median, and percentiles/quantiles over slices or iterators of
-//! `f64`. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! Every function documents whether it operates on a slice (`&[f64]`) or on
-//! any [`IntoIterator`] of `f64`, and returns [`Option<f64>`] for empty
-//! inputs rather than panicking.
-//!
-//! Order-based statistics (`median`, `percentile`, `quantile`) need a sorted
-//! copy of the data; they take `&[f64]` and sort a *caller-owned* mutable
-//! scratch buffer in place, so no heap allocation is required in the
-//! `default` (`no_std`) configuration.
-//!
-//! This crate avoids the floating-point inherent methods that are not present
-//! in every `core` configuration (notably `sqrt`/`floor`/`ceil` and slice
-//! `sort_by`); it provides its own `sqrt` and an in-place insertion sort so
-//! it stays pure `core` with zero external dependencies.
-//!
-//! ```
-//! use tpt_zero_stats::{mean, variance, std_dev, percentile};
-//!
-//! let data = [1.0, 2.0, 3.0, 4.0, 5.0];
-//! assert_eq!(mean(&data), Some(3.0));
-//! assert_eq!(variance(&data), Some(2.5));
-//! assert!((std_dev(&data).unwrap() * std_dev(&data).unwrap() - 2.5).abs() < 1e-12);
-//! assert_eq!(percentile(&data, 0.5, &mut [0.0; 5]), Some(3.0));
-//! ```
-//!
-//! Iterators work too, via the slice-free helpers:
-//!
-//! ```
-//! use tpt_zero_stats::mean_iter;
-//!
-//! assert_eq!(mean_iter([1.0, 2.0, 3.0]), Some(2.0));
-//! assert_eq!(mean_iter(core::iter::repeat(0.0).take(0)), None);
-//! ```
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]

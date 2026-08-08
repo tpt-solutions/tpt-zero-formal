@@ -1,29 +1,4 @@
-//! Panic-free, explicitly verified numeric casting traits for `no_std`.
-//! Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! Rust's `as` operator silently truncates, wraps, or saturates when a
-//! numeric cast doesn't fit — a common source of logic bugs in
-//! safety-critical code. [`SafeCast::safe_cast`] instead returns a
-//! [`CastError`] whenever the source value cannot be represented in the
-//! target type *exactly*.
-//!
-//! ```
-//! use out_zero_safe_cast::SafeCast;
-//!
-//! let ok: Result<u8, _> = 200i32.safe_cast();
-//! assert_eq!(ok, Ok(200u8));
-//!
-//! let err: Result<u8, _> = 300i32.safe_cast();
-//! assert!(err.is_err());
-//!
-//! let float_ok: Result<i32, _> = 4.0f64.safe_cast();
-//! assert_eq!(float_ok, Ok(4));
-//!
-//! let float_err: Result<i32, _> = 4.5f64.safe_cast();
-//! assert!(float_err.is_err());
-//! ```
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]

@@ -1,38 +1,4 @@
-//! Refinement types for `no_std`: a value of type `T` that is known to
-//! satisfy a compile-time-named predicate `P`. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! A [`Refined<T, P>`] wraps a value together with a *type-level* promise
-//! that the [`Predicate`] `P` holds for that value. The only way to build one
-//! is through [`Refined::new`] (or the [`TryFrom`] impl), which runs
-//! [`Predicate::check`]; construction fails with a [`RefinementError`] when
-//! the predicate is not satisfied. Because `P` is zero-sized, a
-//! `Refined<T, P>` has the same size and representation cost as `T` itself.
-//!
-//! This complements [`tpt_zero_witness::Witness`]: a `Witness` pairs a value
-//! with an *externally established* proof, whereas a `Refined` establishes the
-//! proof itself by running a decidable predicate at construction time. Use
-//! [`Refined::into_witness`] to bridge from the former to the latter.
-//!
-//! ```
-//! use out_zero_refinement::{Predicate, Refined};
-//!
-//! /// Predicate: a `u32` that is non-zero.
-//! struct NonZeroU32;
-//! impl Predicate<u32> for NonZeroU32 {
-//!     fn check(value: &u32) -> bool {
-//!         *value != 0
-//!     }
-//! }
-//!
-//! let refined = Refined::<u32, NonZeroU32>::new(7).unwrap();
-//! assert_eq!(*refined.get(), 7);
-//! assert_eq!(*refined, 7); // via `Deref`
-//! assert_eq!(refined.into_inner(), 7);
-//!
-//! assert!(Refined::<u32, NonZeroU32>::new(0).is_err());
-//! ```
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]
@@ -171,8 +137,8 @@ impl<T> std::error::Error for RefinementError<T> {}
 ///
 /// `P` is stored as [`PhantomData`], so it occupies no space:
 /// `Refined<T, P>` has the same size as `T`. The predicate type participates
-/// only in the type signature, so a `Refined` can only be *named* — and thus
-/// only be built or accepted — where the predicate type is in scope.
+/// only in the type signature, so a `Refined` can only be *named* â€” and thus
+/// only be built or accepted â€” where the predicate type is in scope.
 ///
 /// The wrapper deliberately exposes only shared access to its contents
 /// ([`get`](Self::get), [`Deref`], [`AsRef`]) plus [`into_inner`](Self::into_inner) to move
@@ -286,7 +252,7 @@ impl<T, P: Predicate<T>> Refined<T, P> {
     /// This is the sound bridge from decidable refinements to the more
     /// general witness API. Because a `Refined<T, P>` can only exist if
     /// `P::check` returned `true`, it may hand out a
-    /// `Witness<T, RefinedProof<P>>` — a proof type that is *only*
+    /// `Witness<T, RefinedProof<P>>` â€” a proof type that is *only*
     /// constructible through this method, so no caller can forge it for an
     /// unvalidated value.
     ///

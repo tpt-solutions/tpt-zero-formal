@@ -1,42 +1,4 @@
-//! `no_std` matrix decompositions for small, fixed-size matrices. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! This crate factors an `N`-by-`N` matrix `A` (given as a
-//! [`Tensor2<f64, N, N>`](tpt_zero_tensor::Tensor2)) into canonical forms:
-//!
-//! - [`lu`] — Doolittle LU with partial pivoting: `P A = L U`, where `L` is
-//!   unit-lower-triangular, `U` is upper-triangular, and `P` is a row
-//!   permutation.
-//! - [`qr`] — Householder QR: `A = Q R`, where `Q` is orthonormal and `R` is
-//!   upper-triangular.
-//! - [`cholesky`] — Cholesky: `A = L Lᵀ` for symmetric positive-definite `A`,
-//!   returning `None` otherwise.
-//!
-//! It reuses the [`tpt_zero_linalg`] square root so it never relies on float
-//! intrinsics that are unavailable in some `core`-only targets.
-//!
-//! ```
-//! use tpt_zero_decomp::{cholesky, lu, qr};
-//! use tpt_zero_tensor::Tensor2;
-//!
-//! let m = Tensor2::from([[4.0, 12.0, -16.0], [12.0, 37.0, -43.0], [-16.0, -43.0, 98.0]]);
-//!
-//! // P A = L U.
-//! let (l, u, _p) = lu(&m);
-//!
-//! // A = Q R with Q orthonormal.
-//! let (q, r) = qr(&m);
-//! assert!((q[(0,0)].abs() - 1.0).abs() <= 1.0);
-//!
-//! // A = L L^T for symmetric positive-definite A.
-//! let chol = cholesky(&m).unwrap();
-//! ```
-//!
-//! # Verifying a decomposition
-//!
-//! [`lu`] returns `L`, `U`, and a permutation `p` such that applying `p` to the
-//! rows of `A` gives `L U`. [`lu_reconstruct`] rebuilds that permuted input.
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]
@@ -225,7 +187,7 @@ pub fn lu_reconstruct<const N: usize>(
 /// Computes the Householder QR decomposition of a square matrix `A`.
 ///
 /// Returns `(Q, R)` such that `A = Q R`, where `Q` is orthonormal
-/// (`Qᵀ Q = I`) and `R` is upper-triangular. The implementation applies `N`
+/// (`Qáµ€ Q = I`) and `R` is upper-triangular. The implementation applies `N`
 /// successive Householder reflections that zero the sub-diagonal entries of
 /// each column.
 ///
@@ -290,7 +252,7 @@ pub fn qr<const N: usize>(m: &Tensor2<f64, N, N>) -> (Tensor2<f64, N, N>, Tensor
             i += 1;
         }
 
-        // Apply H = I - 2 v vᵀ to R: R <- (I - 2 v vᵀ) R.
+        // Apply H = I - 2 v váµ€ to R: R <- (I - 2 v váµ€) R.
         let mut c = 0;
         while c < N {
             let mut coeff = 0.0;
@@ -308,7 +270,7 @@ pub fn qr<const N: usize>(m: &Tensor2<f64, N, N>) -> (Tensor2<f64, N, N>, Tensor
             c += 1;
         }
 
-        // Accumulate Q: Q <- Q Hᵀ = Q (I - 2 v vᵀ) = Q - 2 (Q v) vᵀ.
+        // Accumulate Q: Q <- Q Háµ€ = Q (I - 2 v váµ€) = Q - 2 (Q v) váµ€.
         let mut col = 0;
         while col < N {
             let mut coeff = 0.0;
@@ -338,10 +300,10 @@ fn identity<const N: usize>() -> Tensor2<f64, N, N> {
     Tensor2::from_fn(|i, c| if i == c { 1.0 } else { 0.0 })
 }
 
-/// Computes the Cholesky decomposition `L Lᵀ` of a symmetric
+/// Computes the Cholesky decomposition `L Láµ€` of a symmetric
 /// positive-definite matrix `A`.
 ///
-/// Returns `Some(L)`, where `L` is lower-triangular and `L Lᵀ == A`, or `None`
+/// Returns `Some(L)`, where `L` is lower-triangular and `L Láµ€ == A`, or `None`
 /// if `A` is not symmetric positive-definite (for example if a non-positive
 /// pivot is encountered). The upper triangle of `A` is ignored; only the lower
 /// triangle is read.
@@ -474,7 +436,7 @@ mod tests {
         assert!(approx_eq(r[(2, 0)], 0.0));
         assert!(approx_eq(r[(2, 1)], 0.0));
 
-        // Q is orthonormal: Qᵀ Q = I.
+        // Q is orthonormal: Qáµ€ Q = I.
         let qtq = q.transpose().mul(&q);
         let i3 = identity::<3>();
         let mut i = 0;

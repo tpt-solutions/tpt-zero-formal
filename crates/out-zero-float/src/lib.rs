@@ -1,19 +1,4 @@
-//! Verified `no_std` floating-point primitives: [`sqrt`], [`exp`], and [`ln`]
-//! for `f64`.
-//!
-//! These are implemented from scratch in `core` (no `libm`, no FPU-runtime
-//! dependency) so they work on bare-metal targets without an FPU math
-//! runtime. Unlike the ad-hoc copies that used to live in several crates,
-//! these handle subnormals, overflow, and underflow correctly and converge
-//! to full `f64` precision.
-//!
-//! ```
-//! use out_zero_float::{sqrt, exp, ln};
-//!
-//! assert!((sqrt(2.0) - core::f64::consts::SQRT_2).abs() < 1e-12);
-//! assert!((exp(1.0) - core::f64::consts::E).abs() < 1e-12);
-//! assert!((ln(core::f64::consts::E) - 1.0).abs() < 1e-12);
-//! ```
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]

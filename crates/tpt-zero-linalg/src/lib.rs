@@ -1,39 +1,4 @@
-//! Linear algebra over fixed-size tensors for `no_std`, with zero external
-//! production dependencies. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! This crate operates on the compile-time-sized tensors from
-//! [`tpt_zero_tensor`]: [`Tensor<T, N>`](tpt_zero_tensor::Tensor) (a length-`N`
-//! vector) and [`Tensor2<T, R, C>`](tpt_zero_tensor::Tensor2) (an `R`-by-`C`
-//! matrix), both backed by fixed-size arrays so no heap allocation is needed.
-//!
-//! It provides:
-//!
-//! - vector products: [`dot`] and [`cross`],
-//! - vector norms: [`norm_l1`], [`norm_l2`], [`norm_max`],
-//! - [`normalize`] (which returns `None` on the zero vector),
-//! - matrix helpers on `Tensor2`: [`trace`], [`frobenius_norm`],
-//!   [`mat_vec_mul`].
-//!
-//! `#[no_std]` and const-generic, the crate uses a Newton-iteration square root
-//! ([`sqrt`]) so it never relies on float intrinsics that are unavailable in
-//! some `core`-only targets.
-//!
-//! ```
-//! use tpt_zero_linalg::{cross, dot, normalize, norm_l2, norm_max};
-//! use tpt_zero_tensor::Tensor;
-//!
-//! let a = Tensor::from([1.0, 2.0, 3.0]);
-//! let b = Tensor::from([4.0, 5.0, 6.0]);
-//!
-//! assert_eq!(dot(&a, &b), 32.0);
-//! assert_eq!(cross(&a, &b).as_ref(), &[-3.0, 6.0, -3.0]);
-//! assert_eq!(norm_max(&a), 3.0);
-//!
-//! let n = normalize(&a).unwrap();
-//! assert!((norm_l2(&n) - 1.0).abs() < 1e-12);
-//! ```
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]
@@ -81,7 +46,7 @@ pub fn dot<const N: usize>(a: &Tensor<f64, N>, b: &Tensor<f64, N>) -> f64 {
     sum
 }
 
-/// Computes the cross product `a × b` of two 3D vectors.
+/// Computes the cross product `a Ã— b` of two 3D vectors.
 ///
 /// The result is a vector orthogonal to both `a` and `b`; its magnitude equals
 /// the area of the parallelogram spanned by `a` and `b`.
@@ -105,7 +70,7 @@ pub fn cross(a: &Tensor<f64, 3>, b: &Tensor<f64, 3>) -> Tensor<f64, 3> {
     ])
 }
 
-/// Returns the Euclidean (L2) norm of `v`: `sqrt(Σ v[i]²)`.
+/// Returns the Euclidean (L2) norm of `v`: `sqrt(Î£ v[i]Â²)`.
 ///
 /// The result is always non-negative. Returns `0.0` for the zero vector.
 ///
@@ -123,7 +88,7 @@ pub fn norm_l2<const N: usize>(v: &Tensor<f64, N>) -> f64 {
     sqrt(dot(v, v))
 }
 
-/// Returns the Manhattan (L1) norm of `v`: `Σ |v[i]|`.
+/// Returns the Manhattan (L1) norm of `v`: `Î£ |v[i]|`.
 ///
 /// The result is always non-negative.
 ///
@@ -147,7 +112,7 @@ pub fn norm_l1<const N: usize>(v: &Tensor<f64, N>) -> f64 {
     sum
 }
 
-/// Returns the maximum-norm (L∞) of `v`: `max_i |v[i]|`.
+/// Returns the maximum-norm (Lâˆž) of `v`: `max_i |v[i]|`.
 ///
 /// The result is always non-negative, and equals `0.0` only for the zero
 /// vector.
@@ -175,7 +140,7 @@ pub fn norm_max<const N: usize>(v: &Tensor<f64, N>) -> f64 {
     m
 }
 
-/// Returns `v` scaled to unit length (`v / ‖v‖`), or `None` if `v` is the zero
+/// Returns `v` scaled to unit length (`v / â€–vâ€–`), or `None` if `v` is the zero
 /// vector (which has no well-defined direction).
 ///
 /// The returned vector satisfies `norm_l2(&result) == 1.0` whenever it is
@@ -234,7 +199,7 @@ pub fn trace<const R: usize, const C: usize>(m: &Tensor2<f64, R, C>) -> f64 {
     sum
 }
 
-/// Returns the Frobenius norm of a matrix: `sqrt(Σ_i Σ_j m[i][j]²)`.
+/// Returns the Frobenius norm of a matrix: `sqrt(Î£_i Î£_j m[i][j]Â²)`.
 ///
 /// This is the Euclidean norm of the matrix treated as a vector of its entries.
 ///
@@ -336,7 +301,7 @@ mod tests {
         let x = Tensor::from([1.0, 0.0, 0.0]);
         let y = Tensor::from([0.0, 1.0, 0.0]);
         assert_eq!(cross(&x, &y).as_ref(), &[0.0, 0.0, 1.0]);
-        // a × a = 0.
+        // a Ã— a = 0.
         assert_eq!(cross(&x, &x).as_ref(), &[0.0, 0.0, 0.0]);
     }
 

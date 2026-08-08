@@ -1,42 +1,4 @@
-//! Concrete probability distributions for `no_std`: [`Uniform`], [`Normal`],
-//! [`Bernoulli`], and [`Poisson`]. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! Each distribution exposes its analytic density (PDF for continuous
-//! distributions, PMF for discrete ones), cumulative distribution function,
-//! mean, and variance, and can draw random samples from any generator that
-//! implements [`tpt_zero_rand::Rng`]. Sampling is dependency-free and uses
-//! textbook algorithms: inverse-transform scaling for [`Uniform`], the
-//! Box–Muller transform for [`Normal`], a Bernoulli trial for [`Bernoulli`],
-//! and Knuth's multiplication algorithm for [`Poisson`].
-//!
-//! The transcendental functions those algorithms need (`sqrt`, `ln`, `exp`,
-//! `floor`) are reimplemented from scratch in [`math`] because this crate
-//! targets a `core`-only environment where the `std` float methods are not
-//! available.
-//!
-//! ```
-//! use tpt_zero_dist::{Distribution, Normal};
-//! use tpt_zero_rand::{Pcg32, SeedableRng};
-//!
-//! let n = Normal::new(0.0, 1.0).unwrap();
-//! assert_eq!(n.mean(), 0.0);
-//! assert_eq!(n.variance(), 1.0);
-//!
-//! let mut rng = Pcg32::seed_from_u64(42);
-//! let x = n.sample(&mut rng);
-//! assert!(x.is_finite());
-//! ```
-//!
-//! # Features
-//!
-//! | Feature | Default | Enables |
-//! |---|---|---|
-//! | `alloc` | off | reserved for future alloc-dependent helpers |
-//! | `std` | off | implies `alloc` |
-//!
-//! This crate builds with `--no-default-features` (pure `core`, no `alloc`).
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]
@@ -602,7 +564,7 @@ pub fn sample_summary(samples: &[f64]) -> (Option<f64>, Option<f64>) {
 
 /// Cosine via a range-reduced Taylor series.
 ///
-/// Box–Muller only needs `cos` of an angle in `[0, 2*pi)`, so this reduces the
+/// Boxâ€“Muller only needs `cos` of an angle in `[0, 2*pi)`, so this reduces the
 /// argument modulo `2*pi`, folds it into `[-pi, pi]`, and evaluates the Taylor
 /// series. `f64::cos` is not available in this `core`-only crate.
 fn cos(x: f64) -> f64 {

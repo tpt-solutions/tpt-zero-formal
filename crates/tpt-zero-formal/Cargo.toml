@@ -1,0 +1,99 @@
+[package]
+name = "tpt-zero-formal"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+description = "Zero-dependency, no_std formal-methods and numerical toolkit (umbrella crate)."
+readme = "README.md"
+keywords = ["no-std", "formal-methods", "numerical", "verification", "zero-cost"]
+categories = ["no-std", "rust-patterns", "science", "algorithms", "mathematics"]
+documentation = "https://docs.rs/tpt-zero-formal"
+
+[lib]
+name = "tpt_zero_formal"
+
+[features]
+default = ["layer0", "layer1", "layer2", "layer3"]
+alloc = []
+std = ["alloc"]
+
+# Per-crate opt-in features (namespaced re-exports below).
+safe-cast = ["dep:out-zero-safe-cast"]
+assert-const = ["dep:out-zero-assert-const"]
+smt-lite = ["dep:tpt-zero-smt-lite"]
+float = ["dep:out-zero-float"]
+witness = ["dep:tpt-zero-witness"]
+phantom = ["dep:out-zero-phantom"]
+type-level = ["dep:out-zero-type-level"]
+bounded = ["dep:out-zero-bounded"]
+precond = ["dep:out-zero-precond"]
+postcond = ["dep:out-zero-postcond"]
+ghost = ["dep:tpt-zero-ghost"]
+refinement = ["dep:out-zero-refinement"]
+rand = ["dep:tpt-zero-rand"]
+stats = ["dep:tpt-zero-stats"]
+tensor = ["dep:tpt-zero-tensor"]
+linalg = ["dep:tpt-zero-linalg"]
+prob = ["dep:tpt-zero-prob"]
+sampler = ["dep:tpt-zero-sampler"]
+eigen = ["dep:tpt-zero-eigen"]
+grad = ["dep:tpt-zero-grad"]
+solver = ["dep:tpt-zero-solver"]
+decomp = ["dep:tpt-zero-decomp"]
+monte-carlo = ["dep:tpt-zero-monte-carlo"]
+bayes = ["dep:tpt-zero-bayes"]
+dist = ["dep:tpt-zero-dist"]
+markov = ["dep:tpt-zero-markov"]
+fsm = ["dep:tpt-zero-fsm"]
+contract = ["dep:out-zero-contract"]
+invariant = ["dep:tpt-zero-invariant"]
+loop-inv = ["dep:out-zero-loop-inv"]
+
+# Layer groupings (see crate docs).
+layer0 = ["safe-cast", "assert-const", "smt-lite", "float", "witness", "phantom", "type-level"]
+layer1 = ["bounded", "precond", "postcond", "ghost", "refinement"]
+layer2 = ["rand", "stats", "tensor", "linalg", "prob", "sampler"]
+layer3 = ["eigen", "grad", "solver", "decomp", "monte-carlo", "bayes", "dist", "markov", "fsm", "contract", "invariant", "loop-inv"]
+
+[dependencies]
+out-zero-safe-cast = { path = "../out-zero-safe-cast", version = "0.1.0", optional = true }
+out-zero-assert-const = { path = "../out-zero-assert-const", version = "0.1.0", optional = true }
+tpt-zero-smt-lite = { path = "../tpt-zero-smt-lite", version = "0.1.0", optional = true }
+out-zero-float = { path = "../out-zero-float", version = "0.1.0", optional = true }
+tpt-zero-witness = { path = "../tpt-zero-witness", version = "0.1.0", optional = true }
+out-zero-phantom = { path = "../out-zero-phantom", version = "0.1.0", optional = true }
+out-zero-type-level = { path = "../out-zero-type-level", version = "0.1.0", optional = true }
+out-zero-bounded = { path = "../out-zero-bounded", version = "0.1.0", optional = true }
+out-zero-precond = { path = "../out-zero-precond", version = "0.1.0", optional = true }
+out-zero-postcond = { path = "../out-zero-postcond", version = "0.1.0", optional = true }
+tpt-zero-ghost = { path = "../tpt-zero-ghost", version = "0.1.0", optional = true }
+out-zero-refinement = { path = "../out-zero-refinement", version = "0.1.0", optional = true }
+tpt-zero-rand = { path = "../tpt-zero-rand", version = "0.1.0", optional = true }
+tpt-zero-stats = { path = "../tpt-zero-stats", version = "0.1.0", optional = true }
+tpt-zero-tensor = { path = "../tpt-zero-tensor", version = "0.1.0", optional = true }
+tpt-zero-linalg = { path = "../tpt-zero-linalg", version = "0.1.0", optional = true }
+tpt-zero-prob = { path = "../tpt-zero-prob", version = "0.1.0", optional = true }
+tpt-zero-sampler = { path = "../tpt-zero-sampler", version = "0.1.0", optional = true }
+tpt-zero-eigen = { path = "../tpt-zero-eigen", version = "0.1.0", optional = true }
+tpt-zero-grad = { path = "../tpt-zero-grad", version = "0.1.0", optional = true }
+tpt-zero-solver = { path = "../tpt-zero-solver", version = "0.1.0", optional = true }
+tpt-zero-decomp = { path = "../tpt-zero-decomp", version = "0.1.0", optional = true }
+tpt-zero-monte-carlo = { path = "../tpt-zero-monte-carlo", version = "0.1.0", optional = true }
+tpt-zero-bayes = { path = "../tpt-zero-bayes", version = "0.1.0", optional = true }
+tpt-zero-dist = { path = "../tpt-zero-dist", version = "0.1.0", optional = true }
+tpt-zero-markov = { path = "../tpt-zero-markov", version = "0.1.0", optional = true }
+tpt-zero-fsm = { path = "../tpt-zero-fsm", version = "0.1.0", optional = true }
+out-zero-contract = { path = "../out-zero-contract", version = "0.1.0", optional = true }
+tpt-zero-invariant = { path = "../tpt-zero-invariant", version = "0.1.0", optional = true }
+out-zero-loop-inv = { path = "../out-zero-loop-inv", version = "0.1.0", optional = true }
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs", "--generate-link-to-definition"]
+
+[lints]
+workspace = true

@@ -1,31 +1,4 @@
-//! Design-by-contract precondition and postcondition macros for `no_std`.
-//! Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! [`requires!`] and [`ensures!`] encode function invariants directly at
-//! the call site: [`requires!`] checks a *precondition* at the top of a
-//! function, and [`ensures!`] checks a *postcondition* before it returns.
-//!
-//! By default both macros use [`core::debug_assert!`], so they cost nothing
-//! in release builds. Enable the `checked` feature to make them use
-//! [`core::assert!`] instead, so the contracts are enforced even in release.
-//!
-//! ```
-//! use out_zero_contract::{requires, ensures};
-//!
-//! fn div(a: i32, b: i32) -> i32 {
-//!     requires!(b != 0, "divisor must be non-zero");
-//!     let q = a / b;
-//!     ensures!(b * q == a - (a % b), "division identity holds");
-//!     q
-//! }
-//!
-//! assert_eq!(div(10, 2), 5);
-//! ```
-//!
-//! In a `release` build the above checks are compiled away; with
-//! `--features checked` they are always evaluated.
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]
@@ -38,7 +11,7 @@
 ///
 /// The `checked` flag is resolved in *this* crate (the two definitions below
 /// are gated by `#[cfg]` at the item level, which is resolved when this crate
-/// is compiled), not in the calling crate — so a `#[cfg(feature = "checked")]`
+/// is compiled), not in the calling crate â€” so a `#[cfg(feature = "checked")]`
 /// written *inside* an exported macro body would silently read the caller's
 /// features and do nothing.
 #[cfg(not(feature = "checked"))]

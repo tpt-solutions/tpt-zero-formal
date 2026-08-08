@@ -1,55 +1,4 @@
-//! Eigenvalue and eigenvector computation for small, fixed-size matrices in
-//! `no_std`, with zero external dependencies. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! All routines operate on the compile-time-sized tensors from
-//! [`tpt_zero_tensor`]: [`Tensor2<f64, N, N>`](tpt_zero_tensor::Tensor2) (a
-//! square matrix) and [`Tensor<f64, N>`](tpt_zero_tensor::Tensor) (a vector).
-//! They target *small* matrices (`N` known at compile time, storage backed by
-//! fixed-size arrays, no heap allocation).
-//!
-//! Three complementary algorithms are provided:
-//!
-//! - [`power_iteration`] — estimates the dominant (largest-magnitude)
-//!   eigenvalue and a corresponding unit eigenvector of any `N`-by-`N` matrix.
-//! - [`inverse_iteration`] — estimates the *smallest-magnitude* eigenvalue and
-//!   its eigenvector by applying power iteration to `A⁻¹`.
-//! - [`eigenvalues_2x2`] — returns both eigenvalues of a `2`-by-`2` matrix from
-//!   the closed-form roots of its characteristic equation.
-//!
-//! The Rayleigh quotient [`rayleigh_quotient`] reports the eigenvalue estimate
-//! associated with a given vector, and is used internally to extract the scalar
-//! eigenvalue from an eigenvector estimate.
-//!
-//! This crate implements its own Newton-iteration square root ([`sqrt`]) so it
-//! never relies on `f64::sqrt`, which is unavailable in some `core`-only
-//! targets. The sibling crates [`tpt_zero_linalg`], [`tpt_zero_decomp`], and
-//! [`tpt_zero_solver`] provide the underlying norms, decompositions, and linear
-//! solvers.
-//!
-//! ```
-//! use tpt_zero_eigen::{eigenvalues_2x2, power_iteration};
-//! use tpt_zero_tensor::Tensor2;
-//!
-//! // A symmetric 2x2 matrix.
-//! let a = Tensor2::from([[2.0, 1.0], [1.0, 2.0]]);
-//!
-//! // Closed-form eigenvalues: both 3 and 1.
-//! let ev = eigenvalues_2x2(&a);
-//! assert!((ev[0] - 3.0).abs() < 1e-12 || (ev[0] - 1.0).abs() < 1e-12);
-//!
-//! // Power iteration recovers the dominant eigenpair (lambda = 3).
-//! let (lambda, v) = power_iteration(&a, 1e-12, 1000);
-//! assert!((lambda - 3.0).abs() < 1e-9);
-//!
-//! // The eigenpair satisfies A v ≈ lambda v.
-//! let av = tpt_zero_linalg::mat_vec_mul(&a, &v);
-//! let lv = v.map(|x| x * lambda);
-//! for i in 0..2 {
-//!     assert!((av[i] - lv[i]).abs() < 1e-8);
-//! }
-//! ```
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]
@@ -93,7 +42,7 @@ pub fn sqrt(x: f64) -> f64 {
     out_zero_float::sqrt(x)
 }
 
-/// Returns the Euclidean (L2) norm of `v`: `sqrt(Σ v[i]²)`.
+/// Returns the Euclidean (L2) norm of `v`: `sqrt(Î£ v[i]Â²)`.
 ///
 /// This is a local copy of the [`tpt_zero_linalg`] norm so that callers of this
 /// crate do not pay a transitive dependency cost for a single helper; it uses
@@ -119,7 +68,7 @@ pub fn norm_l2<const N: usize>(v: &Tensor<f64, N>) -> f64 {
     sqrt(sum)
 }
 
-/// Returns `v` scaled to unit length (`v / ‖v‖`), or `None` if `v` is the zero
+/// Returns `v` scaled to unit length (`v / â€–vâ€–`), or `None` if `v` is the zero
 /// vector.
 ///
 /// The returned vector satisfies `norm_l2(&result) == 1.0` whenever it is
@@ -147,7 +96,7 @@ pub fn normalize<const N: usize>(v: &Tensor<f64, N>) -> Option<Tensor<f64, N>> {
     Some(Tensor::new(core::array::from_fn(|i| v[i] / len)))
 }
 
-/// Computes the Rayleigh quotient `vᵀ A v / (vᵀ v)` of a symmetric (or general)
+/// Computes the Rayleigh quotient `váµ€ A v / (váµ€ v)` of a symmetric (or general)
 /// matrix `A` with respect to a non-zero vector `v`.
 ///
 /// For an eigenvector `v` of `A` the quotient equals the associated eigenvalue,
@@ -187,18 +136,18 @@ pub fn rayleigh_quotient<const N: usize>(a: &Tensor2<f64, N, N>, v: &Tensor<f64,
 /// matrix `a` via the power iteration method.
 ///
 /// Starting from a random-ish initial vector, the iteration repeatedly applies
-/// `v ← a v` and normalizes, converging to the eigenvector associated with the
+/// `v â† a v` and normalizes, converging to the eigenvector associated with the
 /// eigenvalue of largest magnitude. The returned eigenvalue is the Rayleigh
-/// quotient of the final eigenvector estimate (so it equals `vᵀ a v / vᵀ v`).
+/// quotient of the final eigenvector estimate (so it equals `váµ€ a v / váµ€ v`).
 ///
 /// Returns `(lambda, v)` where `lambda` is the dominant eigenvalue and `v` is a
-/// corresponding unit eigenvector, satisfying `a v ≈ lambda v`.
+/// corresponding unit eigenvector, satisfying `a v â‰ˆ lambda v`.
 ///
 /// # Arguments
 ///
-/// - `a` — the square matrix.
-/// - `tol` — convergence tolerance on the change in the eigenvalue estimate.
-/// - `max_iter` — upper bound on the number of iterations.
+/// - `a` â€” the square matrix.
+/// - `tol` â€” convergence tolerance on the change in the eigenvalue estimate.
+/// - `max_iter` â€” upper bound on the number of iterations.
 ///
 /// # Examples
 ///
@@ -210,7 +159,7 @@ pub fn rayleigh_quotient<const N: usize>(a: &Tensor2<f64, N, N>, v: &Tensor<f64,
 /// let (lambda, v) = power_iteration(&a, 1e-12, 1000);
 /// // Dominant eigenvalue is 3.
 /// assert!((lambda - 3.0).abs() < 1e-9);
-/// // Verify A v ≈ lambda v.
+/// // Verify A v â‰ˆ lambda v.
 /// let av = tpt_zero_linalg::mat_vec_mul(&a, &v);
 /// let lv = v.map(|x| x * lambda);
 /// for i in 0..2 {
@@ -242,7 +191,7 @@ pub fn power_iteration<const N: usize>(
         let next_lambda = rayleigh_quotient(a, &next);
         // Converge on the change of the *eigenvector*: the Rayleigh quotient
         // can stabilise long before the vector does, so gating on the vector
-        // keeps the returned pair `a v ≈ lambda v` accurate to `tol`.
+        // keeps the returned pair `a v â‰ˆ lambda v` accurate to `tol`.
         let converged = iter > 0 && vec_inf_dist(&next, &v) < tol;
         v = next;
         lambda = next_lambda;
@@ -272,7 +221,7 @@ fn vec_inf_dist<const N: usize>(x: &Tensor<f64, N>, y: &Tensor<f64, N>) -> f64 {
 /// Estimates the smallest-magnitude eigenvalue of an `N`-by-`N` matrix `a` via
 /// inverse iteration.
 ///
-/// Inverse iteration applies power iteration to `A⁻¹`, whose dominant
+/// Inverse iteration applies power iteration to `Aâ»Â¹`, whose dominant
 /// eigenvalue is the reciprocal of `A`'s smallest-magnitude eigenvalue. Each
 /// step solves `A w = v` (via [`tpt_zero_solver::solve_gaussian`]) and
 /// normalizes `w`; this converges to the eigenvector of the eigenvalue closest
@@ -284,9 +233,9 @@ fn vec_inf_dist<const N: usize>(x: &Tensor<f64, N>, y: &Tensor<f64, N>) -> f64 {
 ///
 /// # Arguments
 ///
-/// - `a` — the square matrix (must be non-singular).
-/// - `tol` — convergence tolerance on the change in the eigenvalue estimate.
-/// - `max_iter` — upper bound on the number of iterations.
+/// - `a` â€” the square matrix (must be non-singular).
+/// - `tol` â€” convergence tolerance on the change in the eigenvalue estimate.
+/// - `max_iter` â€” upper bound on the number of iterations.
 ///
 /// # Examples
 ///
@@ -334,9 +283,9 @@ pub fn inverse_iteration<const N: usize>(
 /// roots of its characteristic equation.
 ///
 /// For `A = [[a, b], [c, d]]`, the eigenvalues are the roots of
-/// `λ² − (a+d) λ + (ad − bc) = 0`, given by
-/// `λ = (tr ± sqrt(tr² − 4 det)) / 2` where `tr = a+d` and `det = ad − bc`.
-/// The two returned values satisfy `λ1 + λ2 == tr` and `λ1 * λ2 == det`.
+/// `Î»Â² âˆ’ (a+d) Î» + (ad âˆ’ bc) = 0`, given by
+/// `Î» = (tr Â± sqrt(trÂ² âˆ’ 4 det)) / 2` where `tr = a+d` and `det = ad âˆ’ bc`.
+/// The two returned values satisfy `Î»1 + Î»2 == tr` and `Î»1 * Î»2 == det`.
 ///
 /// # Examples
 ///
@@ -362,7 +311,7 @@ pub fn eigenvalues_2x2(a: &Tensor2<f64, 2, 2>) -> [f64; 2] {
     let tr = a00 + a11;
     let det = a00 * a11 - a01 * a10;
 
-    // Discriminant of λ² − tr λ + det = 0.
+    // Discriminant of Î»Â² âˆ’ tr Î» + det = 0.
     let disc = tr * tr - 4.0 * det;
     let root = sqrt(disc.max(0.0));
 
@@ -514,7 +463,7 @@ mod proptests {
             .prop_map(|rows| Tensor2::new(rows.map(|r| r.map(|x| x as f64))))
     }
 
-    /// A 2x2 matrix whose discriminant `tr² − 4 det` is non-negative, so its
+    /// A 2x2 matrix whose discriminant `trÂ² âˆ’ 4 det` is non-negative, so its
     /// eigenvalues are real (power iteration then converges to a real eigenpair
     /// and the closed-form roots are real).
     fn mat2_real_eigs() -> impl Strategy<Value = Tensor2<f64, 2, 2>> {

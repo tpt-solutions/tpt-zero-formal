@@ -1,38 +1,4 @@
-//! Zero-cost bounds-checked integers for `no_std`, built on
-//! [`out_zero_safe_cast`] and [`out_zero_assert_const`]. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! [`BoundedInt<MIN, MAX>`] wraps an `i64` and guarantees at compile time
-//! (`MIN <= MAX`) and at construction (`MIN <= value <= MAX`) that the value
-//! always stays inside the range. Out-of-range construction returns
-//! [`BoundsError`], and the arithmetic helpers saturate/clamp to the bounds
-//! instead of overflowing.
-//!
-//! ```
-//! use out_zero_bounded::{BoundedInt, BoundsError};
-//!
-//! type Percent = BoundedInt<0, 100>;
-//!
-//! let x = Percent::new(50).unwrap();
-//! assert_eq!(x.value(), 50);
-//!
-//! // Clamps instead of overflowing:
-//! let clamped = x.saturating_add(200);
-//! assert_eq!(clamped.value(), 100);
-//!
-//! assert!(matches!(Percent::new(101), Err(BoundsError)));
-//! ```
-//!
-//! An inverted range (`MIN > MAX`) is a compile error, because every
-//! constructor forces the `MIN <= MAX` check:
-//!
-//! ```compile_fail
-//! use out_zero_bounded::BoundedInt;
-//!
-//! // Fails to compile: `BoundedInt: MIN must be <= MAX`.
-//! let _ = BoundedInt::<100, 0>::new(0);
-//! ```
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]

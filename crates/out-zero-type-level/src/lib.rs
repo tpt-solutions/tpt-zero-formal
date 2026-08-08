@@ -1,42 +1,4 @@
-//! Type-level unsigned integer arithmetic and constraints, built on `const`
-//! generics, for `no_std` targets. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! The crate provides [`U`], a zero-sized type wrapping a `const N: usize`
-//! generic parameter, together with the [`Add`], [`Sub`], [`Mul`], [`Min`]
-//! and [`Max`] traits that compute a result entirely at the type level via
-//! associated consts. Companion `const fn` helpers ([`add`], [`sub`],
-//! [`mul`], [`min`], [`max`]) do the same at the value level, and the
-//! [`AssertLe`] trait turns a type-level inequality (`A <= B`) into a compile
-//! error when it does not hold.
-//!
-//! Because edition 2024 forbids using a const generic parameter directly
-//! inside a `const` expression, the operation impls are generated for the
-//! range `0..=31` in the [`generated`] module; values outside that range are
-//! still representable as [`U\<N\>`] but do not have pre-generated operation
-//! impls.
-//!
-//! ```
-//! use out_zero_type_level::{U, Add, Sum};
-//!
-//! type Three = U<3>;
-//! type Four = U<4>;
-//! type Seven = <Three as Add<Four>>::Output;
-//!
-//! assert_eq!(<Seven as Add<U<0>>>::VALUE, 7);
-//! ```
-//!
-//! A violation of a type-level constraint is a compile error, not a runtime
-//! panic:
-//!
-//! ```compile_fail
-//! use out_zero_type_level::{U, AssertLe};
-//!
-//! // 5 is not <= 3, so this fails to compile.
-//! fn needs_le<const A: usize, const B: usize>() where U<A>: AssertLe<B> {}
-//! needs_le::<5, 3>();
-//! ```
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]

@@ -1,31 +1,4 @@
-//! Forward-mode automatic differentiation via dual numbers for `no_std`, with
-//! zero external production dependencies. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! A [`Dual<T>`] carries a primal value together with its derivative with
-//! respect to a single independent variable (the "seed"). Arithmetic operators
-//! are overloaded with the standard dual-number rules, so evaluating any
-//! differentiable expression composed from them also produces its derivative
-//! for free. [`grad`] seeds the derivative to `1.0` and returns the
-//! derivative part at a given point.
-//!
-//! ```
-//! use tpt_zero_grad::{grad, Dual};
-//!
-//! // d/dx x^2 = 2x
-//! let d = grad(|x| x * x, 3.0);
-//! assert!((d - 6.0).abs() < 1e-12);
-//!
-//! // d/dx sin(x) = cos(x)
-//! let d = grad(Dual::sin, 1.0);
-//! assert!((d - 1.0f64.cos()).abs() < 1e-12);
-//! ```
-//!
-//! The crate is `#[no_std]` and const-generic friendly: `Dual<T>` works for any
-//! `T: Copy + the usual arithmetic`, and gradient-based operations over the
-//! fixed-size [`Tensor`](tpt_zero_tensor::Tensor)s from `tpt-zero-tensor` are
-//! provided through [`grad_tensor`].
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]
@@ -78,7 +51,7 @@ impl DualNum for f32 {
 /// Evaluating ordinary arithmetic on `Dual`s composes the standard
 /// dual-number rules, so the `deriv` field tracks `d(value)/dx` automatically.
 /// For example, given `x = Dual::seed(3.0)` (value `3`, derivative `1`),
-/// `x * x` yields `Dual { value: 9, deriv: 6 }`, i.e. `d/dx x² = 2x` at `x = 3`.
+/// `x * x` yields `Dual { value: 9, deriv: 6 }`, i.e. `d/dx xÂ² = 2x` at `x = 3`.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Dual<T> {
     /// The primal (ordinary) value of the quantity.
@@ -468,9 +441,9 @@ mod float_fallback {
         out_zero_float::ln(x)
     }
 
-    /// Returns `sin(x)` via argument reduction into `[-π/2, π/2]` and a Taylor
+    /// Returns `sin(x)` via argument reduction into `[-Ï€/2, Ï€/2]` and a Taylor
     /// series. `cos` is derived from the same reduction using an offset of
-    /// `π/2`.
+    /// `Ï€/2`.
     #[must_use]
     pub fn sin(x: f64) -> f64 {
         sin_cos_reduced(x).0
@@ -482,7 +455,7 @@ mod float_fallback {
         sin_cos_reduced(x).1
     }
 
-    /// Reduces `x` into `[-π, π]` and returns `(sin x, cos x)` from Taylor
+    /// Reduces `x` into `[-Ï€, Ï€]` and returns `(sin x, cos x)` from Taylor
     /// series, handling quadrant sign/cosine via the periodic symmetry of
     /// sine/cosine.
     #[must_use]

@@ -1,25 +1,4 @@
-//! Self-contained, seedable pseudo-random number generators (PRNGs) for
-//! `no_std`. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! This crate implements two small, dependency-free generators from scratch:
-//! the classic [`XorShift64`] xorshift generator and the [`Pcg32`] variant of
-//! the PCG family. Both are deterministic given a seed, which makes them ideal
-//! for reproducible tests, games, and simulations where a true RNG is not
-//! required.
-//!
-//! ```
-//! use tpt_zero_rand::{Pcg32, Rng, SeedableRng};
-//!
-//! let mut rng = Pcg32::seed_from_u64(42);
-//! let u: u32 = rng.next_u32();
-//! let f: f64 = rng.next_f64();
-//! assert!(f >= 0.0 && f < 1.0);
-//! ```
-//!
-//! All generators implement the [`Rng`] trait, which provides `next_u32`,
-//! `next_u64`, `next_f64`, and `fill_bytes` on top of a single primitive.
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]

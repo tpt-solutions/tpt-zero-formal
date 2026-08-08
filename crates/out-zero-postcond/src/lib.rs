@@ -1,32 +1,4 @@
-//! Postcondition checking helpers for `no_std`. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! [`PostconditionError`] and the [`check`] function let a function *return*
-//! a postcondition violation instead of panicking, while the
-//! [`postcondition!`] macro is zero-cost in release builds (it expands to
-//! [`core::debug_assert!`] there) but returns [`Err`] in `debug_assertions`
-//! builds when the condition is violated.
-//!
-//! [`ensure_postcond!`] performs an early-return of the error at the end of a
-//! function, mirroring the style of `ensures!` from `out-zero-contract`
-//! without requiring a panic.
-//!
-//! ```
-//! use out_zero_postcond::{postcondition, PostconditionError};
-//!
-//! fn checked_add(a: u32, b: u32) -> Result<u32, PostconditionError> {
-//!     let sum = a.checked_add(b).ok_or_else(|| PostconditionError::new("no overflow"))?;
-//!     postcondition!(sum >= a, "addition did not wrap")?;
-//!     Ok(sum)
-//! }
-//!
-//! assert_eq!(checked_add(2, 3), Ok(5));
-//! ```
-//!
-//! In a `release` build the [`postcondition!`] check is compiled away; in a
-//! `debug_assertions` build it is evaluated and returns [`Err`] instead of
-//! panicking.
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]

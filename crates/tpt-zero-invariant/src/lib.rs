@@ -1,44 +1,4 @@
-//! State-machine invariant traits and zero-cost assertion macros for `no_std`.
-//! Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! A *state machine* exposes transitions that must keep the object in a
-//! well-formed state. An *invariant* is a property that holds in every
-//! reachable state. This crate gives you a tiny [`Invariant`] trait to encode
-//! that property, plus [`invariant!`] and [`check_invariant!`] macros that
-//! assert it holds after each transition — compiled to a `debug_assert!`, so
-//! they cost nothing in release builds.
-//!
-//! ```
-//! use tpt_zero_invariant::{Invariant, invariant};
-//!
-//! struct Counter { count: u32, max: u32 }
-//!
-//! impl Invariant for Counter {
-//!     fn check(&self) -> bool {
-//!         self.count <= self.max
-//!     }
-//! }
-//!
-//! let mut c = Counter { count: 0, max: 10 };
-//! c.count += 1;
-//! invariant!(c.count <= c.max);
-//! ```
-//!
-//! The same invariant can be checked through the trait:
-//!
-//! ```
-//! use tpt_zero_invariant::{Invariant, check_invariant};
-//!
-//! struct Counter { count: u32, max: u32 }
-//! impl Invariant for Counter {
-//!     fn check(&self) -> bool { self.count <= self.max }
-//! }
-//!
-//! let c = Counter { count: 0, max: 10 };
-//! check_invariant!(c);
-//! ```
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]

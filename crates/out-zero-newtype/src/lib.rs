@@ -1,42 +1,4 @@
-//! Macro-driven, `no_std` newtype wrappers with safe inner-type access and
-//! trait derivation. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! A *newtype* wraps an inner value in a distinct, zero-cost named type so
-//! the type system can tell two `f64`s apart — a distance from a duration,
-//! a raw user id from a count — without runtime overhead. This crate
-//! provides [`define_newtype!`], a macro that declares such a wrapper and
-//! auto-derives the common traits, and the [`Newtype`] trait that ties a
-//! wrapper to its inner type.
-//!
-//! ```
-//! use out_zero_newtype::{define_newtype, Newtype};
-//!
-//! define_newtype!(Meters, f64);
-//!
-//! let m = Meters(3.0);
-//! let inner: f64 = m.into_inner();
-//! assert_eq!(inner, 3.0);
-//!
-//! let back = Meters::from_inner(4.0);
-//! assert_eq!(back.0, 4.0);
-//! ```
-//!
-//! By default the macro derives `Clone`, `Copy`, `Debug`, `PartialEq`, `Eq`,
-//! and `Default`, and adds `From<Inner>`/`Into<Inner>` plus a `Newtype`
-//! implementation. Pass `deref` to also derive `Deref`/`DerefMut` so the
-//! wrapper transparently exposes the inner type's methods:
-//!
-//! ```
-//! use out_zero_newtype::define_newtype;
-//!
-//! define_newtype!(Tag, String, deref);
-//!
-//! let mut t = Tag(String::from("hi"));
-//! t.push_str(" there");
-//! assert_eq!(t.0, "hi there");
-//! ```
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]

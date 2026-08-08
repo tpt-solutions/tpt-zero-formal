@@ -1,37 +1,4 @@
-//! `no_std` sampling algorithms for probabilistic inference. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! This crate provides three classic Monte-Carlo sampling strategies, all
-//! generic over any [`Rng`] from
-//! [`tpt-zero-rand`] and operating purely on
-//! `f64`:
-//!
-//! * [`rejection_sample`] — sample a target distribution by accepting draws
-//!   from a proposal whose density bounds the target's.
-//! * [`inverse_transform_sample`] — transform uniform `[0,1)` draws through an
-//!   inverse cumulative distribution function.
-//! * [`metropolis_hastings`] — a Metropolis-Hastings walker with a symmetric
-//!   proposal, for sampling from an (unnormalized) density.
-//!
-//! ```
-//! use tpt_zero_rand::{Pcg32, Rng, SeedableRng};
-//! use tpt_zero_sampler::inverse_transform_sample;
-//!
-//! let mut rng = Pcg32::seed_from_u64(7);
-//! // The inverse CDF of Uniform(0,1) is the identity, so this yields uniform draws.
-//! let x = inverse_transform_sample(|u| u, &mut rng);
-//! assert!(x >= 0.0 && x < 1.0);
-//! ```
-//!
-//! # Features
-//!
-//! | Feature | Default | Enables |
-//! |---|---|---|
-//! | `alloc` | off | reserved for future alloc-dependent helpers |
-//! | `std` | off | implies `alloc` |
-//!
-//! This crate builds with `--no-default-features` (pure `core`, no `alloc`).
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]
@@ -54,17 +21,17 @@ use tpt_zero_rand::Rng;
 ///
 /// # Type parameters
 ///
-/// * `R` — the random source, any [`Rng`].
-/// * `D` — the proposal distribution, any [`Distribution`] returning `f64`.
+/// * `R` â€” the random source, any [`Rng`].
+/// * `D` â€” the proposal distribution, any [`Distribution`] returning `f64`.
 ///
 /// # Arguments
 ///
-/// * `target_pdf` — the (unnormalized) target density.
-/// * `proposal` — the proposal distribution; its `pdf` must dominate the
+/// * `target_pdf` â€” the (unnormalized) target density.
+/// * `proposal` â€” the proposal distribution; its `pdf` must dominate the
 ///   target scaled by `envelope`.
-/// * `envelope` — the constant `m` such that `target_pdf(x) <= m * proposal.pdf(x)`.
-/// * `rng` — the source of randomness.
-/// * `max_trials` — the maximum number of proposal draws before giving up.
+/// * `envelope` â€” the constant `m` such that `target_pdf(x) <= m * proposal.pdf(x)`.
+/// * `rng` â€” the source of randomness.
+/// * `max_trials` â€” the maximum number of proposal draws before giving up.
 ///
 /// # Examples
 ///
@@ -147,7 +114,7 @@ fn inverse_cdf_uniform<D: Distribution<Value = f64>>(dist: &D, u: f64) -> f64 {
     bisect_cdf(dist, u, start)
 }
 
-/// Bisection search for `x` such that `cdf(x) ≈ target`, expanding the
+/// Bisection search for `x` such that `cdf(x) â‰ˆ target`, expanding the
 /// bracketing interval geometrically until `cdf` spans `target`.
 #[must_use]
 fn bisect_cdf<D: Distribution<Value = f64>>(dist: &D, target: f64, start: f64) -> f64 {
@@ -195,15 +162,15 @@ fn bisect_cdf<D: Distribution<Value = f64>>(dist: &D, target: f64, start: f64) -
 
 /// Samples a value by inverse-transform sampling through an inverse CDF.
 ///
-/// Given `cdf_inverse` — the inverse of a cumulative distribution function,
-/// mapping a uniform draw `u in [0,1)` to a sample `x` — this returns
+/// Given `cdf_inverse` â€” the inverse of a cumulative distribution function,
+/// mapping a uniform draw `u in [0,1)` to a sample `x` â€” this returns
 /// `cdf_inverse(rng.next_f64())`. Because `rng.next_f64()` is uniform on
 /// `[0,1)`, the returned value follows the distribution whose CDF is inverted.
 ///
 /// # Type parameters
 ///
-/// * `R` — the random source, any [`Rng`].
-/// * `F` — the inverse-CDF closure `Fn(f64) -> f64`.
+/// * `R` â€” the random source, any [`Rng`].
+/// * `F` â€” the inverse-CDF closure `Fn(f64) -> f64`.
 ///
 /// # Examples
 ///
@@ -251,15 +218,15 @@ where
 /// The candidate is accepted with probability `alpha`, otherwise the walker
 /// stays at `current`.
 ///
-/// The caller is expected to drive the chain — calling this repeatedly,
-/// recording states, and discarding an initial burn-in — which keeps the
+/// The caller is expected to drive the chain â€” calling this repeatedly,
+/// recording states, and discarding an initial burn-in â€” which keeps the
 /// function allocation-free and free of any convergence assumptions.
 ///
 /// # Type parameters
 ///
-/// * `R` — the random source, any [`Rng`].
-/// * `F` — the target log-density `Fn(f64) -> f64`.
-/// * `P` — the symmetric proposal `Fn(f64) -> f64`.
+/// * `R` â€” the random source, any [`Rng`].
+/// * `F` â€” the target log-density `Fn(f64) -> f64`.
+/// * `P` â€” the symmetric proposal `Fn(f64) -> f64`.
 ///
 /// # Examples
 ///

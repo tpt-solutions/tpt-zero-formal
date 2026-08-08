@@ -1,45 +1,4 @@
-//! Monte Carlo simulation and variance reduction for `no_std`, zero external
-//! dependencies. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! This crate provides generic Monte Carlo estimators over any
-//! [`Rng`] from
-//! [`tpt-zero-rand`], together with classic
-//! variance-reduction techniques:
-//!
-//! * [`monte_carlo_integral`] — plain Monte Carlo estimate of `∫ f` over
-//!   `[0, 1]`.
-//! * [`estimate_mean_with_error`] — sample mean and its standard error, built
-//!   on [`tpt-zero-stats`](https://docs.rs/tpt-zero-stats).
-//! * [`antithetic_estimate`] — antithetic variates variance reduction.
-//! * [`control_variate_estimate`] — control-variate variance reduction using a
-//!   known-mean control function.
-//! * [`sample_mean_variance`] — measures the variance of the Monte Carlo
-//!   estimator itself across independent replications.
-//!
-//! ```
-//! use tpt_zero_rand::{Pcg32, Rng, SeedableRng};
-//! use tpt_zero_monte_carlo::monte_carlo_integral;
-//!
-//! let mut rng = Pcg32::seed_from_u64(7);
-//! // ∫_0^1 x dx = 0.5
-//! let estimate = monte_carlo_integral(|x| x, &mut rng, 10_000);
-//! assert!((estimate - 0.5).abs() < 0.05);
-//! ```
-//!
-//! All estimators implement their own `sqrt` (the project's `core`-only target
-//! does not expose `f64::sqrt`), so the crate stays pure `core` with no
-//! external production dependencies.
-//!
-//! # Features
-//!
-//! | Feature | Default | Enables |
-//! |---|---|---|
-//! | `alloc` | off | reserved for future alloc-dependent helpers |
-//! | `std` | off | implies `alloc` |
-//!
-//! This crate builds with `--no-default-features` (pure `core`, no `alloc`).
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]
@@ -66,16 +25,16 @@ use tpt_zero_stats::{mean, variance};
 /// the estimator is the arithmetic mean of `f(x)` over the `n` draws:
 ///
 /// ```text
-/// I ≈ (1/n) Σ_{i=1}^n f(x_i)
+/// I â‰ˆ (1/n) Î£_{i=1}^n f(x_i)
 /// ```
 ///
-/// The error of this estimator is `O(1/√n)` and independent of the dimension
+/// The error of this estimator is `O(1/âˆšn)` and independent of the dimension
 /// of the domain, which is the defining advantage of Monte Carlo integration.
 ///
 /// # Type parameters
 ///
-/// * `R` — the random source, any [`Rng`].
-/// * `F` — the integrand `Fn(f64) -> f64`.
+/// * `R` â€” the random source, any [`Rng`].
+/// * `F` â€” the integrand `Fn(f64) -> f64`.
 ///
 /// # Examples
 ///
@@ -84,7 +43,7 @@ use tpt_zero_stats::{mean, variance};
 /// use tpt_zero_monte_carlo::monte_carlo_integral;
 ///
 /// let mut rng = Pcg32::seed_from_u64(1);
-/// // ∫_0^1 x^2 dx = 1/3
+/// // âˆ«_0^1 x^2 dx = 1/3
 /// let est = monte_carlo_integral(|x| x * x, &mut rng, 20_000);
 /// assert!((est - 1.0 / 3.0).abs() < 0.02);
 /// ```
@@ -115,7 +74,7 @@ where
 /// ```
 ///
 /// It quantifies how far the mean of `samples` is likely to be from the true
-/// mean, and shrinks like `1/√n` as the sample size grows. A `None` standard
+/// mean, and shrinks like `1/âˆšn` as the sample size grows. A `None` standard
 /// deviation (fewer than two samples) yields a standard error of `0.0`.
 ///
 /// This delegates the mean and standard deviation to
@@ -147,7 +106,7 @@ pub fn estimate_mean_with_error(samples: &[f64]) -> (f64, f64) {
     (mean, sem)
 }
 
-/// Estimates `∫_0^1 f` using antithetic variates, a variance-reduction
+/// Estimates `âˆ«_0^1 f` using antithetic variates, a variance-reduction
 /// technique.
 ///
 /// For each pair, one uniform draw `x` produces two evaluations `f(x)` and
@@ -156,7 +115,7 @@ pub fn estimate_mean_with_error(samples: &[f64]) -> (f64, f64) {
 /// draws:
 ///
 /// ```text
-/// I ≈ (1/n) Σ_{i=1}^n (f(x_i) + f(1 - x_i)) / 2
+/// I â‰ˆ (1/n) Î£_{i=1}^n (f(x_i) + f(1 - x_i)) / 2
 /// ```
 ///
 /// Antithetic variates are most effective for monotone integrands, where the
@@ -165,8 +124,8 @@ pub fn estimate_mean_with_error(samples: &[f64]) -> (f64, f64) {
 ///
 /// # Type parameters
 ///
-/// * `R` — the random source, any [`Rng`].
-/// * `F` — the integrand `Fn(f64) -> f64`.
+/// * `R` â€” the random source, any [`Rng`].
+/// * `F` â€” the integrand `Fn(f64) -> f64`.
 ///
 /// # Examples
 ///
@@ -175,7 +134,7 @@ pub fn estimate_mean_with_error(samples: &[f64]) -> (f64, f64) {
 /// use tpt_zero_monte_carlo::antithetic_estimate;
 ///
 /// let mut rng = Pcg32::seed_from_u64(2);
-/// // ∫_0^1 e^x dx = e - 1
+/// // âˆ«_0^1 e^x dx = e - 1
 /// let est = antithetic_estimate(|x| x.exp(), &mut rng, 20_000);
 /// assert!((est - (core::f64::consts::E - 1.0)).abs() < 0.02);
 /// ```
@@ -196,27 +155,27 @@ where
     sum / (n as f64)
 }
 
-/// Estimates `∫_0^1 f` using control variates, a variance-reduction technique.
+/// Estimates `âˆ«_0^1 f` using control variates, a variance-reduction technique.
 ///
 /// A *control* function `g` with known integral `g_int` over `[0, 1]` is used
 /// to reduce variance. The corrected estimator subtracts the (mean-zero)
 /// control's empirical integral from the plain estimate of `f`:
 ///
 /// ```text
-/// I ≈ (mean of f(x_i)) - (mean of g(x_i) - g_int)
+/// I â‰ˆ (mean of f(x_i)) - (mean of g(x_i) - g_int)
 ///   =  mean of (f(x_i) - g(x_i))  + g_int
 /// ```
 ///
-/// Because `∫_0^1 (f - g) = ∫_0^1 f - g_int`, the corrected estimator is still
+/// Because `âˆ«_0^1 (f - g) = âˆ«_0^1 f - g_int`, the corrected estimator is still
 /// unbiased. When `g` is correlated with `f`, the variance of `f - g` is
 /// smaller than that of `f`, which is the whole point. The function `f` and the
 /// control `g` are each evaluated exactly `n` times.
 ///
 /// # Type parameters
 ///
-/// * `R` — the random source, any [`Rng`].
-/// * `F` — the integrand `Fn(f64) -> f64`.
-/// * `G` — the control variate `Fn(f64) -> f64`.
+/// * `R` â€” the random source, any [`Rng`].
+/// * `F` â€” the integrand `Fn(f64) -> f64`.
+/// * `G` â€” the control variate `Fn(f64) -> f64`.
 ///
 /// # Examples
 ///
@@ -225,7 +184,7 @@ where
 /// use tpt_zero_monte_carlo::control_variate_estimate;
 ///
 /// let mut rng = Pcg32::seed_from_u64(4);
-/// // Estimate ∫ x^2 dx; use g(x) = x with known ∫_0^1 x dx = 0.5 as control.
+/// // Estimate âˆ« x^2 dx; use g(x) = x with known âˆ«_0^1 x dx = 0.5 as control.
 /// let est = control_variate_estimate(|x| x * x, |x| x, 0.5, &mut rng, 20_000);
 /// assert!((est - 1.0 / 3.0).abs() < 0.02);
 /// ```
@@ -255,13 +214,13 @@ where
     (sum_f - sum_g) / (n as f64) + g_int
 }
 
-/// Measures the variance of the Monte Carlo estimator of `∫_0^1 f` by running
+/// Measures the variance of the Monte Carlo estimator of `âˆ«_0^1 f` by running
 /// `n` independent replications.
 ///
 /// Each replication is a fresh estimate from `reps` samples. The returned
 /// variance describes how much the estimator itself fluctuates across runs; in
 /// expectation it equals `Var(f) / reps`, shrinking like `1/reps` (equivalently
-/// like `1/n^2` combined with the per-sample `1/√reps`). A single replication
+/// like `1/n^2` combined with the per-sample `1/âˆšreps`). A single replication
 /// yields a variance of `0.0`.
 ///
 /// The variance is accumulated online (Welford's algorithm), so it needs no
@@ -269,8 +228,8 @@ where
 ///
 /// # Type parameters
 ///
-/// * `R` — the random source, any [`Rng`].
-/// * `F` — the integrand `Fn(f64) -> f64`, required to be `Copy`.
+/// * `R` â€” the random source, any [`Rng`].
+/// * `F` â€” the integrand `Fn(f64) -> f64`, required to be `Copy`.
 ///
 /// # Examples
 ///
@@ -279,7 +238,7 @@ where
 /// use tpt_zero_monte_carlo::sample_mean_variance;
 ///
 /// let mut rng = Pcg32::seed_from_u64(5);
-/// // ∫_0^1 x dx over 200 replications of 500 samples each.
+/// // âˆ«_0^1 x dx over 200 replications of 500 samples each.
 /// let (mean, var) = sample_mean_variance(|x| x, &mut rng, 200, 500);
 /// assert!((mean - 0.5).abs() < 0.05);
 /// assert!(var > 0.0 && var < 1.0);
@@ -389,7 +348,7 @@ mod tests {
     #[test]
     fn control_variate_integral_of_x_squared() {
         let mut rng = Pcg32::seed_from_u64(7);
-        // g(x) = x, ∫_0^1 x dx = 0.5
+        // g(x) = x, âˆ«_0^1 x dx = 0.5
         let est = control_variate_estimate(|x| x * x, |x| x, 0.5, &mut rng, 40_000);
         assert!((est - 1.0 / 3.0).abs() < 2e-2, "control variate estimate {est}");
     }
@@ -397,7 +356,7 @@ mod tests {
     #[test]
     fn control_variate_with_identity_control_is_exact_for_constant() {
         let mut rng = Pcg32::seed_from_u64(8);
-        // f(x) = c + x, g(x) = x; ∫ g = 0.5 => estimate should be c + 0.5.
+        // f(x) = c + x, g(x) = x; âˆ« g = 0.5 => estimate should be c + 0.5.
         let est = control_variate_estimate(|x| 2.0 + x, |x| x, 0.5, &mut rng, 1_000);
         assert!((est - 2.5).abs() < 1e-9, "estimate {est}");
     }
@@ -464,7 +423,7 @@ mod tests {
         proptest! {
             #[test]
             fn integral_of_linear_is_exact_mean(seed in any::<u64>(), n in 1000usize..50_000) {
-                // ∫_0^1 (a + b x) dx = a + b/2. With a=0,b=1 => 0.5.
+                // âˆ«_0^1 (a + b x) dx = a + b/2. With a=0,b=1 => 0.5.
                 let mut rng = Pcg32::seed_from_u64(seed);
                 let est = monte_carlo_integral(|x| x, &mut rng, n);
                 prop_assert!((est - 0.5).abs() < 0.1, "estimate {est} for n={n}");
@@ -479,7 +438,7 @@ mod tests {
 
             #[test]
             fn control_variate_constant_control(seed in any::<u64>(), n in 1000usize..50_000) {
-                // f(x) = 1 + 2x, g(x) = x, ∫ g = 0.5 => exact = 1 + 1 = 2.
+                // f(x) = 1 + 2x, g(x) = x, âˆ« g = 0.5 => exact = 1 + 1 = 2.
                 // The estimator is unbiased but carries Monte Carlo noise, so
                 // we allow a statistical tolerance rather than a tight bound.
                 let mut rng = Pcg32::seed_from_u64(seed);

@@ -1,33 +1,4 @@
-//! Fixed-rank tensor types backed by fixed-size arrays for `no_std` with zero
-//! allocation. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! This crate provides shape-known-at-compile-time tensors built entirely from
-//! const generics and `[T; N]` / `[[T; C]; R]` arrays, so no heap allocation is
-//! required and everything works in `core`-only builds.
-//!
-//! - [`Tensor<T, N>`] is a length-`N` vector with elementwise `add`/`sub`,
-//!   `dot` product, `map`, `zip`, and `from_fn`.
-//! - [`Tensor2<T, R, C>`] is an `R`-by-`C` matrix with `mul`, `transpose`,
-//!   `row`, `col`, and the vector operations.
-//!
-//! ```
-//! use tpt_zero_tensor::{Tensor, Tensor2};
-//!
-//! let a: Tensor<f64, 5> = Tensor::from_fn(|i| i as f64);
-//! let b: Tensor<f64, 5> = Tensor::from_fn(|i| (i * 2) as f64);
-//! let sum = a.add(&b);
-//! assert_eq!(sum.get(1), Some(&3.0));
-//!
-//! let m: Tensor2<i32, 3, 3> = Tensor2::from_fn(|r, c| (r * 10 + c) as i32);
-//! let t = m.transpose();
-//! assert_eq!(t.get(1, 0), Some(&1));
-//! ```
-//!
-//! All operations are defined only where the element type supports them
-//! (e.g. `add` requires `T: Add<Output = T>`), so the compiler rejects shape-
-//! or algebra-mismatched expressions eagerly.
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]

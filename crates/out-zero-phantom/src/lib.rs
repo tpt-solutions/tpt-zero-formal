@@ -1,33 +1,4 @@
-//! Zero-cost phantom-type markers and variance patterns for `no_std`.
-//! Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! A *phantom* type carries a type parameter that is never stored in the
-//! value, so the wrapper has the same size as `()` (zero bytes). This lets
-//! you tag values at the type level — distinguishing `Id<User>` from
-//! `Id<Order>` — without runtime cost. It also gives precise control over
-//! subtyping *variance* via `PhantomData<T>` and `PhantomData<fn(T)>`-
-//! style markers.
-//!
-//! ```
-//! use out_zero_phantom::{Phantom, Covariant, marker};
-//!
-//! // A zero-sized wrapper that carries a phantom tag.
-//! let tagged: Phantom<&str> = Phantom::new();
-//! assert_eq!(core::mem::size_of::<Phantom<&str>>(), 0);
-//!
-//! // Declare a named zero-sized marker type.
-//! marker!(pub UserId);
-//! let id = UserId::new();
-//! assert_eq!(core::mem::size_of_val(&id), 0);
-//!
-//! // Variance markers expose the covariance/invariance of a parameter.
-//! let _cov: Covariant<&str> = Covariant::new();
-//! ```
-//!
-//! All markers here are `#![forbid(unsafe_code)]` and work in a pure `core`
-//! environment (`--no-default-features`).
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]
@@ -223,9 +194,9 @@ pub const fn invariant<T: ?Sized>() -> Invariant<T> {
 ///
 /// The macro supports three shapes:
 ///
-/// - `marker!(Name);` — a unit-like zero-sized marker with no phantom tag.
-/// - `marker!(pub Name);` — same, but `pub`.
-/// - `marker!(pub Name<T>);` — a generic marker carrying a phantom `T`.
+/// - `marker!(Name);` â€” a unit-like zero-sized marker with no phantom tag.
+/// - `marker!(pub Name);` â€” same, but `pub`.
+/// - `marker!(pub Name<T>);` â€” a generic marker carrying a phantom `T`.
 ///
 /// Because the produced type is zero-sized, it adds no runtime cost and is
 /// useful for encoding state machines, capability tokens, and type-level

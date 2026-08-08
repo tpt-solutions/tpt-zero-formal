@@ -1,45 +1,4 @@
-//! Bayesian inference primitives and conjugate priors for `no_std`. Part of
-//! the [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! Conjugate-prior pairs expose closed-form posterior updates, so inference
-//! stays exact and allocation-free. The crate provides three conjugacies:
-//!
-//! - **Beta–Bernoulli** ([`Beta`]): a `Beta(alpha, beta)` prior over a
-//!   Bernoulli success probability `p` updates by simply adding the observed
-//!   successes to `alpha` and the observed failures to `beta`.
-//! - **Normal–Normal** ([`GaussianKnownVar`]): an unknown mean with known
-//!   observation variance. The posterior is again Gaussian, with precision
-//!   (inverse variance) accumulating one `1 / obs_var` per observation.
-//! - **Gamma–Poisson** ([`Gamma`]): a `Gamma(shape, rate)` prior over a
-//!   Poisson rate `lambda` updates by adding the total count to `shape` and
-//!   the total exposure to `rate`.
-//!
-//! The transcendental functions the formulas need (`sqrt`, `ln`, `exp`,
-//! `gamma`) are reimplemented from scratch in [`math`] because this crate
-//! targets a `core`-only environment where the `std` float methods are not
-//! available.
-//!
-//! ```
-//! use tpt_zero_bayes::Beta;
-//!
-//! // A uniform prior on a coin's bias: Beta(1, 1).
-//! let prior = Beta::new(1.0, 1.0).unwrap();
-//! assert!((prior.mean() - 0.5).abs() < 1e-12);
-//!
-//! // Observe 7 heads and 3 tails -> Beta(8, 4), mean 8/12 = 2/3.
-//! let posterior = prior.posterior(7, 3);
-//! assert!((posterior.mean() - 2.0 / 3.0).abs() < 1e-12);
-//! ```
-//!
-//! # Features
-//!
-//! | Feature | Default | Enables |
-//! |---|---|---|
-//! | `alloc` | off | reserved for future alloc-dependent helpers |
-//! | `std` | off | implies `alloc` |
-//!
-//! This crate builds with `--no-default-features` (pure `core`, no `alloc`).
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]
@@ -65,7 +24,7 @@ use math::{exp, gamma, ln, sqrt};
 /// The Beta distribution is the conjugate prior for the success probability
 /// `p` of a [`Bernoulli`](tpt_zero_dist::Bernoulli) likelihood. Observing
 /// `s` successes and `f` failures updates the prior to
-/// `Beta(alpha + s, beta + f)` in closed form — see [`posterior`](Self::posterior).
+/// `Beta(alpha + s, beta + f)` in closed form â€” see [`posterior`](Self::posterior).
 ///
 /// # Examples
 ///
@@ -216,7 +175,7 @@ impl Beta {
 }
 
 /// A Gaussian (normal) prior over an unknown mean with known observation
-/// variance — the Normal–Normal conjugate pair.
+/// variance â€” the Normalâ€“Normal conjugate pair.
 ///
 /// The model is `x_i ~ N(mu, obs_var)` with a prior `mu ~ N(prior_mean,
 /// prior_var)`. The posterior over `mu` is again Gaussian, with precision
@@ -245,7 +204,7 @@ pub struct GaussianKnownVar {
 }
 
 impl GaussianKnownVar {
-    /// Creates a Normal–Normal prior over a mean.
+    /// Creates a Normalâ€“Normal prior over a mean.
     ///
     /// `prior_mean` is the prior mean, `prior_var` the prior variance
     /// (must be positive), and `obs_var` the known observation variance

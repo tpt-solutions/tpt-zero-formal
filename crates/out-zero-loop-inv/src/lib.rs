@@ -1,45 +1,4 @@
-//! Loop-invariant checking helpers: zero-cost per-iteration assertions for
-//! `no_std`. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! A *loop invariant* is a property that holds before the loop starts, is
-//! maintained by every iteration, and therefore holds when the loop
-//! terminates. This crate gives you a [`LoopInvariant`] trait to encode that
-//! property together with its [`LoopInvariant::establish`] (entry) and
-//! [`LoopInvariant::maintain`] (per-iteration) predicates, plus the
-//! [`loop_invariant!`] and [`check_loop_invariant!`] macros that assert the
-//! predicate holds on each iteration using [`core::debug_assert!`] — so they
-//! cost nothing in release builds.
-//!
-//! ```
-//! use out_zero_loop_inv::loop_invariant;
-//!
-//! let mut sum: u64 = 0;
-//! for i in 0..10u64 {
-//!     loop_invariant!(sum == i * (i + 1) / 2);
-//!     sum += i + 1;
-//! }
-//! assert_eq!(sum, 10 * 11 / 2);
-//! ```
-//!
-//! The same invariant can be checked through the [`LoopInvariant`] trait,
-//! which separates the "established on entry" and "maintained per iteration"
-//! predicates so both phases can be verified independently:
-//!
-//! ```
-//! use out_zero_loop_inv::{LoopInvariant, check_loop_invariant};
-//!
-//! struct SumLoop { i: u64, sum: u64 }
-//!
-//! impl LoopInvariant for SumLoop {
-//!     fn establish(&self) -> bool { self.sum == self.i * (self.i + 1) / 2 }
-//!     fn maintain(&self) -> bool { self.sum == self.i * (self.i + 1) / 2 }
-//! }
-//!
-//! let s = SumLoop { i: 0, sum: 0 };
-//! check_loop_invariant!(s);
-//! ```
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]
@@ -52,7 +11,7 @@ extern crate tpt_zero_invariant;
 ///
 /// Splitting the invariant into [`LoopInvariant::establish`] (true before the
 /// first iteration) and [`LoopInvariant::maintain`] (true after every
-/// iteration) lets callers verify the two halves independently — the entry
+/// iteration) lets callers verify the two halves independently â€” the entry
 /// condition can be checked once, and the per-iteration condition checked on
 /// every pass through the loop body.
 ///

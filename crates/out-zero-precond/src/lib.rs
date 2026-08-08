@@ -1,43 +1,4 @@
-//! Precondition checking helpers built on design-by-contract for `no_std`.
-//! Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! A *precondition* is an invariant that must hold when a function is entered.
-//! The companion [`out-zero-contract`](https://docs.rs/out-zero-contract)
-//! crate encodes preconditions with the [`requires!`](https://docs.rs/out-zero-contract)
-//! macro, which *asserts* the condition (panicking in debug, or always with
-//! its `checked` feature). This crate instead *checks* preconditions: the
-//! condition is turned into a recoverable [`PreconditionError`] that the
-//! caller's function can propagate with `?`.
-//!
-//! ```
-//! use out_zero_precond::{check, PreconditionError};
-//!
-//! fn sqrt(x: f64) -> Result<f64, PreconditionError> {
-//!     check(x >= 0.0, "x must be non-negative")?;
-//!     Ok(x.sqrt())
-//! }
-//!
-//! assert_eq!(sqrt(4.0), Ok(2.0));
-//! assert!(sqrt(-1.0).is_err());
-//! ```
-//!
-//! For call-site ergonomics the [`requires_ok!`] macro performs the same check
-//! and returns `Err(PreconditionError)` early from the enclosing function, so a
-//! validating function reads almost like a contract:
-//!
-//! ```
-//! use out_zero_precond::{requires_ok, PreconditionError};
-//!
-//! fn push_at(slice: &[i32], index: usize) -> Result<i32, PreconditionError> {
-//!     requires_ok!(index < slice.len(), "index out of bounds");
-//!     Ok(slice[index])
-//! }
-//!
-//! assert_eq!(push_at(&[10, 20], 1), Ok(20));
-//! assert!(push_at(&[10, 20], 5).is_err());
-//! ```
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]

@@ -1,48 +1,5 @@
-//! Discrete-time Markov chains and transition-matrix operations for `no_std`.
-//! Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! A [`Chain<const N: usize>`] models a discrete-time Markov chain over `N`
-//! states. It stores a row-stochastic transition [`Tensor2`] (every row sums to
-//! `1.0`), supplied either via [`Chain::new`] (which normalizes arbitrary
-//! non-negative rows) or [`Chain::checked_new`] (which rejects non-stochastic
-//! rows), plus an initial [`Tensor`] distribution over the states.
-//!
-//! The crate provides the core chain operations:
-//!
-//! - [`Chain::step`] advances a distribution one step (`π P`),
-//! - [`Chain::n_step`] returns the `k`-th power `P^k` of the transition matrix,
-//! - [`Chain::stationary`] solves the balance equation `π P = π` via power
-//!   iteration,
+#![doc = include_str!("../README.md")]
 #![cfg_attr(feature = "alloc", doc = "- [`Chain::sample`] draws a trajectory of state indices using a [`tpt_zero_rand::Rng`].")]
-//!
-//! It builds on [`tpt_zero_linalg`], [`tpt_zero_rand`], and [`tpt_zero_stats`],
-//! and uses the sibling crates' `no_std`-safe square root so it never relies on
-//! float intrinsics missing from some `core`-only targets.
-//!
-//! ```
-//! use tpt_zero_markov::Chain;
-//! use tpt_zero_tensor::{Tensor, Tensor2};
-//!
-//! // A 2-state chain with transition matrix P and initial distribution pi.
-//! let p = Tensor2::from([[0.9, 0.1], [0.5, 0.5]]);
-//! let chain = Chain::new(p, Tensor::from([1.0, 0.0])).unwrap();
-//!
-//! // One step of the initial distribution:
-//! let next = chain.step(&chain.initial());
-//! assert!((next[0] - 0.9).abs() < 1e-12);
-//!
-//! // The stationary distribution satisfies pi P = pi.
-//! let pi = chain.stationary().unwrap();
-//! let balanced = chain.step(&pi);
-//! for i in 0..2 {
-//!     assert!((balanced[i] - pi[i]).abs() < 1e-9);
-//! }
-//! ```
-//!
-//! [`Tensor2`]: tpt_zero_tensor::Tensor2
-//! [`Tensor`]: tpt_zero_tensor::Tensor
 
 #![no_std]
 #![warn(missing_docs)]
@@ -305,13 +262,13 @@ impl<const N: usize> Chain<N> {
         result
     }
 
-    /// Solves the stationary (invariant) distribution equation `π P = π` via
+    /// Solves the stationary (invariant) distribution equation `Ï€ P = Ï€` via
     /// power iteration.
     ///
     /// Power iteration repeatedly applies `P` to a uniform starting vector; the
     /// sequence converges to the left eigenvector with eigenvalue `1`, which is
     /// the stationary distribution. The iteration stops once the distribution
-    /// changes by less than `1e-12` in the L∞ norm (or after a fixed cap of
+    /// changes by less than `1e-12` in the Lâˆž norm (or after a fixed cap of
     /// `1_000` iterations). Returns `None` only if `N == 0` (a chain with no
     /// states).
     ///
@@ -442,7 +399,7 @@ fn identity<const N: usize>() -> Tensor2<f64, N, N> {
     Tensor2::from_fn(|r, c| if r == c { 1.0 } else { 0.0 })
 }
 
-/// Returns the L∞ difference (`max_i |a[i] - b[i]|`) between two vectors.
+/// Returns the Lâˆž difference (`max_i |a[i] - b[i]|`) between two vectors.
 fn max_abs_diff<const N: usize>(a: &Tensor<f64, N>, b: &Tensor<f64, N>) -> f64 {
     let mut m = 0.0;
     let mut i = 0;

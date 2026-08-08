@@ -1,62 +1,4 @@
-//! Zero-allocation, strongly-typed finite state machine builder with
-//! compile-time transition checking for `no_std`. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! States and events are zero-sized marker types implementing [`State`] and
-//! [`Event`]. The legal transitions of the machine are declared at compile
-//! time by implementing the [`Transition`] trait, one impl per allowed
-//! `(from state, event)` pair. A [`Machine<S>`] carries its current state
-//! purely in the type parameter `S` via [`PhantomData`], so it is zero-sized
-//! and every [`Machine::transition`] is a zero-cost, allocation-free change
-//! of type.
-//!
-//! Because [`Machine::transition`] is gated on `T: Transition<S, E>`, only
-//! transitions you declared can compile — an illegal transition is a type
-//! error, caught at build time rather than at runtime.
-//!
-//! ```
-//! use tpt_zero_fsm::{Event, Machine, State, Transition};
-//!
-//! // States and events are zero-sized marker types.
-//! struct Locked;
-//! struct Unlocked;
-//! impl State for Locked {}
-//! impl State for Unlocked {}
-//!
-//! struct PushUnlock;
-//! struct PushLock;
-//! impl Event for PushUnlock {}
-//! impl Event for PushLock {}
-//!
-//! // Declare the only legal transitions at compile time.
-//! impl Transition<Locked, PushUnlock> for () { type To = Unlocked; }
-//! impl Transition<Unlocked, PushLock> for () { type To = Locked; }
-//!
-//! let m = Machine::<Locked>::new();
-//! let m = m.transition::<PushUnlock, ()>(); // Machine<Unlocked>
-//! let _m = m.transition::<PushLock, ()>();  // Machine<Locked>
-//! ```
-//!
-//! Attempting an undeclared transition does not compile, because no matching
-//! [`Transition`] impl exists:
-//!
-//! ```compile_fail
-//! use tpt_zero_fsm::{Event, Machine, State, Transition};
-//!
-//! struct Locked;
-//! struct Unlocked;
-//! impl State for Locked {}
-//! impl State for Unlocked {}
-//!
-//! struct PushLock;
-//! impl Event for PushLock {}
-//!
-//! // No `Transition<Locked, PushLock>` impl exists, so this is a type error.
-//! let _ = Machine::<Locked>::new().transition::<PushLock, ()>();
-//! ```
-//!
-//! [`PhantomData`]: core::marker::PhantomData
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]
@@ -139,7 +81,7 @@ pub trait Transition<From: State, Evt: Event> {
 /// A zero-sized finite state machine whose current state is the type
 /// parameter `S`.
 ///
-/// `Machine<S>` holds no runtime data — only a [`PhantomData<S>`] — so it is a
+/// `Machine<S>` holds no runtime data â€” only a [`PhantomData<S>`] â€” so it is a
 /// zero-sized type and every transition is a zero-cost change of type rather
 /// than a mutation of stored data.
 ///

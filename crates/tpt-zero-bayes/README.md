@@ -27,12 +27,12 @@ The transcendental functions those formulas need (`sqrt`, `ln`, `exp`,
 use tpt_zero_bayes::Beta;
 
 // A uniform prior on a coin's bias: Beta(1, 1).
-let prior = Beta::new(1.0, 1.0);
+let prior = Beta::new(1.0, 1.0).unwrap();
 assert!((prior.mean() - 0.5).abs() < 1e-12);
 
-// Observe 7 heads and 3 tails.
+// Observe 7 heads and 3 tails: posterior is Beta(1+7, 1+3) = Beta(8, 4).
 let posterior = prior.posterior(7, 3);
-assert!((posterior.mean() - 0.8).abs() < 1e-12);
+assert!((posterior.mean() - 8.0 / 12.0).abs() < 1e-12);
 ```
 
 ## Features

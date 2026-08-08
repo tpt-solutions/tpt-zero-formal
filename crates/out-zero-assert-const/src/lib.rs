@@ -1,26 +1,4 @@
-//! Compile-time assertion macros and `const fn` helpers for `no_std` const
-//! contexts. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! [`const_assert!`] fails the *build*, not a runtime call, when the
-//! condition does not hold, so invariants like `MIN <= MAX` on a
-//! `BoundedInt<const MIN: i64, const MAX: i64>` are caught at compile time
-//! for every concrete instantiation that is actually used.
-//!
-//! ```
-//! use out_zero_assert_const::const_assert;
-//!
-//! const_assert!(core::mem::size_of::<u32>() == 4);
-//! ```
-//!
-//! A failing assertion is a compile error, not a runtime panic:
-//!
-//! ```compile_fail
-//! use out_zero_assert_const::const_assert;
-//!
-//! const_assert!(core::mem::size_of::<u32>() == 8);
-//! ```
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]

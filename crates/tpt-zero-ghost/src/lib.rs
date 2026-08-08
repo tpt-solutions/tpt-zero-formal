@@ -1,36 +1,4 @@
-//! Separation-logic-style ghost-state markers for `no_std`. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! A `Ghost<T, P>` pairs a value `T` with a zero-sized *provenance marker*
-//! `P` — either [`Proven`] or [`Unproven`] — that records, at the type
-//! level, whether some property of `T` has been established. The marker
-//! occupies no space: `Ghost<T, P>` has exactly the same size, alignment,
-//! and layout as `T` itself, because `P` is stored as [`PhantomData`].
-//!
-//! This mirrors the *ghost state* of separation logic: a piece of
-//! information that the program carries around to reason about a property
-//! but that is erased at runtime, leaving zero cost behind.
-//!
-//! ```
-//! use tpt_zero_ghost::{Ghost, GhostProven, Proven, Unproven};
-//!
-//! // A value whose property has not yet been established.
-//! let raw: Ghost<u32, Unproven> = Ghost::new(42);
-//!
-//! // The caller asserts the invariant; this is a ghost operation and is
-//! // unsound unless the caller actually maintains it.
-//! let proven: GhostProven<u32> = raw.assume_proven();
-//!
-//! // The value is carried unchanged, at zero runtime cost.
-//! assert_eq!(*proven.value(), 42);
-//! assert_eq!(core::mem::size_of::<GhostProven<u32>>(), 4);
-//! ```
-//!
-//! The optional [`Ghost::prove`] operation ties the transition into the
-//! [`tpt-zero-witness`] crate: it consumes a [`Proof`](tpt_zero_witness::Proof)
-//! witness value, producing a [`Proven`] ghost only when that proof type is
-//! in scope.
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]
@@ -64,7 +32,7 @@ pub struct Unproven;
 /// `P` is stored as [`PhantomData`], so it occupies no space:
 /// `Ghost<T, P>` has the same size, alignment, and layout as `T`. The marker
 /// exists only to track, at the type level, whether some property of `T` has
-/// been established — a piece of *ghost state* that is erased at runtime.
+/// been established â€” a piece of *ghost state* that is erased at runtime.
 ///
 /// `Ghost::new` constructs only the [`Unproven`] end of the lattice. Promote
 /// to [`Proven`] through [`Ghost::prove`] (sound, given a proof) or the
@@ -170,7 +138,7 @@ impl<T, P> Ghost<T, P> {
     /// Consumes the `Ghost`, returning the carried value and discarding the
     /// provenance marker.
     ///
-    /// Because the marker is zero-sized, this is a no-op at runtime — the
+    /// Because the marker is zero-sized, this is a no-op at runtime â€” the
     /// proof/state distinction is erased.
     ///
     /// # Examples

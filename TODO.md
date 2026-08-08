@@ -309,7 +309,7 @@ Severity: 🔴 = ship-blocker, 🟠 = should-fix, 🟡 = nice-to-have.
 
 ## P1 — Before announcing
 
-- [ ] **publish metadata**: add `rust-version`, `homepage`, `include` (license
+- [x] **publish metadata**: add `rust-version`, `homepage`, `include` (license
       files), `[package.metadata.docs.rs]` + `doc(cfg)` to all crates; copy
       `LICENSE-MIT`/`LICENSE-APACHE` into each crate dir.
 - [x] **ghost README**: remove false "builds with `--no-default-features`" / "`std`
@@ -317,31 +317,33 @@ Severity: 🔴 = ship-blocker, 🟠 = should-fix, 🟡 = nice-to-have.
 - [x] **tensor README**: delete lines 1–24 (raw `//!` doc-comment source pasted in).
 - [ ] **dead features**: drop inert `alloc`/`std` from the 21 crates whose `src/`
       never reads them (use `core::error::Error` instead of a `std` gate).
-- [ ] Add `tpt-zero-formal` **facade crate** (feature groups + prelude) and claim
+- [x] Add `tpt-zero-formal` **facade crate** (feature groups + prelude) and claim
       the name on crates.io; namespace away `Distribution`/`Normal`/`Witness` collisions.
-- [ ] Rewrite root README around one runnable end-to-end example; move the two
+- [x] Rewrite root README around one runnable end-to-end example; move the two
       "Internal-only / closest alternative" tables to `docs/crate-selection.md`.
-- [ ] `#![doc = include_str!("../README.md")]` in all 30 `lib.rs` so README examples
-      become doctests; fix the 5 broken ones (smt-lite, solver, bayes, stats, tensor).
+- [x] `#![doc = include_str!("../README.md")]` in all 30 `lib.rs` so README examples
+      become doctests; fix the broken ones (only `tpt-zero-bayes` needed a fix:
+      `Beta::new` returns `Option` and the posterior mean is `8/12`, not `0.8`).
 - [ ] Add `cargo-generate` templates + `examples/` (start: contracts_basics,
       do178c_altitude_monitor, baremetal_thumbv7, telos_transpile_target,
       type_state_protocol, refinement_vs_witness_vs_ghost, kalman_filter_nostd,
       migrating_from_rand).
 - [ ] Add `docs/choosing.md` (problem→crate index), `docs/architecture.md`
       (layer diagram from `cargo metadata`), `docs/comparison.md` (vs contracts/nalgebra/rand).
-- [ ] **CI**: `fmt`, `clippy -D`, `test`, `--no-default-features`, `--all-features`,
-      bare-metal (`thumbv7em-none-eabi`/`thumbv6m-none-eabi`), `xtask check-readmes`,
-      `xtask check-consistency`; split proptest budget so `cargo test` isn't 10 min.
+- [x] **CI**: `fmt`, `clippy -D`, `test`, `--no-default-features`, `--all-features`,
+      bare-metal (`thumbv7em-none-eabihf`), `doc`; split proptest budget so `cargo test`
+      isn't 10 min. (Direct cargo steps; `xtask check-readmes`/`check-consistency`
+      are tracked under the xtask item below.)
 - [ ] **xtask**: `new-crate`, `check-consistency`, `check-readmes`, `check-nostd`,
       `publish-order`, `publish`, `gen-graph`, `gen-type-level` (restore the missing
       `out-zero-type-level/src/generated.rs` generator).
 - [ ] Reconsider publish decisions for `out-zero-contract`, `-precond`, `-postcond`,
       `-refinement` (load-bearing for the `tpt-telos` transpile story; `contracts`
       is not zero-dep).
-- [ ] Remove dead `criterion` dev-dep and the 4 unused `proptest` dev-deps; delete
-      `libt.rmeta`; fix `rustfmt.toml` (`imports_granularity` is nightly-only,
-      silently ignored on stable).
-- [ ] Add `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md`, `deny.toml`,
+- [x] Remove dead `criterion` dev-dep and the 4 unused `proptest` dev-deps
+      (`safe-cast`, `fsm`, `prob`, `sampler`); fix `rustfmt.toml` (`imports_granularity`
+      is nightly-only, silently ignored on stable). (`libt.rmeta` not present.)
+- [x] Add `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md`, `deny.toml`,
       `CODE_OF_CONDUCT.md`.
 - [ ] Update `Cargo.lock` (currently gitignored).
 

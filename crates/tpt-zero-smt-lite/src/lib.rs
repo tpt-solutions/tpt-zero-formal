@@ -1,47 +1,4 @@
-//! Boolean and pseudo-boolean (0/1) linear constraint helpers with a tiny
-//! `no_std` SMT-lite solver for checking satisfiability at runtime. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! **Note on the "linear" constraints:** they are *pseudo-boolean* constraints,
-//! not general integer-linear constraints. Each variable is a boolean and is
-//! read as the integer `1`/`0`, so `pb_eq`/`pb_leq` describe linear relations over
-//! the `0`/`1` assignment — not over arbitrary `i64` values.
-//!
-//! The crate models two kinds of constraint over a fixed set of
-//! [`Var`]iables:
-//!
-//! * **Boolean constraints** over the truth value of each [`Var`], built with
-//!   the combinators on [`ConstraintSet`]: [`ConstraintSet::and`],
-//!   [`ConstraintSet::or`], [`ConstraintSet::implies`], [`ConstraintSet::not`],
-//!   [`ConstraintSet::all`], [`ConstraintSet::any`], [`ConstraintSet::var`].
-//! * **Pseudo-boolean (0/1) linear constraints** over the boolean assignment
-//!   to each [`Var`] (read as `1`/`0`), built with [`ConstraintSet::pb_eq`] and
-//!   [`ConstraintSet::pb_leq`].
-//!
-//! A [`ConstraintSet`] is also the arena that owns the boolean expression
-//! tree, so no heap allocation is required and the crate builds with
-//! `--no-default-features` (pure `core`).
-//!
-//! [`solve`] (or [`ConstraintSet::solve`]) performs a naive enumeration over
-//! the `2^n` boolean assignments, returning a [`Witness`] when the set is
-//! satisfiable.
-//!
-//! ```
-//! use tpt_zero_smt_lite::{Var, ConstraintSet};
-//!
-//! let a = Var(0);
-//! let b = Var(1);
-//!
-//! let cs = ConstraintSet::new(2);
-//! let expr = cs.and(cs.or(cs.var(a), cs.var(b)), cs.not(cs.var(a)));
-//! cs.add_bool(expr);
-//! cs.pb_leq(&[(1, a), (1, b)], 1);
-//!
-//! let witness = cs.solve().expect("the constraints are satisfiable");
-//! assert_eq!(witness.bool_of(a), Some(false));
-//! assert_eq!(witness.bool_of(b), Some(true));
-//! ```
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]

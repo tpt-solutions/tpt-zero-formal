@@ -1,46 +1,4 @@
-//! Linear system solvers for `no_std`, built on the fixed-size tensors from
-//! [`tpt_zero_tensor`]. Part of the
-//! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
-//! ecosystem.
-//!
-//! Given a square `N`-by-`N` matrix `A` and a right-hand-side vector `b`, these
-//! routines solve `A x = b` for the unknown vector `x`. Two families are
-//! provided:
-//!
-//! - **Direct** methods, which terminate in a fixed number of operations:
-//!   [`solve_gaussian`] (Gaussian elimination with partial pivoting, done
-//!   inline), [`solve_lu`] (via the [`tpt_zero_decomp`] LU factors), and
-//!   [`solve_cholesky`] (via the [`tpt_zero_decomp`] Cholesky factor, for
-//!   symmetric positive-definite `A`).
-//! - **Iterative** methods, which refine an initial guess until convergence:
-//!   [`jacobi`] and [`gauss_seidel`], both of which converge to `A x = b` for
-//!   diagonally dominant systems.
-//!
-//! Every solver returns `None` (the direct ones) or a best-effort `x` (the
-//! iterative ones) rather than panicking on a singular or non-convergent
-//! system. The crate is `no_std` and uses a local Newton square root via
-//! [`tpt_zero_linalg::sqrt`], so it never relies on float intrinsics that may
-//! be unavailable in some `core`-only targets.
-//!
-//! ```
-//! use tpt_zero_solver::{solve_gaussian, solve_cholesky};
-//! use tpt_zero_tensor::{Tensor, Tensor2};
-//!
-//! let a = Tensor2::from([[2.0, 1.0], [1.0, 3.0]]);
-//! let b = Tensor::from([5.0, 10.0]);
-//!
-//! // Direct solve via Gaussian elimination with partial pivoting.
-//! let x = solve_gaussian(&a, &b).unwrap();
-//! assert!((x[0] - 1.0).abs() < 1e-9);
-//! assert!((x[1] - 3.0).abs() < 1e-9);
-//!
-//! // Cholesky is exact for symmetric positive-definite systems.
-//! let spd = Tensor2::from([[4.0, 1.0], [1.0, 3.0]]);
-//! let y = solve_cholesky(&spd, &Tensor::from([1.0, 2.0])).unwrap();
-//! let got = tpt_zero_linalg::mat_vec_mul(&spd, &y);
-//! assert!((got[0] - 1.0).abs() < 1e-9);
-//! assert!((got[1] - 2.0).abs() < 1e-9);
-//! ```
+#![doc = include_str!("../README.md")]
 
 #![no_std]
 #![warn(missing_docs)]
@@ -74,7 +32,7 @@ const SINGULAR_EPS: f64 = 1e-12;
 /// inputs are not modified. Partial pivoting swaps rows to use the largest
 /// available pivot magnitude at each step, improving numerical stability.
 ///
-/// Returns `Some(x)` with `A x ≈ b` to within the working precision, or `None`
+/// Returns `Some(x)` with `A x â‰ˆ b` to within the working precision, or `None`
 /// if `A` is (numerically) singular.
 ///
 /// # Examples
@@ -178,7 +136,7 @@ pub fn solve_gaussian<const N: usize>(
 /// equivalent to [`solve_gaussian`] but reuses the shared decomposition, which
 /// is cheaper when you must solve several right-hand sides sharing the same `A`.
 ///
-/// Returns `Some(x)` with `A x ≈ b`, or `None` if `A` is (numerically) singular.
+/// Returns `Some(x)` with `A x â‰ˆ b`, or `None` if `A` is (numerically) singular.
 ///
 /// # Examples
 ///
@@ -267,11 +225,11 @@ pub fn solve_lu_factors<const N: usize>(
 /// [`tpt_zero_decomp::cholesky`].
 ///
 /// `A` must be symmetric positive-definite; the system is solved as
-/// `L Lᵀ x = b` by forward-substitution on `L` then back-substitution on
-/// `Lᵀ`. This is both faster and more numerically stable than the general LU
+/// `L Láµ€ x = b` by forward-substitution on `L` then back-substitution on
+/// `Láµ€`. This is both faster and more numerically stable than the general LU
 /// route for SPD systems.
 ///
-/// Returns `Some(x)` with `A x ≈ b`, or `None` if `A` is not symmetric
+/// Returns `Some(x)` with `A x â‰ˆ b`, or `None` if `A` is not symmetric
 /// positive-definite (the Cholesky factor does not exist).
 ///
 /// # Examples
@@ -312,7 +270,7 @@ pub fn solve_cholesky<const N: usize>(
         i += 1;
     }
 
-    // Back substitution on Lᵀ: Lᵀ x = y.
+    // Back substitution on Láµ€: Láµ€ x = y.
     let mut x = [0.0f64; N];
     let mut r = N;
     while r > 0 {
@@ -333,8 +291,8 @@ pub fn solve_cholesky<const N: usize>(
 /// Solves `A x = b` by the Jacobi iterative method.
 ///
 /// Starting from the initial guess `x0`, each component is updated from the
-/// previous iterate using `x_i = (b_i - Σ_{j≠i} A[i][j] x_j) / A[i][i]`. The
-/// iteration stops when the infinity-norm of the step (`‖x^{k+1} - x^k‖_∞`)
+/// previous iterate using `x_i = (b_i - Î£_{jâ‰ i} A[i][j] x_j) / A[i][i]`. The
+/// iteration stops when the infinity-norm of the step (`â€–x^{k+1} - x^kâ€–_âˆž`)
 /// drops below `tol` or after `max_iter` iterations, whichever comes first.
 ///
 /// The method converges to the true solution for diagonally dominant `A`. The
@@ -412,7 +370,7 @@ pub fn jacobi<const N: usize>(
 /// Like [`jacobi`], but each component uses the most recently computed values
 /// of the other components within the same sweep (in-place update), which
 /// typically converges faster than Jacobi for the same diagonally dominant
-/// systems. Iteration stops when `‖x^{k+1} - x^k‖_∞ < tol` or after
+/// systems. Iteration stops when `â€–x^{k+1} - x^kâ€–_âˆž < tol` or after
 /// `max_iter` iterations.
 ///
 /// The returned vector is the final iterate; for a non-convergent system it is
