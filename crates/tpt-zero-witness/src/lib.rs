@@ -6,8 +6,9 @@
 //! [`Witness<T, P>`] carries a value `T` together with a (zero-sized) proof
 //! `P` that some property of `T` holds. The proof is a *type-level* witness:
 //! because it appears in the type, the compiler only lets you construct a
-//! `Witness` when you can name the proof type `P`, which in practice means
-//! you have run the construction logic that establishes the property.
+//! `Witness` when you can supply a *value* of the proof type `P` — and the
+//! only way to obtain such a value is through a constructor that establishes
+//! the property. Build a `Witness` with [`Witness::from_proof`].
 //!
 //! ```
 //! use tpt_zero_witness::{Proof, Witness};
@@ -21,7 +22,7 @@
 //!     if value == 0 {
 //!         None
 //!     } else {
-//!         Some(Witness::new(value))
+//!         Some(Witness::from_proof(value, NonZero))
 //!     }
 //! }
 //!
@@ -35,6 +36,7 @@
 #![no_std]
 #![warn(missing_docs)]
 #![forbid(unsafe_code)]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 use core::marker::PhantomData;
 
@@ -44,6 +46,16 @@ use core::marker::PhantomData;
 /// compile-time witness that some property holds. Implement it for the unit
 /// struct (or any zero-sized type) that names the property you want to
 /// track.
+///
+/// # Soundness
+///
+/// The only public constructor for a `Witness<T, P>` is
+/// [`Witness::from_proof`], which consumes a *value* of `P`. Because `P` is
+/// a zero-sized type you define, you should construct that value only inside
+/// a function that has just established the property (e.g. a checked
+/// constructor that returns `None` otherwise). If the proof type has no
+/// public constructor outside its defining module, then no caller elsewhere
+/// can ever mint a `Witness` for it.
 ///
 /// # Examples
 ///
@@ -60,12 +72,13 @@ pub trait Proof {}
 /// A value `T` paired with a zero-sized proof `P` that some property holds.
 ///
 /// `P` is stored as [`PhantomData`], so it occupies no space: `Witness<T, P>`
-/// has the same size as `T`. The proof type participates only in the type
-/// signature, guaranteeing that a `Witness` can only be constructed where
-/// the proof type is in scope and has been meaningfully provided.
+/// has the same size as `T`. A `Witness` can only be constructed by supplying
+/// a value of the proof type `P` (see [`Witness::from_proof`]), so the
+/// property is guaranteed to have been established wherever the proof value
+/// originated.
 ///
 /// `T` is not required to be `Copy`; the `Witness` is `Copy` *only when* `T`
-/// is, via the derived `Copy` impl's bounds.
+/// is, via the hand-written `Copy` impl.
 ///
 /// # Examples
 ///
@@ -81,7 +94,7 @@ pub trait Proof {}
 ///     if value == 0 {
 ///         None
 ///     } else {
-///         Some(Witness::new(value))
+///         Some(Witness::from_proof(value, NonZero))
 ///     }
 /// }
 ///
@@ -90,7 +103,6 @@ pub trait Proof {}
 /// let raw = w.into_inner();
 /// assert_eq!(raw, 42);
 /// ```
-#[derive(Clone, Copy, Debug)]
 pub struct Witness<T, P: Proof> {
     /// The carried value.
     value: T,
@@ -98,33 +110,24 @@ pub struct Witness<T, P: Proof> {
     _proof: PhantomData<P>,
 }
 
-impl<T, P: Proof> Witness<T, P> {
-    /// Constructs a `Witness` carrying `value` and the proof type `P`.
-    ///
-    /// Call this only after the property witnessed by `P` has been
-    /// established for `value` (typically inside a constructor that checks
-    /// the invariant and returns `None` or panics otherwise).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use tpt_zero_witness::{Proof, Witness};
-    ///
-    /// #[derive(Clone, Copy, Debug)]
-    /// struct Always;
-    /// impl Proof for Always {}
-    ///
-    /// let w: Witness<i32, Always> = Witness::new(3);
-    /// assert_eq!(*w.value(), 3);
-    /// ```
-    #[must_use]
-    pub const fn new(value: T) -> Self {
+impl<T: Clone, P: Proof> Clone for Witness<T, P> {
+    fn clone(&self) -> Self {
         Self {
-            value,
+            value: self.value.clone(),
             _proof: PhantomData,
         }
     }
+}
 
+impl<T: Copy, P: Proof> Copy for Witness<T, P> {}
+
+impl<T: core::fmt::Debug, P: Proof> core::fmt::Debug for Witness<T, P> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("Witness").field("value", &self.value).finish()
+    }
+}
+
+impl<T, P: Proof> Witness<T, P> {
     /// Returns a shared reference to the carried value.
     ///
     /// # Examples
@@ -136,7 +139,7 @@ impl<T, P: Proof> Witness<T, P> {
     /// struct P;
     /// impl Proof for P {}
     ///
-    /// let w = Witness::<&str, P>::new("hello");
+    /// let w = Witness::from_proof("hello", P);
     /// assert_eq!(w.value(), &"hello");
     /// ```
     #[must_use]
@@ -155,7 +158,7 @@ impl<T, P: Proof> Witness<T, P> {
     /// struct P;
     /// impl Proof for P {}
     ///
-    /// let w = Witness::<String, P>::new(String::from("x"));
+    /// let w = Witness::from_proof(String::from("x"), P);
     /// let s = w.into_inner();
     /// assert_eq!(s, "x");
     /// ```
@@ -166,13 +169,13 @@ impl<T, P: Proof> Witness<T, P> {
 }
 
 impl<T, P: Proof> Witness<T, P> {
-    /// Constructs a `Witness` from a value that already carries an explicit
-    /// proof marker value of type `P`.
+    /// Constructs a `Witness` from a value together with a *value* of its
+    /// proof type `P`.
     ///
-    /// Unlike [`Witness::new`], which relies only on the type `P`, this
-    /// accepts a *value* of the proof type (which must itself be zero-sized)
-    /// for APIs that thread a witness value through. The value is consumed
-    /// and discarded; only its type matters.
+    /// This is the only public constructor. Because it consumes a value of
+    /// `P`, a `Witness` can only be created where such a value is available —
+    /// i.e. where the property has just been established. The proof value is
+    /// zero-sized and discarded; only its type matters.
     ///
     /// # Examples
     ///
@@ -215,26 +218,26 @@ mod tests {
     }
 
     #[test]
-    fn new_and_value() {
-        let w = Witness::<u32, NonZero>::new(5);
+    fn from_proof_and_value() {
+        let w = Witness::from_proof(5u32, NonZero);
         assert_eq!(*w.value(), 5);
     }
 
     #[test]
     fn into_inner_returns_value() {
-        let w = Witness::<&str, NonZero>::new("abc");
+        let w = Witness::from_proof("abc", NonZero);
         assert_eq!(w.into_inner(), "abc");
     }
 
     #[test]
     fn from_proof_consumes_proof_value() {
-        let w = Witness::<i64, Even>::from_proof(4, Even);
+        let w = Witness::from_proof(4i64, Even);
         assert_eq!(*w.value(), 4);
     }
 
     #[test]
     fn copy_when_t_is_copy() {
-        let w = Witness::<u8, NonZero>::new(1);
+        let w = Witness::from_proof(1u8, NonZero);
         let w2 = w;
         assert_eq!(*w.value(), 1);
         assert_eq!(*w2.value(), 1);
@@ -242,7 +245,7 @@ mod tests {
 
     #[test]
     fn non_copy_t_works() {
-        let w = Witness::<Bag, NonZero>::new(Bag { items: [1, 2] });
+        let w = Witness::from_proof(Bag { items: [1, 2] }, NonZero);
         let w2 = w.clone();
         assert_eq!(w.into_inner(), Bag { items: [1, 2] });
         assert_eq!(w2.into_inner(), Bag { items: [1, 2] });

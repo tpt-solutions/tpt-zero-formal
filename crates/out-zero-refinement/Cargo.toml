@@ -5,6 +5,8 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
 description = "Refinement types: a value known to satisfy a compile-time-named predicate, for no_std."
 readme = "README.md"
 keywords = ["refinement", "no-std", "predicate", "invariant", "type-level"]
@@ -27,3 +29,4 @@ workspace = true
 
 [dev-dependencies]
 proptest = { workspace = true }
+

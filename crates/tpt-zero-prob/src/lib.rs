@@ -173,6 +173,7 @@ impl Dist<alloc::vec::Vec<f64>> {
     /// # Examples
     ///
     /// ```
+    /// # extern crate alloc;
     /// use tpt_zero_prob::Dist;
     ///
     /// let dist = Dist::from_vec(alloc::vec![0.0, 1.0, 2.0]);

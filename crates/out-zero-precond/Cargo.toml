@@ -5,6 +5,8 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
 description = "Precondition checking helpers built on design-by-contract for no_std."
 readme = "README.md"
 keywords = ["precondition", "no-std", "contract", "validation", "design-by-contract"]
@@ -21,3 +23,4 @@ std = ["alloc"]
 
 [lints]
 workspace = true
+

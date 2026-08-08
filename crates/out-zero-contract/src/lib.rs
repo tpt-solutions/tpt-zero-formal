@@ -30,6 +30,37 @@
 #![no_std]
 #![warn(missing_docs)]
 #![forbid(unsafe_code)]
+#![cfg_attr(docsrs, feature(doc_cfg))]
+
+/// Internal helper that expands to [`core::debug_assert!`] or
+/// [`core::assert!`] depending on whether this crate was built with the
+/// `checked` feature. Not part of the public API.
+///
+/// The `checked` flag is resolved in *this* crate (the two definitions below
+/// are gated by `#[cfg]` at the item level, which is resolved when this crate
+/// is compiled), not in the calling crate — so a `#[cfg(feature = "checked")]`
+/// written *inside* an exported macro body would silently read the caller's
+/// features and do nothing.
+#[cfg(not(feature = "checked"))]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __contract_assert {
+    ($($t:tt)*) => {{
+        ::core::debug_assert!($($t)*);
+    }};
+}
+
+/// Internal helper that expands to [`core::debug_assert!`] or
+/// [`core::assert!`] depending on whether this crate was built with the
+/// `checked` feature. Not part of the public API.
+#[cfg(feature = "checked")]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __contract_assert {
+    ($($t:tt)*) => {{
+        ::core::assert!($($t)*);
+    }};
+}
 
 /// Declares a function *precondition*: an invariant that must hold when the
 /// function is entered.
@@ -55,19 +86,22 @@
 ///
 /// Panics in debug builds (or always, with the `checked` feature) if
 /// `$cond` is `false`.
+///
+/// # Note on feature resolution
+///
+/// The `checked` flag is resolved in *this* crate, not in the calling crate.
+/// A `#[cfg(feature = "checked")]` written *inside* an exported macro body is
+/// resolved where the macro is expanded (the caller), so it silently reads
+/// the wrong features. These macros therefore delegate to the
+/// `__contract_assert` helper, whose two definitions are selected by
+/// `#[cfg]` at this crate's compile time.
 #[macro_export]
 macro_rules! requires {
     ($cond:expr $(,)?) => {{
-        #[cfg(not(feature = "checked"))]
-        { ::core::debug_assert!($cond); }
-        #[cfg(feature = "checked")]
-        { ::core::assert!($cond); }
+        $crate::__contract_assert!($cond);
     }};
     ($cond:expr, $($msg:tt)+) => {{
-        #[cfg(not(feature = "checked"))]
-        { ::core::debug_assert!($cond, $($msg)+); }
-        #[cfg(feature = "checked")]
-        { ::core::assert!($cond, $($msg)+); }
+        $crate::__contract_assert!($cond, $($msg)+);
     }};
 }
 
@@ -99,16 +133,10 @@ macro_rules! requires {
 #[macro_export]
 macro_rules! ensures {
     ($cond:expr $(,)?) => {{
-        #[cfg(not(feature = "checked"))]
-        { ::core::debug_assert!($cond); }
-        #[cfg(feature = "checked")]
-        { ::core::assert!($cond); }
+        $crate::__contract_assert!($cond);
     }};
     ($cond:expr, $($msg:tt)+) => {{
-        #[cfg(not(feature = "checked"))]
-        { ::core::debug_assert!($cond, $($msg)+); }
-        #[cfg(feature = "checked")]
-        { ::core::assert!($cond, $($msg)+); }
+        $crate::__contract_assert!($cond, $($msg)+);
     }};
 }
 

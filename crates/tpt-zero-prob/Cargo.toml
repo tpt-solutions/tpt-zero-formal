@@ -5,17 +5,25 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+include = ["LICENSE-MIT", "LICENSE-APACHE", "README.md", "src/**/*"]
 description = "no_std probability building blocks: a Distribution trait and generic empirical-sample container over f64, built on tpt-zero-stats."
 readme = "README.md"
 keywords = ["prob", "no-std", "probability", "distribution", "statistics"]
 categories = ["no-std", "algorithms", "science"]
 documentation = "https://docs.rs/tpt-zero-prob"
 
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs", "--generate-link-to-definition"]
 [lib]
 name = "tpt_zero_prob"
 
 [dependencies]
 tpt-zero-stats = { path = "../tpt-zero-stats", version = "0.1.0" }
+out-zero-float = { path = "../out-zero-float", version = "0.1.0" }
 
 [features]
 default = []
@@ -25,5 +33,4 @@ std = ["alloc"]
 [lints]
 workspace = true
 
-[dev-dependencies]
-proptest = { workspace = true }
+

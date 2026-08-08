@@ -366,27 +366,12 @@ fn quantile_sorted(sorted: &[f64], q: f64) -> Option<f64> {
     }
 }
 
-/// Computes the square root of `x >= 0.0` via Newton's method, falling back
-/// to a bisection refinement for accuracy.
+/// Computes the square root of `x >= 0.0`.
 ///
-/// Returns `f64::NAN` for negative inputs and for `f64::NAN`.
+/// Returns `f64::NAN` for negative inputs and for `f64::NAN`. Delegates to the
+/// shared, subnormal-safe [`out_zero_float`] implementation.
 fn sqrt(x: f64) -> f64 {
-    if x.is_nan() || x < 0.0 {
-        return f64::NAN;
-    }
-    if x == 0.0 {
-        return 0.0;
-    }
-    let mut guess = x;
-    let mut prev = 0.0;
-    for _ in 0..64 {
-        if (guess - prev).abs() < 1e-12 {
-            break;
-        }
-        prev = guess;
-        guess = 0.5 * (guess + x / guess);
-    }
-    guess
+    out_zero_float::sqrt(x)
 }
 
 /// Returns the largest integer not greater than `x` (mathematical floor)

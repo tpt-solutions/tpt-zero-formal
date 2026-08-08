@@ -11,61 +11,15 @@ use crate::Distribution;
 /// `1 / sqrt(2 * pi)`, the normalizing constant of the standard normal PDF.
 const FRAC_1_SQRT_2PI: f64 = 0.398_942_280_401_432_7;
 
-/// Rounds `x` to the nearest integer, ties away from zero.
-fn round(x: f64) -> f64 {
-    let t = x as i64;
-    let frac = x - (t as f64);
-    if frac >= 0.5 {
-        (t + 1) as f64
-    } else if frac <= -0.5 {
-        (t - 1) as f64
-    } else {
-        t as f64
-    }
-}
-
-/// Computes `e^x` via the scaled Taylor series, matching `f64::exp`.
+/// Computes `e^x`, matching `f64::exp`.
 ///
 /// `f64::exp` is not available in this crate's `core`-only target
-/// configuration, so we implement it via range reduction (`x = k*ln2 + r`)
-/// and a degree-13 Taylor series on `r`, following the standard libm
-/// approach. The result is accurate to within a few ULPs for the magnitude of
-/// inputs used by the distribution functions here.
-#[allow(
-    clippy::cast_sign_loss,
-    clippy::cast_possible_truncation,
-    clippy::cast_lossless,
-    clippy::items_after_statements
-)]
+/// configuration, so we delegate to the shared, subnormal-safe
+/// [`out_zero_float`] implementation, which handles the full range (including
+/// the subnormal underflow region) and never returns a negative value for
+/// large negative `x`.
 fn exp(x: f64) -> f64 {
-    if x.is_nan() {
-        return f64::NAN;
-    }
-    if x == 0.0 {
-        return 1.0;
-    }
-    if x < -700.0 {
-        return 0.0;
-    }
-    if x > 700.0 {
-        return f64::INFINITY;
-    }
-    // ln(2), used for range reduction of the exponent.
-    const LN2: f64 = core::f64::consts::LN_2;
-    let k = round(x / LN2);
-    let r = x - k * LN2;
-    // 2^k via bit manipulation on the exponent field.
-    let exp_k = f64::from_bits(((1023.0 + k) as u64) << 52);
-    // Taylor series for e^r around 0.
-    let mut term = 1.0;
-    let mut sum = 1.0;
-    let mut fact = 1.0;
-    for i in 1..=14 {
-        fact *= f64::from(i);
-        term *= r;
-        sum += term / fact;
-    }
-    exp_k * sum
+    out_zero_float::exp(x)
 }
 
 /// A continuous uniform distribution `U(a, b)` over the interval `[a, b]`.

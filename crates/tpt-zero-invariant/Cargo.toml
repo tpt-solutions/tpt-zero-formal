@@ -5,12 +5,19 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+include = ["LICENSE-MIT", "LICENSE-APACHE", "README.md", "src/**/*"]
 description = "State-machine invariant traits and zero-cost assertion macros for no_std."
 readme = "README.md"
 keywords = ["invariant", "no-std", "state-machine", "assert", "validation"]
 categories = ["no-std", "development-tools", "rust-patterns"]
 documentation = "https://docs.rs/tpt-zero-invariant"
 
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs", "--generate-link-to-definition"]
 [lib]
 name = "tpt_zero_invariant"
 
@@ -21,3 +28,4 @@ std = ["alloc"]
 
 [lints]
 workspace = true
+

@@ -1,7 +1,12 @@
-//! Boolean and linear integer constraint helpers with a tiny `no_std`
-//! SMT-lite solver for checking satisfiability at runtime. Part of the
+//! Boolean and pseudo-boolean (0/1) linear constraint helpers with a tiny
+//! `no_std` SMT-lite solver for checking satisfiability at runtime. Part of the
 //! [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
 //! ecosystem.
+//!
+//! **Note on the "linear" constraints:** they are *pseudo-boolean* constraints,
+//! not general integer-linear constraints. Each variable is a boolean and is
+//! read as the integer `1`/`0`, so `pb_eq`/`pb_leq` describe linear relations over
+//! the `0`/`1` assignment — not over arbitrary `i64` values.
 //!
 //! The crate models two kinds of constraint over a fixed set of
 //! [`Var`]iables:
@@ -10,8 +15,9 @@
 //!   the combinators on [`ConstraintSet`]: [`ConstraintSet::and`],
 //!   [`ConstraintSet::or`], [`ConstraintSet::implies`], [`ConstraintSet::not`],
 //!   [`ConstraintSet::all`], [`ConstraintSet::any`], [`ConstraintSet::var`].
-//! * **Linear integer constraints** over an `i64` assignment to each [`Var`],
-//!   built with [`ConstraintSet::linear_eq`] and [`ConstraintSet::linear_leq`].
+//! * **Pseudo-boolean (0/1) linear constraints** over the boolean assignment
+//!   to each [`Var`] (read as `1`/`0`), built with [`ConstraintSet::pb_eq`] and
+//!   [`ConstraintSet::pb_leq`].
 //!
 //! A [`ConstraintSet`] is also the arena that owns the boolean expression
 //! tree, so no heap allocation is required and the crate builds with
@@ -30,7 +36,7 @@
 //! let cs = ConstraintSet::new(2);
 //! let expr = cs.and(cs.or(cs.var(a), cs.var(b)), cs.not(cs.var(a)));
 //! cs.add_bool(expr);
-//! cs.linear_leq(&[(1, a), (1, b)], 1);
+//! cs.pb_leq(&[(1, a), (1, b)], 1);
 //!
 //! let witness = cs.solve().expect("the constraints are satisfiable");
 //! assert_eq!(witness.bool_of(a), Some(false));
@@ -164,38 +170,41 @@ impl From<&[(i64, Var)]> for LinearTerms {
     }
 }
 
-/// A single constraint: either a boolean expression that must hold, or a
-/// linear integer relation that must hold over an integer assignment.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Constraint {
-    /// A boolean expression that must evaluate to `true`.
-    Bool(Expr),
-    /// A linear equality `sum(coeff * var) == rhs` that must hold.
-    LinearEq {
-        /// The sum of linear terms.
-        terms: LinearTerms,
-        /// The required right-hand side value.
-        rhs: i64,
-    },
-    /// A linear inequality `sum(coeff * var) <= rhs` that must hold.
-    LinearLeq {
-        /// The sum of linear terms.
-        terms: LinearTerms,
-        /// The upper bound for the right-hand side value.
-        rhs: i64,
-    },
-}
+    /// A single constraint: either a boolean expression that must hold, or a
+    /// pseudo-boolean (0/1) linear relation that must hold over the boolean
+    /// assignment (each variable read as `1`/`0`).
+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    pub enum Constraint {
+        /// A boolean expression that must evaluate to `true`.
+        Bool(Expr),
+        /// A pseudo-boolean equality `sum(coeff * var) == rhs` that must hold,
+        /// where each `var` is read as `1` (true) or `0` (false).
+        PbEq {
+            /// The sum of linear terms.
+            terms: LinearTerms,
+            /// The required right-hand side value.
+            rhs: i64,
+        },
+        /// A pseudo-boolean inequality `sum(coeff * var) <= rhs` that must hold,
+        /// where each `var` is read as `1` (true) or `0` (false).
+        PbLeq {
+            /// The sum of linear terms.
+            terms: LinearTerms,
+            /// The upper bound for the right-hand side value.
+            rhs: i64,
+        },
+    }
 
 /// A collection of [`Constraint`]s together with an arena of boolean
 /// expression nodes and the number of variables they range over.
 ///
 /// Construct one with [`ConstraintSet::new`], build expressions with the
 /// `ConstraintSet` combinators, and add constraints with [`add_bool`],
-/// [`linear_eq`], or [`linear_leq`]. Call [`solve`] to check satisfiability.
+/// [`pb_eq`], or [`pb_leq`]. Call [`solve`] to check satisfiability.
 ///
 /// [`add_bool`]: ConstraintSet::add_bool
-/// [`linear_eq`]: ConstraintSet::linear_eq
-/// [`linear_leq`]: ConstraintSet::linear_leq
+/// [`pb_eq`]: ConstraintSet::pb_eq
+/// [`pb_leq`]: ConstraintSet::pb_leq
 /// [`solve`]: ConstraintSet::solve
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ConstraintSet {
@@ -391,28 +400,34 @@ impl ConstraintSet {
         self.add(Constraint::Bool(e))
     }
 
-    /// Adds a linear equality `sum(coeff * var) == rhs`.
+    /// Adds a pseudo-boolean equality `sum(coeff * var) == rhs`.
+    ///
+    /// Each variable is read as `1` (true) or `0` (false), so this is a
+    /// *pseudo-boolean* (0/1) linear equality, not a general integer one.
     ///
     /// Returns `false` (and leaves the set unchanged) if constraint capacity
     /// is exhausted or the term list overflows its inline capacity.
-    pub fn linear_eq(&self, pairs: &[(i64, Var)], rhs: i64) -> bool {
+    pub fn pb_eq(&self, pairs: &[(i64, Var)], rhs: i64) -> bool {
         let terms = LinearTerms::from(pairs);
         if terms.len() != pairs.len() {
             return false;
         }
-        self.add(Constraint::LinearEq { terms, rhs })
+        self.add(Constraint::PbEq { terms, rhs })
     }
 
-    /// Adds a linear inequality `sum(coeff * var) <= rhs`.
+    /// Adds a pseudo-boolean inequality `sum(coeff * var) <= rhs`.
+    ///
+    /// Each variable is read as `1` (true) or `0` (false), so this is a
+    /// *pseudo-boolean* (0/1) linear inequality, not a general integer one.
     ///
     /// Returns `false` (and leaves the set unchanged) if constraint capacity
     /// is exhausted or the term list overflows its inline capacity.
-    pub fn linear_leq(&self, pairs: &[(i64, Var)], rhs: i64) -> bool {
+    pub fn pb_leq(&self, pairs: &[(i64, Var)], rhs: i64) -> bool {
         let terms = LinearTerms::from(pairs);
         if terms.len() != pairs.len() {
             return false;
         }
-        self.add(Constraint::LinearLeq { terms, rhs })
+        self.add(Constraint::PbLeq { terms, rhs })
     }
 
     /// Adds a constraint, returning `false` (and leaving the set unchanged)
@@ -455,7 +470,12 @@ impl ConstraintSet {
             return None;
         }
         let n = self.num_vars;
-        let total = 1usize << n;
+        // Enumerating 2^n assignments is only possible when n fits in the
+        // machine word: `1usize << n` overflows (and would panic in debug or
+        // silently wrap in release) once n >= 64. Such a problem is far too
+        // large to enumerate, so report it unsatisfiable-with-respect-to-the
+        // bounded solver rather than producing a wrong answer.
+        let total = 1usize.checked_shl(u32::try_from(n).unwrap_or(u32::MAX))?;
         for mask in 0..total {
             let mut bools = [false; Witness::CAP];
             for (i, slot) in bools.iter_mut().enumerate().take(n) {
@@ -483,18 +503,18 @@ impl Constraint {
     /// Checks whether this constraint holds under a given boolean assignment.
     ///
     /// For [`Constraint::Bool`], `cs` is consulted to evaluate the
-    /// expression. For linear constraints, every variable's integer value is
-    /// taken as its boolean assignment read as `1`/`0`.
+    /// expression. For pseudo-boolean constraints, every variable's boolean
+    /// assignment is read as `1`/`0` to form the integer sum.
     fn holds(&self, cs: &ConstraintSet, bool_assign: &[bool]) -> bool {
         match self {
             Constraint::Bool(e) => cs.eval(*e, bool_assign),
-            Constraint::LinearEq { terms, rhs } => eval_linear(terms, bool_assign) == *rhs,
-            Constraint::LinearLeq { terms, rhs } => eval_linear(terms, bool_assign) <= *rhs,
+            Constraint::PbEq { terms, rhs } => eval_linear(terms, bool_assign) == *rhs,
+            Constraint::PbLeq { terms, rhs } => eval_linear(terms, bool_assign) <= *rhs,
         }
     }
 }
 
-/// Evaluates a list of linear terms to an `i64`, treating each boolean
+/// Evaluates a list of pseudo-boolean terms to an `i64`, treating each boolean
 /// variable as `1` (true) or `0` (false).
 fn eval_linear(terms: &LinearTerms, bool_assign: &[bool]) -> i64 {
     let mut sum: i64 = 0;
@@ -555,7 +575,7 @@ impl Witness {
 /// let b = Var(1);
 /// let cs = ConstraintSet::new(2);
 /// cs.add_bool(cs.and(cs.or(cs.var(a), cs.var(b)), cs.not(cs.var(a))));
-/// cs.linear_leq(&[(1, a), (1, b)], 1);
+/// cs.pb_leq(&[(1, a), (1, b)], 1);
 /// assert!(solve(&cs).is_some());
 /// ```
 #[must_use]
@@ -625,7 +645,7 @@ mod tests {
         let x = Var(0);
         let cs = ConstraintSet::new(1);
         // 2x == 10 has no boolean (0/1) solution.
-        cs.linear_eq(&[(2, x)], 10);
+        cs.pb_eq(&[(2, x)], 10);
         assert!(cs.solve().is_none());
     }
 
@@ -634,10 +654,10 @@ mod tests {
         let x = Var(0);
         let y = Var(1);
         let cs = ConstraintSet::new(2);
-        cs.linear_leq(&[(1, x), (1, y)], 1);
+        cs.pb_leq(&[(1, x), (1, y)], 1);
         assert!(cs.solve().is_some());
         let cs2 = ConstraintSet::new(2);
-        cs2.linear_leq(&[(1, x), (1, y)], -1);
+        cs2.pb_leq(&[(1, x), (1, y)], -1);
         assert!(cs2.solve().is_none());
     }
 

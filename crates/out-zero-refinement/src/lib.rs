@@ -280,19 +280,20 @@ impl<T, P: Predicate<T>> Refined<T, P> {
         self.inner
     }
 
-    /// Converts this refinement into a [`Witness`] carrying the same value
-    /// and a proof type `Pr` of your choosing.
+    /// Converts this refinement into a [`Witness`] carrying the same value,
+    /// tagged with a proof that the predicate `P` held.
     ///
-    /// This is the bridge from decidable refinements to the more general
-    /// witness API: because a `Refined<T, P>` can only exist if `P` held, you
-    /// may soundly hand out a `Witness<T, Pr>` for any proof `Pr` that this
-    /// refinement establishes.
+    /// This is the sound bridge from decidable refinements to the more
+    /// general witness API. Because a `Refined<T, P>` can only exist if
+    /// `P::check` returned `true`, it may hand out a
+    /// `Witness<T, RefinedProof<P>>` — a proof type that is *only*
+    /// constructible through this method, so no caller can forge it for an
+    /// unvalidated value.
     ///
     /// # Examples
     ///
     /// ```
     /// use out_zero_refinement::{Predicate, Refined};
-    /// use tpt_zero_witness::Proof;
     ///
     /// struct NonZeroU32;
     /// impl Predicate<u32> for NonZeroU32 {
@@ -301,17 +302,13 @@ impl<T, P: Predicate<T>> Refined<T, P> {
     ///     }
     /// }
     ///
-    /// #[derive(Clone, Copy, Debug)]
-    /// struct NonZero;
-    /// impl Proof for NonZero {}
-    ///
     /// let refined = Refined::<u32, NonZeroU32>::new(9).unwrap();
-    /// let witness = refined.into_witness::<NonZero>();
+    /// let witness = refined.into_witness();
     /// assert_eq!(*witness.value(), 9);
     /// ```
     #[must_use]
-    pub fn into_witness<Pr: Proof>(self) -> Witness<T, Pr> {
-        Witness::new(self.inner)
+    pub fn into_witness(self) -> Witness<T, RefinedProof<P>> {
+        Witness::from_proof(self.inner, RefinedProof(PhantomData))
     }
 }
 
@@ -334,6 +331,18 @@ impl<T, P: Predicate<T>> From<Refined<T, P>> for RefinedInner<T> {
         RefinedInner(refined.inner)
     }
 }
+
+/// A [`Proof`](tpt_zero_witness::Proof) that a value satisfied the predicate
+/// `P`.
+///
+/// This is constructed *only* by [`Refined::into_witness`], which is itself
+/// reachable only from a `Refined` that already passed `P::check`. Because
+/// the type is local to this crate and has no public constructor other than
+/// through a validated `Refined`, no caller can mint a
+/// `Witness<T, RefinedProof<P>>` for an unvalidated value.
+pub struct RefinedProof<P>(PhantomData<P>);
+
+impl<P> Proof for RefinedProof<P> {}
 
 /// A transparent newtype wrapping the inner value moved out of a [`Refined`].
 ///
@@ -481,10 +490,6 @@ mod tests {
         }
     }
 
-    #[derive(Clone, Copy, Debug)]
-    struct NonZeroProof;
-    impl Proof for NonZeroProof {}
-
     #[test]
     fn new_accepts_satisfying_value() {
         let r = Refined::<u32, NonZeroU32>::new(3).unwrap();
@@ -538,7 +543,7 @@ mod tests {
     #[test]
     fn into_witness_bridges_to_witness() {
         let r = Refined::<u32, NonZeroU32>::new(4).unwrap();
-        let w = r.into_witness::<NonZeroProof>();
+        let w = r.into_witness();
         assert_eq!(*w.value(), 4);
     }
 

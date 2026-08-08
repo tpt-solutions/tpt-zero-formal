@@ -35,6 +35,7 @@
 #![no_std]
 #![warn(missing_docs)]
 #![forbid(unsafe_code)]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 use core::marker::PhantomData;
 
@@ -65,37 +66,55 @@ pub struct Unproven;
 /// exists only to track, at the type level, whether some property of `T` has
 /// been established — a piece of *ghost state* that is erased at runtime.
 ///
-/// Because `PhantomData<P>` is covariant in `P`, a `Ghost<T, Unproven>` is
-/// not a subtype of `Ghost<T, Proven>` (they are distinct types), which is
-/// exactly the separation we want: the property must be established through
-/// an explicit operation, not by implicit coercion.
+/// `Ghost::new` constructs only the [`Unproven`] end of the lattice. Promote
+/// to [`Proven`] through [`Ghost::prove`] (sound, given a proof) or the
+/// unsound [`Ghost::assume_proven`].
 ///
 /// # Examples
 ///
 /// ```
-/// use tpt_zero_ghost::{Ghost, Proven, Unproven};
+/// use tpt_zero_ghost::{Ghost, Unproven};
 ///
 /// let unproven: Ghost<u8, Unproven> = Ghost::new(7);
 /// assert_eq!(*unproven.value(), 7);
 /// assert_eq!(core::mem::size_of::<Ghost<u8, Unproven>>(), 1);
 /// ```
-///
-/// The same value can be re-tagged as proven without moving or copying the
-/// underlying data representation:
-///
-/// ```
-/// use tpt_zero_ghost::{Ghost, GhostProven, Unproven};
-///
-/// let raw: Ghost<u32, Unproven> = Ghost::new(99);
-/// let proven: GhostProven<u32> = raw.assume_proven();
-/// assert_eq!(*proven.value(), 99);
-/// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub struct Ghost<T, P> {
     /// The carried value.
     value: T,
     /// Zero-sized marker pinning the provenance type `P`.
     _marker: PhantomData<P>,
+}
+
+impl<T: Clone, P> Clone for Ghost<T, P> {
+    fn clone(&self) -> Self {
+        Self {
+            value: self.value.clone(),
+            _marker: PhantomData,
+        }
+    }
+}
+
+impl<T: Copy, P> Copy for Ghost<T, P> {}
+
+impl<T: core::fmt::Debug, P> core::fmt::Debug for Ghost<T, P> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("Ghost").field("value", &self.value).finish()
+    }
+}
+
+impl<T: PartialEq, P> PartialEq for Ghost<T, P> {
+    fn eq(&self, other: &Self) -> bool {
+        self.value == other.value
+    }
+}
+
+impl<T: Eq, P> Eq for Ghost<T, P> {}
+
+impl<T: core::hash::Hash, P> core::hash::Hash for Ghost<T, P> {
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        self.value.hash(state);
+    }
 }
 
 /// A [`Ghost`] whose property has been established as [`Proven`].
@@ -105,11 +124,12 @@ pub struct Ghost<T, P> {
 /// [`Ghost::assume_proven`] (unsound without caller-maintained invariants).
 pub type GhostProven<T> = Ghost<T, Proven>;
 
-impl<T, P> Ghost<T, P> {
-    /// Constructs a `Ghost` carrying `value` with provenance marker `P`.
+impl<T> Ghost<T, Unproven> {
+    /// Constructs a `Ghost` carrying `value` tagged as [`Unproven`].
     ///
-    /// Prefer the type aliases [`GhostProven`] (for `P = Proven`) and the
-    /// plain `Ghost<T, Unproven>` form when the property is unestablished.
+    /// Prefer the type alias [`GhostProven`] (for `P = Proven`) only after the
+    /// value has actually been proven via [`Ghost::prove`] or
+    /// [`Ghost::assume_proven`].
     ///
     /// # Examples
     ///
@@ -126,7 +146,9 @@ impl<T, P> Ghost<T, P> {
             _marker: PhantomData,
         }
     }
+}
 
+impl<T, P> Ghost<T, P> {
     /// Returns a shared reference to the carried value.
     ///
     /// The ghost provenance never affects the value being carried; it is
@@ -134,12 +156,12 @@ impl<T, P> Ghost<T, P> {
     ///
     /// # Examples
     ///
-/// ```
-/// use tpt_zero_ghost::{Ghost, GhostProven};
-///
-/// let g: GhostProven<u32> = Ghost::new(5);
-/// assert_eq!(g.value(), &5);
-/// ```
+    /// ```
+    /// use tpt_zero_ghost::{Ghost, Proven, Unproven};
+    ///
+    /// let g: Ghost<u32, Proven> = Ghost::<u32, Unproven>::new(5).assume_proven();
+    /// assert_eq!(g.value(), &5);
+    /// ```
     #[must_use]
     pub const fn value(&self) -> &T {
         &self.value
@@ -164,26 +186,31 @@ impl<T, P> Ghost<T, P> {
         self.value
     }
 
-    /// Maps the carried value, preserving the provenance marker `P`.
+    /// Maps the carried value, **resetting** the provenance marker to
+    /// [`Unproven`].
     ///
-    /// The mapping does not (and cannot, here) change the provenance: a
-    /// proven ghost remains proven, an unproven ghost remains unproven.
+    /// The property was established for the *previous* value; an arbitrary
+    /// function `f` may not preserve it, so the result can no longer be
+    /// trusted as proven.
     ///
     /// # Examples
     ///
     /// ```
-    /// use tpt_zero_ghost::{Ghost, GhostProven};
+    /// use tpt_zero_ghost::{Ghost, Unproven};
     ///
-    /// let g: GhostProven<u32> = Ghost::new(2);
-    /// let mapped: GhostProven<u32> = g.map(|x| x * 21);
+    /// let g: Ghost<u32, Unproven> = Ghost::new(2);
+    /// let mapped: Ghost<u32, Unproven> = g.map(|x| x * 21);
     /// assert_eq!(*mapped.value(), 42);
     /// ```
     #[must_use]
-    pub fn map<U, F>(self, f: F) -> Ghost<U, P>
+    pub fn map<U, F>(self, f: F) -> Ghost<U, Unproven>
     where
         F: FnOnce(T) -> U,
     {
-        Ghost::new(f(self.value))
+        Ghost {
+            value: f(self.value),
+            _marker: PhantomData,
+        }
     }
 }
 
@@ -208,10 +235,14 @@ impl<T> Ghost<T, Unproven> {
     /// ```
     #[must_use]
     pub fn assume_proven(self) -> Ghost<T, Proven> {
-        Ghost::new(self.value)
+        Ghost {
+            value: self.value,
+            _marker: PhantomData,
+        }
     }
 }
 
+#[cfg(feature = "witness")]
 impl<T> Ghost<T, Unproven> {
     /// Promotes an [`Unproven`] ghost to a [`Proven`] one by consuming a
     /// [`Proof`](tpt_zero_witness::Proof) witness value.
@@ -253,7 +284,10 @@ impl<T> Ghost<T, Unproven> {
     where
         W: tpt_zero_witness::Proof,
     {
-        Ghost::new(self.value)
+        Ghost {
+            value: self.value,
+            _marker: PhantomData,
+        }
     }
 }
 
@@ -284,9 +318,9 @@ mod tests {
     }
 
     #[test]
-    fn map_preserves_provenance() {
-        let g: GhostProven<u32> = Ghost::new(2);
-        let mapped: GhostProven<u32> = g.map(|x| x + 40);
+    fn map_resets_provenance() {
+        let g: Ghost<u32, Unproven> = Ghost::new(2);
+        let mapped: Ghost<u32, Unproven> = g.map(|x| x + 40);
         assert_eq!(*mapped.value(), 42);
     }
 
@@ -305,7 +339,7 @@ mod tests {
         assert_eq!(a, c);
     }
 
-    #[cfg(feature = "std")]
+    #[cfg(feature = "witness")]
     #[test]
     fn prove_with_witness() {
         use tpt_zero_witness::Proof;

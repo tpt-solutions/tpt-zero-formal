@@ -446,95 +446,26 @@ pub fn grad_tensor<const N: usize>(
 /// Float implementations that never rely on `f64` intrinsics unavailable in
 /// some `core`-only targets. Used by [`Dual<f64>`]'s transcendental methods.
 mod float_fallback {
-    use core::f64::consts::{
-        FRAC_1_SQRT_2, FRAC_PI_2, LN_2, PI, SQRT_2, TAU,
-    };
+    use core::f64::consts::{FRAC_PI_2, PI, TAU};
 
-    /// Returns `e^x` via a range-reduced Taylor series.
+    /// Returns `e^x`.
     ///
-    /// The input is split as `x = k*ln2 + r` with `|r| <= ln2/2`, `e^x` is
-    /// computed as `2^k * e^r` (the latter by a degree-10 Taylor expansion),
-    /// and `2^k` is accumulated exactly via repeated doubling.
+    /// Delegates to the shared, subnormal-safe [`out_zero_float`] implementation,
+    /// which handles the full range (including the subnormal underflow region) and
+    /// never returns a negative value for large negative `x`.
     #[must_use]
     pub fn exp(x: f64) -> f64 {
-        if x.is_nan() {
-            return f64::NAN;
-        }
-        if x == 0.0 {
-            return 1.0;
-        }
-        let ln2 = LN_2;
-        let k = round_f64(x / ln2) as i64;
-        let r = x - (k as f64) * ln2;
-
-        // e^r via Taylor series around 0.
-        let mut term = 1.0;
-        let mut sum = 1.0;
-        let mut n = 1i64;
-        while n <= 20 {
-            term *= r / (n as f64);
-            sum += term;
-            if term.abs() < 1e-15 * sum.abs() {
-                break;
-            }
-            n += 1;
-        }
-
-        // Multiply by 2^k via exact repeated doubling/halving.
-        let mut factor = 1.0;
-        let mut i = 0i64;
-        if k >= 0 {
-            while i < k {
-                factor *= 2.0;
-                i += 1;
-            }
-        } else {
-            while i > k {
-                factor /= 2.0;
-                i -= 1;
-            }
-        }
-        factor * sum
+        out_zero_float::exp(x)
     }
 
-    /// Returns the natural logarithm `ln(x)` via a square-root iteration.
+    /// Returns the natural logarithm `ln(x)`.
     ///
-    /// The argument is reduced into `[1/√2, √2)` by repeatedly taking square
-    /// roots; each square root doubles the multiplier relating `ln(x)` to
-    /// `ln(s)`. The reduced `ln(s)` is then evaluated with the rapidly
-    /// converging series `ln(s) = 2z(1 + z²/3 + z⁴/5 + …)` where
-    /// `z = (s-1)/(s+1)`. Returns `NaN` for `x <= 0`.
+    /// Delegates to the shared, subnormal-safe [`out_zero_float`] implementation,
+    /// which is accurate for subnormal magnitudes and returns `-inf` for `0`.
+    /// Returns `NaN` for `x <= 0`.
     #[must_use]
     pub fn ln(x: f64) -> f64 {
-        if x.is_nan() || x <= 0.0 {
-            return f64::NAN;
-        }
-        if (x - 1.0).abs() < 1e-12 {
-            return 0.0;
-        }
-        let mut s = x;
-        // Multiplier such that ln(x) = factor * ln(s) after reduction.
-        let mut factor = 1.0;
-        while s > SQRT_2 {
-            s = sqrt(s);
-            factor *= 2.0;
-        }
-        while s < FRAC_1_SQRT_2 {
-            s = sqrt(s);
-            factor *= 2.0;
-        }
-        // ln(s) = 2 * z * (1 + z^2/3 + z^4/5 + ...) with z = (s-1)/(s+1).
-        let z = (s - 1.0) / (s + 1.0);
-        let mut term = z;
-        let mut sum = 0.0;
-        let mut m = 1i64;
-        while m <= 21 {
-            sum += term / (m as f64);
-            term *= z * z;
-            m += 2;
-        }
-        let ln_s = 2.0 * sum;
-        factor * ln_s
+        out_zero_float::ln(x)
     }
 
     /// Returns `sin(x)` via argument reduction into `[-π/2, π/2]` and a Taylor
@@ -620,27 +551,6 @@ mod float_fallback {
         } else {
             floor
         }
-    }
-
-    /// Square root via Newton's method (mirrors `tpt-zero-linalg`'s `sqrt`).
-    #[must_use]
-    fn sqrt(x: f64) -> f64 {
-        if x.is_nan() || x < 0.0 {
-            return f64::NAN;
-        }
-        if x == 0.0 {
-            return 0.0;
-        }
-        let mut guess = x;
-        let mut prev = 0.0;
-        for _ in 0..64 {
-            if (guess - prev).abs() < 1e-12 {
-                break;
-            }
-            prev = guess;
-            guess = 0.5 * (guess + x / guess);
-        }
-        guess
     }
 }
 

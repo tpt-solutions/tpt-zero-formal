@@ -312,66 +312,15 @@ where
     }
 }
 
-/// Rounds `x` to the nearest integer, ties away from zero.
-#[allow(
-    clippy::cast_precision_loss,
-    clippy::cast_possible_truncation,
-    clippy::cast_sign_loss
-)]
-#[must_use]
-fn round_to_nearest(x: f64) -> f64 {
-    let t = x as i64;
-    let frac = x - (t as f64);
-    if frac >= 0.5 {
-        (t + 1) as f64
-    } else if frac <= -0.5 {
-        (t - 1) as f64
-    } else {
-        t as f64
-    }
-}
-
-/// Computes `e^x` via range reduction and a Taylor series, matching
-/// `f64::exp` which is unavailable on this crate's `core`-only target.
+/// Computes `e^x`, matching `f64::exp` which is unavailable on this crate's
+/// `core`-only target.
 ///
-/// The exponent is reduced as `x = k*ln2 + r`; `2^k` is formed by bit
-/// manipulation on the exponent field and `e^r` is summed from a degree-14
-/// Taylor series. Accurate to within a few ULPs for the magnitudes used here.
-#[allow(
-    clippy::cast_sign_loss,
-    clippy::cast_possible_truncation,
-    clippy::cast_lossless,
-    clippy::cast_precision_loss,
-    clippy::items_after_statements,
-    clippy::neg_cmp_op_on_partial_ord
-)]
+/// Delegates to the shared, subnormal-safe [`out_zero_float`] implementation,
+/// which handles the full range (including the subnormal underflow region) and
+/// never returns a negative value for large negative `x`.
+#[allow(clippy::neg_cmp_op_on_partial_ord)]
 fn exp(x: f64) -> f64 {
-    if x.is_nan() {
-        return f64::NAN;
-    }
-    if x == 0.0 {
-        return 1.0;
-    }
-    if x < -700.0 {
-        return 0.0;
-    }
-    if x > 700.0 {
-        return f64::INFINITY;
-    }
-    const LN2: f64 = core::f64::consts::LN_2;
-    let q = x / LN2;
-    let k = round_to_nearest(q);
-    let r = x - k * LN2;
-    let exp_k = f64::from_bits(((1023.0 + k) as u64) << 52);
-    let mut term = 1.0;
-    let mut sum = 1.0;
-    let mut fact = 1.0;
-    for i in 1..=14 {
-        fact *= f64::from(i);
-        term *= r;
-        sum += term / fact;
-    }
-    exp_k * sum
+    out_zero_float::exp(x)
 }
 
 #[cfg(test)]

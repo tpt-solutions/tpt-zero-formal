@@ -5,12 +5,19 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
-description = "no_std boolean/integer constraint helpers and a tiny SMT-lite solver for checking satisfiability at runtime."
+rust-version.workspace = true
+homepage.workspace = true
+include = ["LICENSE-MIT", "LICENSE-APACHE", "README.md", "src/**/*"]
+description = "no_std boolean and pseudo-boolean (0/1) linear constraint helpers and a tiny SMT-lite solver for checking satisfiability at runtime."
 readme = "README.md"
 keywords = ["smt", "constraint", "satisfiability", "no-std", "solver"]
 categories = ["no-std", "algorithms", "rust-patterns"]
 documentation = "https://docs.rs/tpt-zero-smt-lite"
 
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs", "--generate-link-to-definition"]
 [lib]
 name = "tpt_zero_smt_lite"
 
@@ -24,3 +31,4 @@ workspace = true
 
 [dev-dependencies]
 proptest = { workspace = true }
+

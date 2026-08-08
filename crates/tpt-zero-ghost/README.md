@@ -32,10 +32,13 @@ at runtime, leaving zero cost behind.
 
 | Feature | Default | Enables |
 |---|---|---|
+| `witness` | on | sound `Ghost::prove` witness integration with `tpt-zero-witness` |
 | `alloc` | off | reserved for future alloc-dependent helpers |
-| `std` | off | implies `alloc`; enables the sound `Ghost::prove` witness integration with `tpt-zero-witness` |
+| `std` | off | implies `alloc` |
 
-This crate builds with `--no-default-features` (pure `core`, no `alloc`).
+This crate builds with `--no-default-features` (pure `core`, no `alloc`): with
+the default `witness` feature enabled `Ghost::prove` is available; with
+`--no-default-features` only the unsound `assume_proven` remains.
 
 ## Install
 

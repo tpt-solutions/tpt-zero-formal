@@ -5,18 +5,26 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+include = ["LICENSE-MIT", "LICENSE-APACHE", "README.md", "src/**/*"]
 description = "Forward-mode automatic differentiation via dual numbers for no_std, with zero external dependencies."
 readme = "README.md"
 keywords = ["autodiff", "dual-number", "gradient", "no-std", "differentiation"]
 categories = ["no-std", "mathematics", "algorithms", "science"]
 documentation = "https://docs.rs/tpt-zero-grad"
 
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs", "--generate-link-to-definition"]
 [lib]
 name = "tpt_zero_grad"
 
 [dependencies]
 tpt-zero-tensor = { path = "../tpt-zero-tensor", version = "0.1.0" }
 tpt-zero-linalg = { path = "../tpt-zero-linalg", version = "0.1.0" }
+out-zero-float = { path = "../out-zero-float", version = "0.1.0" }
 
 [features]
 default = []
@@ -28,3 +36,4 @@ workspace = true
 
 [dev-dependencies]
 proptest = { workspace = true }
+

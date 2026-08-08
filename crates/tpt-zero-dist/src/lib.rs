@@ -472,14 +472,23 @@ impl Distribution for Poisson {
     type Value = u64;
 
     fn sample<R: Rng>(&self, rng: &mut R) -> u64 {
-        // Knuth's algorithm: multiply uniforms until the running product drops
-        // below e^{-lambda}, counting the number of multiplications.
-        let threshold = exp(-self.lambda);
+        // Knuth's algorithm in log space: multiply uniforms until their
+        // product drops below e^{-lambda}, counting the multiplications.
+        //
+        // The original formulation compares the running *product* against
+        // `e^{-lambda}`. For large `lambda` that threshold underflows to `0.0`,
+        // and `product <= 0.0` is never satisfied, so the loop ran forever.
+        // Working in log space keeps the threshold exact (`-lambda`) and never
+        // underflows.
+        let log_threshold = -self.lambda;
+        let mut log_product = 0.0;
         let mut k: u64 = 0;
-        let mut product = 1.0;
         loop {
-            product *= rng.next_f64();
-            if product <= threshold {
+            // `next_f64` is in [0, 1); guard `ln(0)` which would be `-inf`.
+            let u = rng.next_f64();
+            let u = if u > 0.0 { u } else { f64::MIN_POSITIVE };
+            log_product += crate::math::ln(u);
+            if log_product <= log_threshold {
                 return k;
             }
             k += 1;

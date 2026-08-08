@@ -21,10 +21,17 @@
 //! let clamped = x.saturating_add(200);
 //! assert_eq!(clamped.value(), 100);
 //!
-//! // An inverted range is a compile error (the type won't instantiate).
-//! // type Bad = BoundedInt<100, 0>; // <- fails to compile
-//!
 //! assert!(matches!(Percent::new(101), Err(BoundsError)));
+//! ```
+//!
+//! An inverted range (`MIN > MAX`) is a compile error, because every
+//! constructor forces the `MIN <= MAX` check:
+//!
+//! ```compile_fail
+//! use out_zero_bounded::BoundedInt;
+//!
+//! // Fails to compile: `BoundedInt: MIN must be <= MAX`.
+//! let _ = BoundedInt::<100, 0>::new(0);
 //! ```
 
 #![no_std]
@@ -39,8 +46,6 @@
     clippy::cast_possible_wrap,
     clippy::cast_sign_loss
 )]
-
-use out_zero_assert_const::assert_i64_le;
 
 /// Error returned when a value cannot be represented by a [`BoundedInt`],
 /// because it falls outside the `[MIN, MAX]` range.
@@ -87,10 +92,13 @@ pub struct BoundedInt<const MIN: i64, const MAX: i64> {
 }
 
 impl<const MIN: i64, const MAX: i64> BoundedInt<MIN, MAX> {
-    // Reject an inverted range at the point the type is instantiated. If
-    // `MIN > MAX`, `assert_i64_le` panics in this const context, turning the
-    // instantiation into a compile error for every concrete pair that is used.
-    const _MIN_LE_MAX: i64 = assert_i64_le(MIN, MAX);
+    // Force evaluation of the MIN<=MAX invariant at every constructor. An
+    // associated const is only monomorphized when it is referenced, so without
+    // this explicit reference an inverted range (`BoundedInt<100, 0>`) would
+    // compile and silently violate the invariant. Referencing `ASSERT_RANGE`
+    // from `new` and `clamp` turns it into a compile error wherever the type
+    // is actually used.
+    const ASSERT_RANGE: () = assert!(MIN <= MAX, "BoundedInt: MIN must be <= MAX");
 
     /// The inclusive lower bound of this type's range.
     pub const MIN: i64 = MIN;
@@ -115,6 +123,7 @@ impl<const MIN: i64, const MAX: i64> BoundedInt<MIN, MAX> {
     ///
     /// Returns [`BoundsError`] when `value < MIN` or `value > MAX`.
     pub fn new(value: i64) -> Result<Self, BoundsError> {
+        let () = Self::ASSERT_RANGE;
         if value < MIN || value > MAX {
             return Err(BoundsError);
         }
@@ -123,11 +132,10 @@ impl<const MIN: i64, const MAX: i64> BoundedInt<MIN, MAX> {
 
     /// Constructs a [`BoundedInt`] from `value` without checking the range.
     ///
-    /// This is a safe, `unsafe_code`-free escape hatch. In `debug_assertions`
-    /// builds it panics if `value` violates the `MIN <= value <= MAX`
-    /// invariant, so callers stay honest; in release builds it is a no-op
-    /// zero-cost wrapper. Prefer [`BoundedInt::new`] unless profiling demands
-    /// skipping the check.
+    /// This is a safe, `unsafe_code`-free escape hatch that **clamps** into
+    /// `[MIN, MAX]` in every build profile, so the resulting value always
+    /// satisfies the invariant. Prefer [`BoundedInt::new`] when an
+    /// out-of-range value should be rejected rather than clamped.
     ///
     /// # Examples
     ///
@@ -135,16 +143,14 @@ impl<const MIN: i64, const MAX: i64> BoundedInt<MIN, MAX> {
     /// use out_zero_bounded::BoundedInt;
     ///
     /// type U8 = BoundedInt<0, 255>;
-    /// let v = U8::new_unchecked(42);
+    /// let v = U8::new_clamped(42);
     /// assert_eq!(v.value(), 42);
+    /// assert_eq!(U8::new_clamped(300).value(), 255);
+    /// assert_eq!(U8::new_clamped(-5).value(), 0);
     /// ```
     #[must_use]
-    pub const fn new_unchecked(value: i64) -> Self {
-        #[cfg(debug_assertions)]
-        {
-            assert!(value >= MIN && value <= MAX, "new_unchecked: value out of range");
-        }
-        Self { value }
+    pub const fn new_clamped(value: i64) -> Self {
+        Self::clamp(value)
     }
 
     /// Returns the wrapped value.
@@ -233,10 +239,16 @@ impl<const MIN: i64, const MAX: i64> BoundedInt<MIN, MAX> {
     /// ```
     #[must_use]
     pub fn saturating_add(self, rhs: i64) -> Self {
-        match self.checked_add(rhs) {
-            Some(v) => v,
-            None => Self::clamp(i128::from(self.value).saturating_add(i128::from(rhs)) as i64),
+        if let Some(v) = self.checked_add(rhs) {
+            return v;
         }
+        // Clamp in the full i128 range, then narrow to i64. Because the
+        // result is guaranteed within [MIN, MAX] (itself an i64 range),
+        // the final `as i64` cannot wrap or truncate.
+        let clamped = i128::from(self.value)
+            .saturating_add(i128::from(rhs))
+            .clamp(i128::from(MIN), i128::from(MAX));
+        Self { value: clamped as i64 }
     }
 
     /// Returns `Some(self - rhs)` clamped to `[MIN, MAX]`, or `None` if the
@@ -274,10 +286,13 @@ impl<const MIN: i64, const MAX: i64> BoundedInt<MIN, MAX> {
     /// ```
     #[must_use]
     pub fn saturating_sub(self, rhs: i64) -> Self {
-        match self.checked_sub(rhs) {
-            Some(v) => v,
-            None => Self::clamp(i128::from(self.value).saturating_sub(i128::from(rhs)) as i64),
+        if let Some(v) = self.checked_sub(rhs) {
+            return v;
         }
+        let clamped = i128::from(self.value)
+            .saturating_sub(i128::from(rhs))
+            .clamp(i128::from(MIN), i128::from(MAX));
+        Self { value: clamped as i64 }
     }
 }
 

@@ -5,12 +5,19 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+include = ["LICENSE-MIT", "LICENSE-APACHE", "README.md", "src/**/*"]
 description = "Self-contained, seedable Xorshift and PCG pseudo-random number generators for no_std."
 readme = "README.md"
 keywords = ["random", "no-std", "prng", "xorshift", "pcg"]
 categories = ["no-std", "algorithms", "rust-patterns"]
 documentation = "https://docs.rs/tpt-zero-rand"
 
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs", "--generate-link-to-definition"]
 [lib]
 name = "tpt_zero_rand"
 
@@ -24,3 +31,4 @@ workspace = true
 
 [dev-dependencies]
 proptest = { workspace = true }
+

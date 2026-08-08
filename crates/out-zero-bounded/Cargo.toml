@@ -5,6 +5,8 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
 description = "Zero-cost const-generic bounds-checked integers for no_std, built on safe-cast and assert-const."
 readme = "README.md"
 keywords = ["no-std", "bounded", "range", "integer", "const-generic"]
@@ -28,3 +30,4 @@ workspace = true
 
 [dev-dependencies]
 proptest = { workspace = true }
+

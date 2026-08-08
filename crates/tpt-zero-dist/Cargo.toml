@@ -5,12 +5,19 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+include = ["LICENSE-MIT", "LICENSE-APACHE", "README.md", "src/**/*"]
 description = "no_std concrete probability distributions (Normal, Uniform, Bernoulli, Poisson) with PDF/PMF, CDF, moments, and RNG sampling."
 readme = "README.md"
 keywords = ["distribution", "no-std", "sampling", "normal", "poisson"]
 categories = ["no-std", "algorithms", "science"]
 documentation = "https://docs.rs/tpt-zero-dist"
 
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs", "--generate-link-to-definition"]
 [lib]
 name = "tpt_zero_dist"
 
@@ -18,6 +25,7 @@ name = "tpt_zero_dist"
 tpt-zero-rand = { path = "../tpt-zero-rand", version = "0.1.0" }
 tpt-zero-stats = { path = "../tpt-zero-stats", version = "0.1.0" }
 tpt-zero-prob = { path = "../tpt-zero-prob", version = "0.1.0" }
+out-zero-float = { path = "../out-zero-float", version = "0.1.0" }
 
 [features]
 default = []
@@ -29,3 +37,4 @@ workspace = true
 
 [dev-dependencies]
 proptest = { workspace = true }
+

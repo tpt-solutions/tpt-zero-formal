@@ -34,7 +34,7 @@ where noted) → **Docs** (polish README/rustdoc for docs.rs).
 ### out-zero-safe-cast
 - [x] Scaffold
 - [x] Implement (panic-free verified numeric casts)
-- [x] Tests (unit + doctests + proptest)
+- [x] Tests (unit + doctests) — proptest listed but unused
 - [x] Docs/README
 
 ### tpt-zero-smt-lite
@@ -92,7 +92,9 @@ where noted) → **Docs** (polish README/rustdoc for docs.rs).
 - [x] Docs/README
 
 **Layer 0 exit check**: `cargo build --workspace`, `cargo test --workspace`,
-`cargo clippy --workspace --all-targets --all-features -- -D warnings` all clean.
+`cargo clippy --workspace --all-targets --all-features -- -D warnings` all clean;
+and `cargo build --workspace --no-default-features` plus
+`cargo build --workspace --all-features` succeed.
 
 ## Layer 1 — depends only on Layer 0
 
@@ -102,13 +104,13 @@ where noted) → **Docs** (polish README/rustdoc for docs.rs).
 - [x] Tests (unit + doctests + proptest)
 - [x] Docs/README
 
-### out-zero-precond (needs: contract)
+### out-zero-precond (no internal deps; uses `out-zero-contract` macros by re-export, but does not list it as a `[dependencies]`)
 - [x] Scaffold
 - [x] Implement
 - [x] Tests (unit + doctests)
 - [x] Docs/README
 
-### out-zero-postcond (needs: contract)
+### out-zero-postcond (no internal deps; uses `out-zero-contract` macros by re-export, but does not list it as a `[dependencies]`)
 - [x] Scaffold
 - [x] Implement
 - [x] Tests (unit + doctests)
@@ -126,7 +128,7 @@ where noted) → **Docs** (polish README/rustdoc for docs.rs).
 - [x] Tests (unit + doctests)
 - [x] Docs/README
 
-### tpt-zero-ghost (needs: phantom)
+### tpt-zero-ghost (needs: witness; does NOT depend on `out-zero-phantom`)
 - [x] Scaffold
 - [x] Implement (`Ghost<Proven>` / `Ghost<Unproven>` markers)
 - [x] Tests (unit + doctests)
@@ -141,7 +143,7 @@ where noted) → **Docs** (polish README/rustdoc for docs.rs).
 ### tpt-zero-prob (needs: stats)
 - [x] Scaffold
 - [x] Implement (`Distribution` trait, generic `Dist<f64>` sample container)
-- [x] Tests (unit + doctests + proptest)
+- [x] Tests (unit + doctests) — proptest listed but unused
 - [x] Docs/README
 
 ### tpt-zero-linalg (needs: tensor)
@@ -151,7 +153,9 @@ where noted) → **Docs** (polish README/rustdoc for docs.rs).
 - [x] Docs/README
 
 **Layer 1 exit check**: `cargo build --workspace`, `cargo test --workspace`,
-`cargo clippy --workspace --all-targets --all-features -- -D warnings` all clean.
+`cargo clippy --workspace --all-targets --all-features -- -D warnings` all clean;
+and `cargo build --workspace --no-default-features` plus
+`cargo build --workspace --all-features` succeed.
 
 ## Layer 2 — depends on Layer ≤1
 
@@ -182,11 +186,13 @@ where noted) → **Docs** (polish README/rustdoc for docs.rs).
 ### tpt-zero-sampler (needs: rand, prob)
 - [x] Scaffold
 - [x] Implement (sampling algorithms for probabilistic inference)
-- [x] Tests (unit + doctests + proptest)
+- [x] Tests (unit + doctests) — proptest listed but unused
 - [x] Docs/README
 
 **Layer 2 exit check**: `cargo build --workspace`, `cargo test --workspace`,
-`cargo clippy --workspace --all-targets --all-features -- -D warnings` all clean.
+`cargo clippy --workspace --all-targets --all-features -- -D warnings` all clean;
+and `cargo build --workspace --no-default-features` plus
+`cargo build --workspace --all-features` succeed.
 
 ## Layer 3 — depends on Layer ≤2
 
@@ -209,7 +215,9 @@ where noted) → **Docs** (polish README/rustdoc for docs.rs).
 - [x] Docs/README
 
 **Layer 3 exit check**: `cargo build --workspace`, `cargo test --workspace`,
-`cargo clippy --workspace --all-targets --all-features -- -D warnings` all clean.
+`cargo clippy --workspace --all-targets --all-features -- -D warnings` all clean;
+and `cargo build --workspace --no-default-features` plus
+`cargo build --workspace --all-features` succeed.
 
 ## Layer 4 — depends on Layer ≤3
 
@@ -228,7 +236,131 @@ where noted) → **Docs** (polish README/rustdoc for docs.rs).
 - [ ] Criterion benchmarks (candidates first: `rand`, `linalg`, `tensor`)
 - [ ] `cargo-deny` config (`deny.toml`)
 - [ ] `CONTRIBUTING.md`
-- [ ] `git init` + GitHub Actions CI (build/test/clippy/fmt across stable + no_std targets)
+- [x] `git init` (repository already initialized locally)
+- [ ] GitHub Actions CI (build/test/clippy/fmt across stable + no_std targets)
 - [ ] crates.io publish — **must publish in layer order L0 → L4** (path deps
       need their target versions live on crates.io before a dependent crate
       can publish)
+
+---
+
+# Review Action Items (added 2026-08-08)
+
+Results of a platform-wide review (soundness, numerics, packaging, adoption).
+Severity: 🔴 = ship-blocker, 🟠 = should-fix, 🟡 = nice-to-have.
+
+## P0 — Ship-blockers (do before any publish)
+
+### Soundness of proof-carrying types
+- [x] **witness**: seal the `Proof` forge — delete the no-obligation
+      `Witness::new`; keep `from_proof` (consumes a proof value). Update doctests.
+- [x] **witness**: hand-write `Clone`/`Copy`/`Debug` so they do not add a
+      `P: Clone`/`P: Copy` bound (currently `Witness<u32, NoClone>` is not `Clone`).
+- [x] **ghost**: make `Ghost::new` construct `Unproven` only (move into
+      `impl<T> Ghost<T, Unproven>`); fix doctests that build `GhostProven` via `new`.
+- [x] **ghost**: `map` must return `Ghost<U, Unproven>` (it currently launders
+      `Proven` onto an arbitrary new value).
+- [x] **ghost**: gate `prove` behind a named `witness` feature; fix `Cargo.toml`
+      (`default = ["witness"]`, `witness = ["dep:tpt-zero-witness"]`) so
+      `--no-default-features` builds; fix the `std`-gated test (use `witness`).
+- [x] **refinement**: make `into_witness` sound — it currently mints an
+      *arbitrary* `Proof`. Return `Witness<T, RefinedProof<P>>` (local proof
+      type, only obtainable from a validated `Refined`) instead of a caller-chosen `Pr`.
+- [x] **bounded**: force the `MIN <= MAX` compile check to actually run by
+      evaluating `ASSERT_RANGE` from every constructor (associated consts are
+      lazily monomorphized, so today `BoundedInt<100,0>` compiles and `clamp` lies).
+- [x] **bounded**: `new_unchecked` is a safe fn that breaks the invariant in
+      release — rename to `new_clamped` and clamp in all profiles (or delete).
+- [x] **bounded**: `saturating_add`/`saturating_sub` narrow `i128`→`i64` *before*
+      clamping (so `100.saturating_add(i64::MAX)` returns `0`). Clamp in `i128`.
+
+### Contract `checked` feature is broken across crates
+- [x] **contract**: `requires!`/`ensures!` put `#[cfg(feature="checked")]` *inside*
+      the exported macro, so it reads the **caller's** features and does nothing.
+      Emit a `#[doc(hidden)]` helper macro at definition site instead; add
+      `[lints.rust] unexpected_cfgs` check-cfg so the class of bug is caught.
+
+### Hand-rolled `core_math` is wrong (6×`sqrt`, 5×`exp`, 3×`ln`)
+- [x] Create `out-zero-float` with one verified `sqrt`/`exp`/`ln` (subnormal-safe,
+      relative tolerance, fixed iteration cap). Replace the 14 copies:
+      stats, linalg, eigen, grad, monte-carlo (sqrt); dist, bayes, prob, sampler (exp);
+      bayes, dist, grad (ln).
+- [x] Fix downstream breakage: `qr`/`cholesky` non-orthonormal Q; `grad::ln(1e-13)`
+      hang; `Poisson::sample(λ≳709)` infinite loop; `power_iteration`/`eigenvalues_2x2`
+      cancellation; `norm_l2`/`normalize` for tiny/huge vectors.
+
+### `smt-lite` correctness
+- [x] `1usize << n` at `num_vars == 64` panics in debug / returns UNSAT in release
+      (`>=` should be `>=` guard + `checked_shl`).
+- [x] "Linear **integer** constraints" are actually 0/1 pseudo-boolean — rename/re-scope
+      honestly (`tpt-zero-pbsat`) or implement real integer variables.
+- [x] Rewrite the non-compiling README example (fabricated `constraint_set`,
+      `boolean::{and,or}`, `linear_leq` API).
+
+### `--no-default-features` / `--all-features` build fixes
+- [x] **ghost**: fixed above (named `witness` feature).
+- [x] **prob**: `--all-features` doctest fails (`alloc` not in scope) — add
+      `# extern crate alloc;` to the `from_vec` doctest.
+
+### Macro hygiene — double evaluation
+- [ ] **invariant** + **loop-inv**: `check_invariant!`/loop-inv macros evaluate
+      `$value` twice in debug, once in release. Bind once into a `let` (affects
+      `read_sensor()`-style side effects and debug≠release behaviour).
+
+## P1 — Before announcing
+
+- [ ] **publish metadata**: add `rust-version`, `homepage`, `include` (license
+      files), `[package.metadata.docs.rs]` + `doc(cfg)` to all crates; copy
+      `LICENSE-MIT`/`LICENSE-APACHE` into each crate dir.
+- [x] **ghost README**: remove false "builds with `--no-default-features`" / "`std`
+      enables `Ghost::prove`" claims.
+- [x] **tensor README**: delete lines 1–24 (raw `//!` doc-comment source pasted in).
+- [ ] **dead features**: drop inert `alloc`/`std` from the 21 crates whose `src/`
+      never reads them (use `core::error::Error` instead of a `std` gate).
+- [ ] Add `tpt-zero-formal` **facade crate** (feature groups + prelude) and claim
+      the name on crates.io; namespace away `Distribution`/`Normal`/`Witness` collisions.
+- [ ] Rewrite root README around one runnable end-to-end example; move the two
+      "Internal-only / closest alternative" tables to `docs/crate-selection.md`.
+- [ ] `#![doc = include_str!("../README.md")]` in all 30 `lib.rs` so README examples
+      become doctests; fix the 5 broken ones (smt-lite, solver, bayes, stats, tensor).
+- [ ] Add `cargo-generate` templates + `examples/` (start: contracts_basics,
+      do178c_altitude_monitor, baremetal_thumbv7, telos_transpile_target,
+      type_state_protocol, refinement_vs_witness_vs_ghost, kalman_filter_nostd,
+      migrating_from_rand).
+- [ ] Add `docs/choosing.md` (problem→crate index), `docs/architecture.md`
+      (layer diagram from `cargo metadata`), `docs/comparison.md` (vs contracts/nalgebra/rand).
+- [ ] **CI**: `fmt`, `clippy -D`, `test`, `--no-default-features`, `--all-features`,
+      bare-metal (`thumbv7em-none-eabi`/`thumbv6m-none-eabi`), `xtask check-readmes`,
+      `xtask check-consistency`; split proptest budget so `cargo test` isn't 10 min.
+- [ ] **xtask**: `new-crate`, `check-consistency`, `check-readmes`, `check-nostd`,
+      `publish-order`, `publish`, `gen-graph`, `gen-type-level` (restore the missing
+      `out-zero-type-level/src/generated.rs` generator).
+- [ ] Reconsider publish decisions for `out-zero-contract`, `-precond`, `-postcond`,
+      `-refinement` (load-bearing for the `tpt-telos` transpile story; `contracts`
+      is not zero-dep).
+- [ ] Remove dead `criterion` dev-dep and the 4 unused `proptest` dev-deps; delete
+      `libt.rmeta`; fix `rustfmt.toml` (`imports_granularity` is nightly-only,
+      silently ignored on stable).
+- [ ] Add `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md`, `deny.toml`,
+      `CODE_OF_CONDUCT.md`.
+- [ ] Update `Cargo.lock` (currently gitignored).
+
+## P2 — Differentiation (innovation)
+
+- [ ] Requirement traceability: `requires!(REQ="SRS-ALT-014", cond)` + `xtask certify`
+      → traceability matrix.
+- [ ] Panic-freedom proof (`panic_handler` fail build) per crate/feature set.
+- [ ] `xtask certify` certification artifact pack (deps/unsafe/MSRV/coverage/contract inventory).
+- [ ] Kani / Creusot / Prusti backend for `requires!`/`ensures!`.
+- [ ] MC/DC-aware contract macros (rustc `-Z coverage-options=mcdc`).
+- [ ] Contract-derived test generation (`requires!` → proptest at boundaries).
+- [ ] SMT-LIB / Why3 spec export from `smt-lite` + contracts.
+
+## P3 — Documentation accuracy (TODO.md corrections)
+
+- [x] Mark `proptest` claims false where unused (`safe-cast`, `prob`, `sampler`);
+      mark `precond`/`postcond` "(needs: contract)" false (no `[dependencies]`);
+      mark `ghost` "(needs: phantom)" false (depends on `witness`).
+- [x] Split the stale `git init + CI` item (git done; CI missing).
+- [x] Update layer exit checks: feature matrix (`--no-default-features`,
+      `--all-features`) not just default features.

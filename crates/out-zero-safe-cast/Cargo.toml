@@ -5,6 +5,8 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
 description = "Panic-free, explicitly verified numeric casting traits for no_std."
 readme = "README.md"
 keywords = ["cast", "no-std", "numeric", "conversion", "safe"]
@@ -22,5 +24,4 @@ std = ["alloc"]
 [lints]
 workspace = true
 
-[dev-dependencies]
-proptest = { workspace = true }
+

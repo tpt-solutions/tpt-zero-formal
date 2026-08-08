@@ -5,12 +5,19 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+include = ["LICENSE-MIT", "LICENSE-APACHE", "README.md", "src/**/*"]
 description = "A value paired with a proof that some property holds, for no_std dependently-typed-style APIs."
 readme = "README.md"
 keywords = ["witness", "proof", "no-std", "type-level", "invariant"]
 categories = ["no-std", "rust-patterns", "data-structures"]
 documentation = "https://docs.rs/tpt-zero-witness"
 
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs", "--generate-link-to-definition"]
 [lib]
 name = "tpt_zero_witness"
 
@@ -21,3 +28,4 @@ std = ["alloc"]
 
 [lints]
 workspace = true
+

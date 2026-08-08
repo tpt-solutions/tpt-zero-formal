@@ -8,6 +8,8 @@ edition = "2024"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/tpt-solutions/tpt-zero-formal"
 authors = ["TPT Solutions"]
+rust-version = "1.85"
+homepage = "https://github.com/tpt-solutions/tpt-zero-formal"
 
 [workspace.dependencies]
 # Intentionally empty to enforce ZERO external production dependencies.
@@ -15,11 +17,11 @@ authors = ["TPT Solutions"]
 # via `{ workspace = true }` in their own [dev-dependencies] tables --
 # Cargo has no [workspace.dev-dependencies] table.
 proptest = "1.0"
-criterion = "0.5"
 
 [workspace.lints.rust]
 missing_docs = "warn"
 unsafe_code = "forbid"
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(docsrs)'] }
 
 [workspace.lints.clippy]
 all = "warn"

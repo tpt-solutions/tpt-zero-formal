@@ -5,12 +5,19 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+include = ["LICENSE-MIT", "LICENSE-APACHE", "README.md", "src/**/*"]
 description = "no_std linear system solvers: Gaussian elimination, LU/Cholesky direct solves, and Jacobi/Gauss-Seidel iteration over fixed-size tensors."
 readme = "README.md"
 keywords = ["no-std", "linalg", "solver", "linear-system", "numerical"]
 categories = ["no-std", "algorithms", "mathematics", "science"]
 documentation = "https://docs.rs/tpt-zero-solver"
 
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs", "--generate-link-to-definition"]
 [lib]
 name = "tpt_zero_solver"
 
@@ -29,3 +36,4 @@ workspace = true
 
 [dev-dependencies]
 proptest = { workspace = true }
+

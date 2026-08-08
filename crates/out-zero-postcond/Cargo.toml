@@ -5,6 +5,8 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
 description = "Postcondition checking helpers for no_std, with error-returning checks and debug-only assertions."
 readme = "README.md"
 keywords = ["postcondition", "no-std", "contract", "validation", "design-by-contract"]
@@ -21,3 +23,4 @@ std = ["alloc"]
 
 [lints]
 workspace = true
+

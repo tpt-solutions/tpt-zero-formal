@@ -295,10 +295,13 @@ pub fn mat_vec_mul<const R: usize, const C: usize>(
     }))
 }
 
-/// Computes the square root of `x >= 0.0` via Newton's method.
+/// Computes the square root of `x >= 0.0`.
 ///
 /// Returns `f64::NAN` for negative inputs and for `f64::NAN`. This is provided
-/// because `f64::sqrt` is not available in every `core`-only target.
+/// because `f64::sqrt` is not available in every `core`-only target. The
+/// implementation lives in [`out_zero_float`]; it is subnormal-safe and uses a
+/// relative convergence tolerance, so it remains accurate for both tiny
+/// (`1e-30`) and huge (`1e300`) magnitudes.
 ///
 /// # Examples
 ///
@@ -311,23 +314,7 @@ pub fn mat_vec_mul<const R: usize, const C: usize>(
 /// ```
 #[must_use]
 pub fn sqrt(x: f64) -> f64 {
-    if x.is_nan() || x < 0.0 {
-        return f64::NAN;
-    }
-    if x == 0.0 {
-        return 0.0;
-    }
-    // Newton's method: x_{n+1} = (x_n + x / x_n) / 2.
-    let mut guess = x;
-    let mut prev = 0.0;
-    for _ in 0..64 {
-        if (guess - prev).abs() < 1e-12 {
-            break;
-        }
-        prev = guess;
-        guess = 0.5 * (guess + x / guess);
-    }
-    guess
+    out_zero_float::sqrt(x)
 }
 
 #[cfg(test)]

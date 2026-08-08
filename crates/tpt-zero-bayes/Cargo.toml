@@ -5,12 +5,19 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+include = ["LICENSE-MIT", "LICENSE-APACHE", "README.md", "src/**/*"]
 description = "Bayesian inference primitives and conjugate priors for no_std."
 readme = "README.md"
 keywords = ["bayesian", "no-std", "conjugate-prior", "statistics", "inference"]
 categories = ["no-std", "science", "algorithms"]
 documentation = "https://docs.rs/tpt-zero-bayes"
 
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs", "--generate-link-to-definition"]
 [lib]
 name = "tpt_zero_bayes"
 
@@ -26,6 +33,8 @@ workspace = true
 tpt-zero-dist = { path = "../tpt-zero-dist", version = "0.1.0" }
 tpt-zero-prob = { path = "../tpt-zero-prob", version = "0.1.0" }
 tpt-zero-stats = { path = "../tpt-zero-stats", version = "0.1.0" }
+out-zero-float = { path = "../out-zero-float", version = "0.1.0" }
 
 [dev-dependencies]
 proptest = { workspace = true }
+

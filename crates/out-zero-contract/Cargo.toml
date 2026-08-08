@@ -5,6 +5,8 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
 description = "Design-by-contract precondition and postcondition macros for no_std, with a `checked` mode for always-on assertions."
 readme = "README.md"
 keywords = ["contract", "no-std", "precondition", "postcondition", "design-by-contract"]
@@ -22,3 +24,4 @@ checked = []
 
 [lints]
 workspace = true
+
