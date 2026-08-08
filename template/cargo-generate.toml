@@ -1,0 +1,10 @@
+[template]
+include = ["Cargo.toml", "src/**/*", "README.md", "LICENSE-MIT", "LICENSE-APACHE"]
+
+[placeholders]
+crate_name = { type = "string", prompt = "Crate name (e.g. tpt-zero-foo)?", regex = "^[a-z0-9][a-z0-9-]*$" }
+lib_name = { type = "string", prompt = "Library (Rust identifier) name (e.g. tpt_zero_foo)?", regex = "^[a-z][a-z0-9_]*$" }
+description = { type = "string", prompt = "Short description?" }
+
+[conditional.*]
+cmath = { type = "bool", prompt = "Include a verified-float dependency (out-zero-float)?" }

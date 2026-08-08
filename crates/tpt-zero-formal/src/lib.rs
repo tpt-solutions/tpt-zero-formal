@@ -49,8 +49,10 @@ pub use tpt_zero_solver as solver;
 pub use tpt_zero_decomp as decomp;
 #[cfg(feature = "monte-carlo")]
 pub use tpt_zero_monte_carlo as monte_carlo;
-#[cfg(feature = "bayes")]
-pub use tpt_zero_bayes as bayes;
+    #[cfg(feature = "bayes")]
+    pub use tpt_zero_bayes::{Beta, Gamma};
+    #[cfg(feature = "dist")]
+    pub use tpt_zero_dist::Distribution;
 #[cfg(feature = "dist")]
 pub use tpt_zero_dist as dist;
 #[cfg(feature = "markov")]
@@ -72,6 +74,8 @@ pub mod prelude {
     pub use tpt_zero_prob::{Dist, Distribution};
     #[cfg(feature = "dist")]
     pub use tpt_zero_dist::{Bernoulli, Normal, Poisson, Uniform};
+    #[cfg(feature = "bayes")]
+    pub use tpt_zero_bayes::{Beta, Gamma};
     #[cfg(feature = "witness")]
     pub use tpt_zero_witness::Witness;
     #[cfg(feature = "ghost")]

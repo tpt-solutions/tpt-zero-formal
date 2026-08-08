@@ -325,10 +325,15 @@ Severity: 🔴 = ship-blocker, 🟠 = should-fix, 🟡 = nice-to-have.
       become doctests; fix the broken ones (only `tpt-zero-bayes` needed a fix:
       `Beta::new` returns `Option` and the posterior mean is `8/12`, not `0.8`).
 - [ ] Add `cargo-generate` templates + `examples/` (start: contracts_basics,
-      do178c_altitude_monitor, baremetal_thumbv7, telos_transpile_target,
-      type_state_protocol, refinement_vs_witness_vs_ghost, kalman_filter_nostd,
-      migrating_from_rand).
-- [ ] Add `docs/choosing.md` (problem→crate index), `docs/architecture.md`
+       do178c_altitude_monitor, baremetal_thumbv7, telos_transpile_target,
+       type_state_protocol, refinement_vs_witness_vs_ghost, kalman_filter_nostd,
+       migrating_from_rand).
+       - **examples/**: 3 added so far — `migrating_from_rand`, `bayesian_update`,
+         `tensor_linalg_solve` (all build + run). Remaining: contracts_basics,
+         do178c_altitude_monitor, baremetal_thumbv7, telos_transpile_target,
+         type_state_protocol, refinement_vs_witness_vs_ghost, kalman_filter_nostd.
+       - **cargo-generate templates**: not started.
+- [x] Add `docs/choosing.md` (problem→crate index), `docs/architecture.md`
       (layer diagram from `cargo metadata`), `docs/comparison.md` (vs contracts/nalgebra/rand).
 - [x] **CI**: `fmt`, `clippy -D`, `test`, `--no-default-features`, `--all-features`,
       bare-metal (`thumbv7em-none-eabihf`), `doc`; split proptest budget so `cargo test`
