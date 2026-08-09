@@ -1,6 +1,6 @@
 //! A connection protocol modelled as a type-state machine: illegal transitions
-//! are rejected at compile time by the [`tpt_zero_formal::fsm`] builder.
-use tpt_zero_formal::fsm::{Event, Machine, State, Transition};
+//! are rejected at compile time by the [`out_zero_formal::fsm`] builder.
+use out_zero_formal::fsm::{Event, Machine, State, Transition};
 
 struct Disconnected;
 struct Connected;

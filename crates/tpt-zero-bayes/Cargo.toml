@@ -31,7 +31,7 @@ workspace = true
 tpt-zero-dist = { path = "../tpt-zero-dist", version = "0.1.0" }
 tpt-zero-prob = { path = "../tpt-zero-prob", version = "0.1.0" }
 tpt-zero-stats = { path = "../tpt-zero-stats", version = "0.1.0" }
-out-zero-float = { path = "../out-zero-float", version = "0.1.0" }
+tpt-zero-float = { path = "../tpt-zero-float", version = "0.1.0" }
 
 [dev-dependencies]
 proptest = { workspace = true }

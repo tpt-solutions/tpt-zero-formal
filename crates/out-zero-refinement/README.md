@@ -1,7 +1,5 @@
 # out-zero-refinement
 
-[![crates.io](https://img.shields.io/crates/v/out-zero-refinement.svg)](https://crates.io/crates/out-zero-refinement)
-[![docs.rs](https://docs.rs/out-zero-refinement/badge.svg)](https://docs.rs/out-zero-refinement)
 [![license](https://img.shields.io/crates/l/out-zero-refinement.svg)](#license)
 
 Refinement types for `no_std`: a value of type `T` that is known to satisfy a
@@ -42,11 +40,21 @@ has the same size as `T`.
 
 This crate builds with `--no-default-features` (pure `core`, no `alloc`).
 
-## Install
+## Status: not published
 
-```sh
-cargo add out-zero-refinement
-```
+This crate is **not published to crates.io**. The `tpt-zero-formal` project
+does not publish a crate unless it is more useful than what is already
+available, and for this need a more complete, widely-used alternative already
+exists.
+
+**Use [`refinement`](https://crates.io/crates/refinement) instead.** It is the established refinement-type crate, with a richer predicate and derivation story.
+
+`out-zero-refinement` is kept internal to the workspace because it is a zero-dependency,
+`no_std` building block used by other crates here. If you specifically need
+`no_std` and zero external dependencies, depend on
+[`out-zero-formal`](https://crates.io/crates/out-zero-formal) (which re-exports
+this functionality) rather than adding this crate directly.
+
 
 ## License
 

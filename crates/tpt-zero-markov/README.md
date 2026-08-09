@@ -33,7 +33,7 @@ A [`Chain`] stores a row-stochastic transition matrix and an initial
 distribution. Build it with [`Chain::new`] (which normalizes rows) or
 [`Chain::checked_new`] (which rejects non-stochastic rows), then use
 [`Chain::step`], [`Chain::n_step`], [`Chain::stationary`], and
-[`Chain::sample`] (with the `alloc` feature).
+`Chain::sample` (with the `alloc` feature).
 
 ## Features
 

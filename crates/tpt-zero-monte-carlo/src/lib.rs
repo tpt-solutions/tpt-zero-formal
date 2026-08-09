@@ -268,11 +268,11 @@ where
 /// Computes the square root of `x >= 0.0`.
 ///
 /// Returns `f64::NAN` for negative inputs and for `f64::NAN`. Delegates to the
-/// shared, subnormal-safe [`out_zero_float`] implementation so it stays
+/// shared, subnormal-safe [`tpt_zero_float`] implementation so it stays
 /// dependency-free on the `core`-only target while remaining accurate for tiny
 /// and huge magnitudes.
 fn sqrt(x: f64) -> f64 {
-    out_zero_float::sqrt(x)
+    tpt_zero_float::sqrt(x)
 }
 
 #[cfg(test)]

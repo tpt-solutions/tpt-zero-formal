@@ -7,4 +7,4 @@ lib_name = { type = "string", prompt = "Library (Rust identifier) name (e.g. tpt
 description = { type = "string", prompt = "Short description?" }
 
 [conditional.*]
-cmath = { type = "bool", prompt = "Include a verified-float dependency (out-zero-float)?" }
+cmath = { type = "bool", prompt = "Include a verified-float dependency (tpt-zero-float)?" }

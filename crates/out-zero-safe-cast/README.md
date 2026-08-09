@@ -1,7 +1,5 @@
 # out-zero-safe-cast
 
-[![crates.io](https://img.shields.io/crates/v/out-zero-safe-cast.svg)](https://crates.io/crates/out-zero-safe-cast)
-[![docs.rs](https://docs.rs/out-zero-safe-cast/badge.svg)](https://docs.rs/out-zero-safe-cast)
 [![license](https://img.shields.io/crates/l/out-zero-safe-cast.svg)](#license)
 
 Panic-free, explicitly verified numeric casting traits for `no_std`. Part of
@@ -39,11 +37,21 @@ assert!(float_err.is_err());
 
 This crate builds with `--no-default-features` (pure `core`, no `alloc`).
 
-## Install
+## Status: not published
 
-```sh
-cargo add out-zero-safe-cast
-```
+This crate is **not published to crates.io**. The `tpt-zero-formal` project
+does not publish a crate unless it is more useful than what is already
+available, and for this need a more complete, widely-used alternative already
+exists.
+
+**Use [`az`](https://crates.io/crates/az) instead.** It is a mature, well-tested casting crate (`Cast`/`CheckedAs`/`SaturatingAs`) covering the same cases.
+
+`out-zero-safe-cast` is kept internal to the workspace because it is a zero-dependency,
+`no_std` building block used by other crates here. If you specifically need
+`no_std` and zero external dependencies, depend on
+[`out-zero-formal`](https://crates.io/crates/out-zero-formal) (which re-exports
+this functionality) rather than adding this crate directly.
+
 
 ## License
 

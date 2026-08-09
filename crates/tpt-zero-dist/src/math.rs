@@ -2,7 +2,7 @@
 //!
 //! `f64::sqrt`, `f64::ln`, and `f64::exp` are not available in every
 //! `core`-only target, so the helpers here delegate to
-//! [`out_zero_float`] (a subnormal-safe, `no_std` implementation) while the
+//! [`tpt_zero_float`] (a subnormal-safe, `no_std` implementation) while the
 //! floor remains implemented locally.
 
 /// Returns the largest integer not greater than `x` (mathematical floor).
@@ -31,7 +31,7 @@ pub fn floor(x: f64) -> f64 {
 ///
 /// Returns `f64::NAN` for negative inputs and for `f64::NAN`, matching the
 /// behaviour of `f64::sqrt`. Delegates to the shared, subnormal-safe
-/// [`out_zero_float`] implementation so it remains accurate for tiny and huge
+/// [`tpt_zero_float`] implementation so it remains accurate for tiny and huge
 /// magnitudes.
 ///
 /// # Examples
@@ -45,13 +45,13 @@ pub fn floor(x: f64) -> f64 {
 /// ```
 #[must_use]
 pub fn sqrt(x: f64) -> f64 {
-    out_zero_float::sqrt(x)
+    tpt_zero_float::sqrt(x)
 }
 
 /// Computes `e^x`.
 ///
 /// Reimplements `f64::exp` (unavailable in this `core`-only crate). Delegates
-/// to the shared, subnormal-safe [`out_zero_float`] implementation, which
+/// to the shared, subnormal-safe [`tpt_zero_float`] implementation, which
 /// handles the full range (including the subnormal underflow region) and never
 /// returns a negative value for large negative `x`.
 ///
@@ -65,13 +65,13 @@ pub fn sqrt(x: f64) -> f64 {
 /// ```
 #[must_use]
 pub fn exp(x: f64) -> f64 {
-    out_zero_float::exp(x)
+    tpt_zero_float::exp(x)
 }
 
 /// Computes the natural logarithm of `x > 0`.
 ///
 /// Reimplements `f64::ln` (unavailable in this `core`-only crate). Delegates to
-/// the shared [`out_zero_float`] implementation, which decomposes `x` into a
+/// the shared [`tpt_zero_float`] implementation, which decomposes `x` into a
 /// mantissa and binary exponent and evaluates `ln(m)` with an `atanh` series;
 /// it is accurate for subnormal magnitudes and returns `-inf` for `0`.
 ///
@@ -89,7 +89,7 @@ pub fn exp(x: f64) -> f64 {
 /// ```
 #[must_use]
 pub fn ln(x: f64) -> f64 {
-    out_zero_float::ln(x)
+    tpt_zero_float::ln(x)
 }
 
 #[cfg(test)]

@@ -1,5 +1,6 @@
 [package]
-name = "tpt-zero-formal"
+name = "out-zero-formal"
+publish = false
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -11,10 +12,10 @@ description = "Zero-dependency, no_std formal-methods and numerical toolkit (umb
 readme = "README.md"
 keywords = ["no-std", "formal-methods", "numerical", "verification", "zero-cost"]
 categories = ["no-std", "rust-patterns", "science", "algorithms", "mathematics"]
-documentation = "https://docs.rs/tpt-zero-formal"
+documentation = "https://docs.rs/out-zero-formal"
 
 [lib]
-name = "tpt_zero_formal"
+name = "out_zero_formal"
 
 [features]
 default = ["layer0", "layer1", "layer2", "layer3"]
@@ -23,7 +24,7 @@ default = ["layer0", "layer1", "layer2", "layer3"]
 safe-cast = ["dep:out-zero-safe-cast"]
 assert-const = ["dep:out-zero-assert-const"]
 smt-lite = ["dep:tpt-zero-smt-lite"]
-float = ["dep:out-zero-float"]
+float = ["dep:tpt-zero-float"]
 witness = ["dep:tpt-zero-witness"]
 phantom = ["dep:out-zero-phantom"]
 type-level = ["dep:out-zero-type-level"]
@@ -61,7 +62,7 @@ layer3 = ["eigen", "grad", "solver", "decomp", "monte-carlo", "bayes", "dist", "
 out-zero-safe-cast = { path = "../out-zero-safe-cast", version = "0.1.0", optional = true }
 out-zero-assert-const = { path = "../out-zero-assert-const", version = "0.1.0", optional = true }
 tpt-zero-smt-lite = { path = "../tpt-zero-smt-lite", version = "0.1.0", optional = true }
-out-zero-float = { path = "../out-zero-float", version = "0.1.0", optional = true }
+tpt-zero-float = { path = "../tpt-zero-float", version = "0.1.0", optional = true }
 tpt-zero-witness = { path = "../tpt-zero-witness", version = "0.1.0", optional = true }
 out-zero-phantom = { path = "../out-zero-phantom", version = "0.1.0", optional = true }
 out-zero-type-level = { path = "../out-zero-type-level", version = "0.1.0", optional = true }

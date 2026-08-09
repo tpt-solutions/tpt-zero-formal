@@ -21,7 +21,7 @@ Layer 0  primitives
   out-zero-safe-cast      panic-free, verified numeric casts
   out-zero-assert-const   compile-time assertions in const contexts
   tpt-zero-smt-lite       boolean / pseudo-boolean constraint solver
-  out-zero-float         verified sqrt / exp / ln (subnormal-safe)
+  tpt-zero-float         verified sqrt / exp / ln (subnormal-safe)
   tpt-zero-witness       proof-carrying Witness<T, P> types
   out-zero-phantom       advanced PhantomData patterns
   out-zero-type-level    const-generic type-level arithmetic
@@ -56,7 +56,7 @@ Layer 3  algorithms
   out-zero-loop-inv       loop-invariant checks
 
 Layer 4  umbrella
-  tpt-zero-formal         re-exports every layer, grouped by feature
+  out-zero-formal         re-exports every layer, grouped by feature
 ```
 
 The `out-zero-*` crates are `publish = false` internal implementation details
@@ -65,8 +65,8 @@ published.
 
 ## The facade
 
-`tpt-zero-formal` re-exports each crate behind a short, namespaced module
-(`tpt_zero_formal::prob`, `tpt_zero_formal::linalg`, ...) so types that share a
+`out-zero-formal` re-exports each crate behind a short, namespaced module
+(`out_zero_formal::prob`, `out_zero_formal::linalg`, ...) so types that share a
 name across crates — `Distribution`, `Normal`, `Witness` — no longer collide.
 Feature flags mirror the layers (`layer0` … `layer3`) and individual crates
 (`prob`, `linalg`, ...). A small [`prelude`] re-exports the most common,

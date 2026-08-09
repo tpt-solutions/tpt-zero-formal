@@ -38,7 +38,7 @@ const TAYLOR_EPS: f64 = 1e-16;
 /// # Examples
 ///
 /// ```
-/// use out_zero_float::sqrt;
+/// use tpt_zero_float::sqrt;
 ///
 /// assert_eq!(sqrt(0.0), 0.0);
 /// assert_eq!(sqrt(4.0), 2.0);
@@ -124,7 +124,7 @@ fn exp_taylor(r: f64) -> f64 {
 /// # Examples
 ///
 /// ```
-/// use out_zero_float::exp;
+/// use tpt_zero_float::exp;
 ///
 /// assert_eq!(exp(0.0), 1.0);
 /// assert!((exp(1.0) - core::f64::consts::E).abs() < 1e-12);
@@ -230,7 +230,7 @@ fn atanh_series(z: f64) -> f64 {
 /// # Examples
 ///
 /// ```
-/// use out_zero_float::ln;
+/// use tpt_zero_float::ln;
 ///
 /// assert_eq!(ln(1.0), 0.0);
 /// assert!((ln(core::f64::consts::E) - 1.0).abs() < 1e-12);

@@ -1,9 +1,7 @@
 #![doc = include_str!("../README.md")]
-
 #![no_std]
 #![warn(missing_docs)]
 #![forbid(unsafe_code)]
-
 // The float primitives used by a normal `core` build (notably `f64::sqrt` and
 // the `f64`/`usize` casts in the norm and cross-product implementations) are
 // unavailable in this crate's target configuration, so we provide our own
@@ -264,7 +262,7 @@ pub fn mat_vec_mul<const R: usize, const C: usize>(
 ///
 /// Returns `f64::NAN` for negative inputs and for `f64::NAN`. This is provided
 /// because `f64::sqrt` is not available in every `core`-only target. The
-/// implementation lives in [`out_zero_float`]; it is subnormal-safe and uses a
+/// implementation lives in [`tpt_zero_float`]; it is subnormal-safe and uses a
 /// relative convergence tolerance, so it remains accurate for both tiny
 /// (`1e-30`) and huge (`1e300`) magnitudes.
 ///
@@ -279,7 +277,7 @@ pub fn mat_vec_mul<const R: usize, const C: usize>(
 /// ```
 #[must_use]
 pub fn sqrt(x: f64) -> f64 {
-    out_zero_float::sqrt(x)
+    tpt_zero_float::sqrt(x)
 }
 
 #[cfg(test)]

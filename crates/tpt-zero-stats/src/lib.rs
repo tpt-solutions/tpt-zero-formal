@@ -33,8 +33,15 @@ pub fn mean(data: &[f64]) -> Option<f64> {
     if data.is_empty() {
         return None;
     }
-    let sum: f64 = data.iter().copied().sum();
-    Some(sum / (data.len() as f64))
+    // Welford's online algorithm: each step divides, so the running mean stays
+    // finite even when the raw sum of large-magnitude inputs would overflow.
+    let mut mean = 0.0_f64;
+    let mut count = 0_usize;
+    for &x in data {
+        count += 1;
+        mean += (x - mean) / count as f64;
+    }
+    Some(mean)
 }
 
 /// Returns the arithmetic mean of values yielded by `iter`, or `None` if it
@@ -53,16 +60,17 @@ pub fn mean_iter<I>(iter: I) -> Option<f64>
 where
     I: IntoIterator<Item = f64>,
 {
-    let mut sum = 0.0;
-    let mut count = 0usize;
+    // Welford's online algorithm (see [`mean`] for why this avoids overflow).
+    let mut mean = 0.0_f64;
+    let mut count = 0_usize;
     for x in iter {
-        sum += x;
         count += 1;
+        mean += (x - mean) / count as f64;
     }
     if count == 0 {
         None
     } else {
-        Some(sum / (count as f64))
+        Some(mean)
     }
 }
 
@@ -139,10 +147,20 @@ pub fn variance_with_ddof(data: &[f64], ddof: usize) -> Option<f64> {
     if data.len() <= ddof {
         return None;
     }
-    let n = data.len() as f64;
+    let len = data.len() as f64;
     let mean = mean(data)?;
-    let sse: f64 = data.iter().map(|&x| (x - mean) * (x - mean)).sum();
-    Some(sse / (n - ddof as f64))
+    // Kahan summation of squared deviations avoids catastrophic cancellation and
+    // keeps the running total finite for large-magnitude inputs.
+    let mut sum = 0.0_f64;
+    let mut compensation = 0.0_f64;
+    for &value in data {
+        let deviation = value - mean;
+        let term = deviation * deviation - compensation;
+        let updated = sum + term;
+        compensation = (updated - sum) - term;
+        sum = updated;
+    }
+    Some(sum / (len - ddof as f64))
 }
 
 /// Returns the *population* variance of `data` (dividing by `n`), or `None`
@@ -332,9 +350,9 @@ fn quantile_sorted(sorted: &[f64], q: f64) -> Option<f64> {
 /// Computes the square root of `x >= 0.0`.
 ///
 /// Returns `f64::NAN` for negative inputs and for `f64::NAN`. Delegates to the
-/// shared, subnormal-safe [`out_zero_float`] implementation.
+/// shared, subnormal-safe [`tpt_zero_float`] implementation.
 fn sqrt(x: f64) -> f64 {
-    out_zero_float::sqrt(x)
+    tpt_zero_float::sqrt(x)
 }
 
 /// Returns the largest integer not greater than `x` (mathematical floor)

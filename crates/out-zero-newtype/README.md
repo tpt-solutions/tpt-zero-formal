@@ -1,7 +1,5 @@
 # out-zero-newtype
 
-[![crates.io](https://img.shields.io/crates/v/out-zero-newtype.svg)](https://crates.io/crates/out-zero-newtype)
-[![docs.rs](https://docs.rs/out-zero-newtype/badge.svg)](https://docs.rs/out-zero-newtype)
 [![license](https://img.shields.io/crates/l/out-zero-newtype.svg)](#license)
 
 Macro-driven, `no_std` newtype wrappers with safe inner-type access and
@@ -34,11 +32,21 @@ wrapper to its inner type.
 
 This crate builds with `--no-default-features` (pure `core`, no `alloc`).
 
-## Install
+## Status: not published
 
-```sh
-cargo add out-zero-newtype
-```
+This crate is **not published to crates.io**. The `tpt-zero-formal` project
+does not publish a crate unless it is more useful than what is already
+available, and for this need a more complete, widely-used alternative already
+exists.
+
+**Use [`derive_more`](https://crates.io/crates/derive_more) or [`nutype`](https://crates.io/crates/nutype) instead.** These are mature newtype-derivation crates with far broader trait and validation coverage.
+
+`out-zero-newtype` is kept internal to the workspace because it is a zero-dependency,
+`no_std` building block used by other crates here. If you specifically need
+`no_std` and zero external dependencies, depend on
+[`out-zero-formal`](https://crates.io/crates/out-zero-formal) (which re-exports
+this functionality) rather than adding this crate directly.
+
 
 ## License
 

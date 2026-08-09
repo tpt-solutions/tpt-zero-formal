@@ -29,7 +29,7 @@ impl core::error::Error for BoundsError {}
 /// A zero-cost wrapper around an `i64` guaranteed to lie in `[MIN, MAX]`.
 ///
 /// The range `[MIN, MAX]` is checked at compile time via
-/// [`assert_i64_le`] (from `out-zero-assert-const`), so an inverted range is a compile
+/// [`out_zero_assert_const::assert_i64_le`] (from `out-zero-assert-const`), so an inverted range is a compile
 /// error rather than a runtime panic. The wrapped value is checked against
 /// the range on construction and the arithmetic helpers saturate/clamp to
 /// the bounds, so a `BoundedInt` never holds an out-of-range value.

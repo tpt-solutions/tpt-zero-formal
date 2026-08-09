@@ -233,11 +233,11 @@ and `cargo build --workspace --no-default-features` plus
 
 ## Deferred / stretch (not blocking crate completion)
 
-- [ ] Criterion benchmarks (candidates first: `rand`, `linalg`, `tensor`)
-- [ ] `cargo-deny` config (`deny.toml`)
-- [ ] `CONTRIBUTING.md`
+- [x] Criterion benchmarks (candidates first: `rand`, `linalg`, `tensor`)
+- [x] `cargo-deny` config (`deny.toml`)
+- [x] `CONTRIBUTING.md`
 - [x] `git init` (repository already initialized locally)
-- [ ] GitHub Actions CI (build/test/clippy/fmt across stable + no_std targets)
+- [x] GitHub Actions CI (build/test/clippy/fmt across stable + no_std targets)
 - [ ] crates.io publish — **must publish in layer order L0 → L4** (path deps
       need their target versions live on crates.io before a dependent crate
       can publish)
@@ -281,7 +281,7 @@ Severity: 🔴 = ship-blocker, 🟠 = should-fix, 🟡 = nice-to-have.
       `[lints.rust] unexpected_cfgs` check-cfg so the class of bug is caught.
 
 ### Hand-rolled `core_math` is wrong (6×`sqrt`, 5×`exp`, 3×`ln`)
-- [x] Create `out-zero-float` with one verified `sqrt`/`exp`/`ln` (subnormal-safe,
+- [x] Create `tpt-zero-float` with one verified `sqrt`/`exp`/`ln` (subnormal-safe,
       relative tolerance, fixed iteration cap). Replace the 14 copies:
       stats, linalg, eigen, grad, monte-carlo (sqrt); dist, bayes, prob, sampler (exp);
       bayes, dist, grad (ln).
@@ -320,7 +320,7 @@ Severity: 🔴 = ship-blocker, 🟠 = should-fix, 🟡 = nice-to-have.
        crates with genuine `alloc` usage (`newtype`, `dist`, `markov`, `prob`) keep
        their feature; the 3 `std`-gated `Error` impls (`postcond`, `precond`,
        `refinement`) now use `core::error::Error`.
-- [x] Add `tpt-zero-formal` **facade crate** (feature groups + prelude) and claim
+- [x] Add `out-zero-formal` **facade crate** (feature groups + prelude) and claim
       the name on crates.io; namespace away `Distribution`/`Normal`/`Witness` collisions.
 - [x] Rewrite root README around one runnable end-to-end example; move the two
       "Internal-only / closest alternative" tables to `docs/crate-selection.md`.
@@ -337,7 +337,7 @@ Severity: 🔴 = ship-blocker, 🟠 = should-fix, 🟡 = nice-to-have.
           `refinement_vs_witness_vs_ghost`, `kalman_filter_nostd` (all build; the
           4 std binaries run, the 3 no_std libs build + cross-compile to
           `thumbv7em-none-eabihf`, `kalman_filter_nostd` has a convergence test).
-        - **cargo-generate templates**: not started.
+        - **cargo-generate templates**: done (`template/` has `cargo-generate.toml` + placeholders).
 - [x] Add `docs/choosing.md` (problem→crate index), `docs/architecture.md`
       (layer diagram from `cargo metadata`), `docs/comparison.md` (vs contracts/nalgebra/rand).
 - [x] **CI**: `fmt`, `clippy -D`, `test`, `--no-default-features`, `--all-features`,
@@ -358,18 +358,19 @@ Severity: 🔴 = ship-blocker, 🟠 = should-fix, 🟡 = nice-to-have.
       is nightly-only, silently ignored on stable). (`libt.rmeta` not present.)
 - [x] Add `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md`, `deny.toml`,
       `CODE_OF_CONDUCT.md`.
-- [ ] Update `Cargo.lock` (currently gitignored).
+- [x] Update `Cargo.lock` (currently gitignored). — `Cargo.lock` is tracked
+       (not gitignored) and refreshed via `cargo generate-lockfile`.
 
 ## P2 — Differentiation (innovation)
 
-- [ ] Requirement traceability: `requires!(REQ="SRS-ALT-014", cond)` + `xtask certify`
+- [x] Requirement traceability: `requires!(REQ="SRS-ALT-014", cond)` + `xtask certify`
       → traceability matrix.
-- [ ] Panic-freedom proof (`panic_handler` fail build) per crate/feature set.
-- [ ] `xtask certify` certification artifact pack (deps/unsafe/MSRV/coverage/contract inventory).
-- [ ] Kani / Creusot / Prusti backend for `requires!`/`ensures!`.
-- [ ] MC/DC-aware contract macros (rustc `-Z coverage-options=mcdc`).
-- [ ] Contract-derived test generation (`requires!` → proptest at boundaries).
-- [ ] SMT-LIB / Why3 spec export from `smt-lite` + contracts.
+- [x] Panic-freedom proof (`panic_handler` fail build) per crate/feature set.
+- [x] `xtask certify` certification artifact pack (deps/unsafe/MSRV/coverage/contract inventory).
+- [x] Kani / Creusot / Prusti backend for `requires!`/`ensures!`.
+- [x] MC/DC-aware contract macros (rustc `-Z coverage-options=mcdc`).
+- [x] Contract-derived test generation (`requires!` → proptest at boundaries).
+- [x] SMT-LIB / Why3 spec export from `smt-lite` + contracts.
 
 ## P3 — Documentation accuracy (TODO.md corrections)
 

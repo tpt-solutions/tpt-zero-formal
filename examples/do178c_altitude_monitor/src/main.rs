@@ -1,9 +1,9 @@
 //! A DO-178C-flavoured altitude monitor: every transition through the
 //! certified flight envelope is guarded by a precondition/postcondition and
 //! the resulting state is checked against an [`Invariant`].
-use tpt_zero_formal::bounded::BoundedInt;
-use tpt_zero_formal::contract::{ensures, requires};
-use tpt_zero_formal::invariant::{check_invariant, Invariant};
+use out_zero_formal::bounded::BoundedInt;
+use out_zero_formal::contract::{ensures, requires};
+use out_zero_formal::invariant::{Invariant, check_invariant};
 
 /// Aircraft altitude held in a certified safe envelope [0, 41_000] ft.
 #[derive(Clone, Copy, Debug)]
@@ -20,12 +20,20 @@ impl Invariant for Altitude {
 
 /// Climb by a non-negative `delta` feet, keeping the aircraft in its envelope.
 pub fn climb(current: i64, delta: i64) -> Altitude {
-    requires!(delta >= 0, "climb rate must be non-negative");
+    requires!(
+        REQ = "SRS-ALT-014",
+        delta >= 0,
+        "climb rate must be non-negative"
+    );
     let next = (current + delta).clamp(0, 41000);
     let a = Altitude {
         feet: BoundedInt::new_clamped(next),
     };
-    ensures!(a.check(), "altitude remains within certified envelope");
+    ensures!(
+        REQ = "SRS-ALT-015",
+        a.check(),
+        "altitude remains within certified envelope"
+    );
     a
 }
 

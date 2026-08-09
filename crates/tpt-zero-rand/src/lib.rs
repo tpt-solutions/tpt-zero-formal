@@ -1,5 +1,4 @@
 #![doc = include_str!("../README.md")]
-
 #![no_std]
 #![warn(missing_docs)]
 #![forbid(unsafe_code)]
@@ -194,10 +193,16 @@ impl SeedableRng for Pcg32 {
     fn from_seed(seed: u64) -> Self {
         let mut rng = Pcg32::new(0, Self::DEFAULT_INC);
         rng.state = seed.wrapping_add(rng.inc);
-        rng.state = rng.state.wrapping_mul(Self::MULTIPLIER).wrapping_add(rng.inc);
+        rng.state = rng
+            .state
+            .wrapping_mul(Self::MULTIPLIER)
+            .wrapping_add(rng.inc);
         let _ = rng.next_u32();
         rng.state = seed.wrapping_add(rng.inc);
-        rng.state = rng.state.wrapping_mul(Self::MULTIPLIER).wrapping_add(rng.inc);
+        rng.state = rng
+            .state
+            .wrapping_mul(Self::MULTIPLIER)
+            .wrapping_add(rng.inc);
         let _ = rng.next_u32();
         rng
     }
@@ -273,11 +278,7 @@ mod tests {
         rng.fill_bytes(&mut buf);
         assert_ne!(buf, [0u8; 10]);
         let mut rng2 = XorShift64::from_seed(7);
-        let expected = [
-            rng2.next_u32().to_le_bytes(),
-            rng2.next_u32().to_le_bytes(),
-        ]
-        .concat();
+        let expected = [rng2.next_u32().to_le_bytes(), rng2.next_u32().to_le_bytes()].concat();
         assert_eq!(&buf[..8], &expected[..]);
     }
 

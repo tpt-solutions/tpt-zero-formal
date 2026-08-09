@@ -1,8 +1,8 @@
 //! Three closely related "value-with-proof" patterns and when to reach for
-//! each, using the [`refinement`], [`witness`], and [`ghost`] crates.
-use tpt_zero_formal::ghost::{Ghost, GhostProven, Unproven};
-use tpt_zero_formal::refinement::{Predicate, Refined};
-use tpt_zero_formal::witness::{Proof, Witness};
+//! each, using the `refinement`, `witness`, and `ghost` crates.
+use out_zero_formal::ghost::{Ghost, GhostProven, Unproven};
+use out_zero_formal::refinement::{Predicate, Refined};
+use out_zero_formal::witness::{Proof, Witness};
 
 /// A decidable predicate: "this `i64` is strictly positive".
 struct Positive;

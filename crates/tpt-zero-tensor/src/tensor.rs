@@ -176,7 +176,9 @@ impl<T, const N: usize> Tensor<T, N> {
         F: FnMut(usize, T, &U) -> T,
         T: Clone,
     {
-        Tensor::new(core::array::from_fn(|i| f(i, self.data[i].clone(), &other.data[i])))
+        Tensor::new(core::array::from_fn(|i| {
+            f(i, self.data[i].clone(), &other.data[i])
+        }))
     }
 
     /// Returns an iterator over the elements by reference.

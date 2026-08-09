@@ -14,13 +14,13 @@ project adheres to [Semantic Versioning](https://semver.org/).
 - Numerics & data: `rand`, `stats`, `tensor`, `linalg`, `prob`, `sampler`.
 - Algorithms: `eigen`, `grad`, `solver`, `decomp`, `monte-carlo`, `bayes`,
   `dist`, `markov`, `fsm`, `contract`, `invariant`, `loop-inv`.
-- `tpt-zero-formal` umbrella crate with namespaced re-exports and layered
+- `out-zero-formal` umbrella crate with namespaced re-exports and layered
   feature flags.
 
 ### Fixed
-- `out-zero-float` `ln` accuracy (correct `frexp` for normals/subnormals).
+- `tpt-zero-float` `ln` accuracy (correct `frexp` for normals/subnormals).
 - `smt-lite` `1usize << n` overflow at 64 variables; re-scoped "linear integer"
   constraints as pseudo-boolean (`pb_eq`/`pb_leq`).
 - `dist::Poisson::sample` infinite loop for large `lambda` (log-space Knuth).
 - Replaced 14 hand-rolled `sqrt`/`exp`/`ln` copies with the verified
-  `out-zero-float` implementation.
+  `tpt-zero-float` implementation.

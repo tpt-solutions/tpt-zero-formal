@@ -29,7 +29,7 @@ tpt-zero-tensor = { path = "../tpt-zero-tensor", version = "0.1.0" }
 tpt-zero-linalg = { path = "../tpt-zero-linalg", version = "0.1.0" }
 tpt-zero-decomp = { path = "../tpt-zero-decomp", version = "0.1.0" }
 tpt-zero-solver = { path = "../tpt-zero-solver", version = "0.1.0" }
-out-zero-float = { path = "../out-zero-float", version = "0.1.0" }
+tpt-zero-float = { path = "../tpt-zero-float", version = "0.1.0" }
 
 [lints]
 workspace = true

@@ -11,6 +11,7 @@ description = "{{description}}"
 readme = "README.md"
 keywords = ["no-std", "rust-patterns"]
 categories = ["no-std"]
+include = ["LICENSE-MIT", "LICENSE-APACHE", "README.md", "src/**/*"]
 
 [lib]
 name = "{{lib_name}}"
@@ -22,6 +23,9 @@ std = ["alloc"]
 
 [lints]
 workspace = true
+
+[dev-dependencies]
+proptest = { workspace = true }
 
 [package.metadata.docs.rs]
 all-features = true

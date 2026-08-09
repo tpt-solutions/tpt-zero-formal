@@ -1,7 +1,5 @@
 # out-zero-type-level
 
-[![crates.io](https://img.shields.io/crates/v/out-zero-type-level.svg)](https://crates.io/crates/out-zero-type-level)
-[![docs.rs](https://docs.rs/out-zero-type-level/badge.svg)](https://docs.rs/out-zero-type-level)
 [![license](https://img.shields.io/crates/l/out-zero-type-level.svg)](#license)
 
 Type-level unsigned integer arithmetic and constraints, built on `const`
@@ -39,11 +37,21 @@ const_assert_le::<U<5>, U<3>>();
 
 This crate builds with `--no-default-features` (pure `core`, no `alloc`).
 
-## Install
+## Status: not published
 
-```sh
-cargo add out-zero-type-level
-```
+This crate is **not published to crates.io**. The `tpt-zero-formal` project
+does not publish a crate unless it is more useful than what is already
+available, and for this need a more complete, widely-used alternative already
+exists.
+
+**Use [`typenum`](https://crates.io/crates/typenum) instead.** It is the complete, widely-used type-level number library.
+
+`out-zero-type-level` is kept internal to the workspace because it is a zero-dependency,
+`no_std` building block used by other crates here. If you specifically need
+`no_std` and zero external dependencies, depend on
+[`out-zero-formal`](https://crates.io/crates/out-zero-formal) (which re-exports
+this functionality) rather than adding this crate directly.
+
 
 ## License
 

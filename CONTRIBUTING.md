@@ -16,7 +16,7 @@ Crates are layered so each depends only on the layer(s) below it:
   `sampler`.
 - **Layer 3** — algorithms: `eigen`, `grad`, `solver`, `decomp`, `monte-carlo`,
   `bayes`, `dist`, `markov`, `fsm`, `contract`, `invariant`, `loop-inv`.
-- **Layer 4** — the `tpt-zero-formal` umbrella crate.
+- **Layer 4** — the `out-zero-formal` umbrella crate.
 
 ## Before opening a PR
 

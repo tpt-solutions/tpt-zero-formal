@@ -15,11 +15,11 @@ const FRAC_1_SQRT_2PI: f64 = 0.398_942_280_401_432_7;
 ///
 /// `f64::exp` is not available in this crate's `core`-only target
 /// configuration, so we delegate to the shared, subnormal-safe
-/// [`out_zero_float`] implementation, which handles the full range (including
+/// [`tpt_zero_float`] implementation, which handles the full range (including
 /// the subnormal underflow region) and never returns a negative value for
 /// large negative `x`.
 fn exp(x: f64) -> f64 {
-    out_zero_float::exp(x)
+    tpt_zero_float::exp(x)
 }
 
 /// A continuous uniform distribution `U(a, b)` over the interval `[a, b]`.

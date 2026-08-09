@@ -3,8 +3,8 @@
 //!
 //! By default the checks compile to `debug_assert!` (zero cost in release).
 //! Build the `contract` crate with its `checked` feature to make them always-on.
-use tpt_zero_formal::bounded::BoundedInt;
-use tpt_zero_formal::contract::{ensures, requires};
+use out_zero_formal::bounded::BoundedInt;
+use out_zero_formal::contract::{ensures, requires};
 
 /// Integer division guarded by a precondition on the divisor.
 fn checked_div(a: i64, b: i64) -> i64 {

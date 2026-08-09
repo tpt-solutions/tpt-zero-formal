@@ -1,7 +1,5 @@
 # out-zero-bounded
 
-[![crates.io](https://img.shields.io/crates/v/out-zero-bounded.svg)](https://crates.io/crates/out-zero-bounded)
-[![docs.rs](https://docs.rs/out-zero-bounded/badge.svg)](https://docs.rs/out-zero-bounded)
 [![license](https://img.shields.io/crates/l/out-zero-bounded.svg)](#license)
 
 Zero-cost bounds-checked integers for `no_std`, built on
@@ -49,11 +47,21 @@ runtime panic.
 
 This crate builds with `--no-default-features` (pure `core`, no `alloc`).
 
-## Install
+## Status: not published
 
-```sh
-cargo add out-zero-bounded
-```
+This crate is **not published to crates.io**. The `tpt-zero-formal` project
+does not publish a crate unless it is more useful than what is already
+available, and for this need a more complete, widely-used alternative already
+exists.
+
+**Use [`bounded-integer`](https://crates.io/crates/bounded-integer) instead.** It provides more feature-complete, proc-macro-derived bounded-integer types with a richer API.
+
+`out-zero-bounded` is kept internal to the workspace because it is a zero-dependency,
+`no_std` building block used by other crates here. If you specifically need
+`no_std` and zero external dependencies, depend on
+[`out-zero-formal`](https://crates.io/crates/out-zero-formal) (which re-exports
+this functionality) rather than adding this crate directly.
+
 
 ## License
 

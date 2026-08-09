@@ -38,11 +38,20 @@ general integer-linear constraints. Every variable is a boolean and is read as
 the integer `1` (when true) or `0` (when false), so they describe linear
 relations over the `0`/`1` assignment. There are no arbitrary `i64` variables.
 
+## Export to external provers
+
+With the `alloc` feature, the [`export`](https://docs.rs/tpt-zero-smt-lite)
+module translates a [`ConstraintSet`] into an SMT-LIB 2.6 script
+(`export::to_smtlib`) or a Why3 module (`export::to_why3`). The same
+constraints can then be re-checked independently by an SMT solver or a
+deductive proof assistant — useful when pairing with the formal-verification
+backends described by `out-zero-contract`'s `formal` feature.
+
 ## Features
 
 | Feature | Default | Enables |
 |---|---|---|
-| `alloc` | off | reserved for future heap-backed enumeration |
+| `alloc` | off | the `export` module (SMT-LIB / Why3 serialisation) |
 | `std` | off | implies `alloc` |
 
 This crate builds with `--no-default-features` (pure `core`, no `alloc`). The

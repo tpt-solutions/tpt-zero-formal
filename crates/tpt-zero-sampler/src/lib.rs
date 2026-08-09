@@ -282,12 +282,12 @@ where
 /// Computes `e^x`, matching `f64::exp` which is unavailable on this crate's
 /// `core`-only target.
 ///
-/// Delegates to the shared, subnormal-safe [`out_zero_float`] implementation,
+/// Delegates to the shared, subnormal-safe [`tpt_zero_float`] implementation,
 /// which handles the full range (including the subnormal underflow region) and
 /// never returns a negative value for large negative `x`.
 #[allow(clippy::neg_cmp_op_on_partial_ord)]
 fn exp(x: f64) -> f64 {
-    out_zero_float::exp(x)
+    tpt_zero_float::exp(x)
 }
 
 #[cfg(test)]

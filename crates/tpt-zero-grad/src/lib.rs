@@ -423,22 +423,22 @@ mod float_fallback {
 
     /// Returns `e^x`.
     ///
-    /// Delegates to the shared, subnormal-safe [`out_zero_float`] implementation,
+    /// Delegates to the shared, subnormal-safe [`tpt_zero_float`] implementation,
     /// which handles the full range (including the subnormal underflow region) and
     /// never returns a negative value for large negative `x`.
     #[must_use]
     pub fn exp(x: f64) -> f64 {
-        out_zero_float::exp(x)
+        tpt_zero_float::exp(x)
     }
 
     /// Returns the natural logarithm `ln(x)`.
     ///
-    /// Delegates to the shared, subnormal-safe [`out_zero_float`] implementation,
+    /// Delegates to the shared, subnormal-safe [`tpt_zero_float`] implementation,
     /// which is accurate for subnormal magnitudes and returns `-inf` for `0`.
     /// Returns `NaN` for `x <= 0`.
     #[must_use]
     pub fn ln(x: f64) -> f64 {
-        out_zero_float::ln(x)
+        tpt_zero_float::ln(x)
     }
 
     /// Returns `sin(x)` via argument reduction into `[-Ï€/2, Ï€/2]` and a Taylor

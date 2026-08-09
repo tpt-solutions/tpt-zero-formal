@@ -19,6 +19,10 @@ name = "out_zero_contract"
 [features]
 default = []
 checked = []
+# Enables the `formal` module: anchors and documentation for discharging
+# `requires!`/`ensures!` contracts with Kani, Creusot, or Prusti. No external
+# toolchain is pulled in by this feature.
+formal = []
 
 [lints]
 workspace = true

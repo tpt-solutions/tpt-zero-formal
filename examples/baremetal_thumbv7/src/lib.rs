@@ -4,9 +4,9 @@
 //! --target thumbv7em-none-eabihf -p example-baremetal-thumbv7`.
 #![no_std]
 
-use tpt_zero_formal::bounded::BoundedInt;
-use tpt_zero_formal::contract::{ensures, requires};
-use tpt_zero_formal::invariant::{check_invariant, Invariant};
+use out_zero_formal::bounded::BoundedInt;
+use out_zero_formal::contract::{ensures, requires};
+use out_zero_formal::invariant::{check_invariant, Invariant};
 
 /// A temperature sensor whose reading is bounded to its calibrated envelope.
 #[derive(Clone, Copy)]

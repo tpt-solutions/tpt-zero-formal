@@ -1,9 +1,9 @@
 //! Mirrors the familiar `rand` workflow but with a deterministic, `no_std`,
 //! zero-dependency PRNG and distribution types.
-use tpt_zero_formal::prelude::*;
-use tpt_zero_formal::dist::Distribution;
-use tpt_zero_formal::rand::{Rng, XorShift64};
-use tpt_zero_formal::stats;
+use out_zero_formal::prelude::*;
+use out_zero_formal::dist::Distribution;
+use out_zero_formal::rand::{Rng, XorShift64};
+use out_zero_formal::stats;
 
 fn main() {
     // Equivalent to `rand::thread_rng().gen::<f64>()` but reproducible.

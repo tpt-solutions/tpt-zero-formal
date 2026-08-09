@@ -1,7 +1,5 @@
 # out-zero-phantom
 
-[![crates.io](https://img.shields.io/crates/v/out-zero-phantom.svg)](https://crates.io/crates/out-zero-phantom)
-[![docs.rs](https://docs.rs/out-zero-phantom/badge.svg)](https://docs.rs/out-zero-phantom)
 [![license](https://img.shields.io/crates/l/out-zero-phantom.svg)](#license)
 
 Zero-cost phantom-type markers and variance patterns for `no_std`. Part of
@@ -39,11 +37,21 @@ borrow checker without any runtime cost.
 
 This crate builds with `--no-default-features` (pure `core`, no `alloc`).
 
-## Install
+## Status: not published
 
-```sh
-cargo add out-zero-phantom
-```
+This crate is **not published to crates.io**. The `tpt-zero-formal` project
+does not publish a crate unless it is more useful than what is already
+available, and for this need a more complete, widely-used alternative already
+exists.
+
+**Use [`core::marker::PhantomData`](https://doc.rust-lang.org/core/marker/struct.PhantomData.html) from the standard library instead.** This crate is a thin convenience wrapper over `PhantomData`; the standard type covers the zero-cost marker use case directly.
+
+`out-zero-phantom` is kept internal to the workspace because it is a zero-dependency,
+`no_std` building block used by other crates here. If you specifically need
+`no_std` and zero external dependencies, depend on
+[`out-zero-formal`](https://crates.io/crates/out-zero-formal) (which re-exports
+this functionality) rather than adding this crate directly.
+
 
 ## License
 

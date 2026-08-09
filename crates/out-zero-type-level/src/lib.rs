@@ -6,7 +6,7 @@
 
 /// The inclusive upper bound of the generated operation impls.
 ///
-/// Values of [`U\<N\>`] with `N <= MAX_GENERATED` have pre-generated
+/// Values of `U<N>` with `N <= MAX_GENERATED` have pre-generated
 /// [`Add`]/[`Sub`]/[`Mul`]/[`Min`]/[`Max`]/[`AssertLe`] impls. This bound
 /// exists only because edition 2024 cannot compute `N + M` directly in a
 /// const expression; it is not a semantic limit on the type itself.
@@ -15,7 +15,7 @@ pub const MAX_GENERATED: usize = 31;
 /// A zero-sized type carrying an unsigned integer value `N` at the type
 /// level, backed by a `const N: usize` generic parameter.
 ///
-/// `U\<N\>` exists purely to let arithmetic be expressed in the type system:
+/// `U<N>` exists purely to let arithmetic be expressed in the type system:
 /// the value `N` is recoverable via the `VALUE` of any operation trait.
 ///
 /// # Examples

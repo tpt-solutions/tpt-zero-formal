@@ -29,7 +29,7 @@ fn checked_nonzero(value: u32) -> Option<Witness<u32, NonZero>> {
     if value == 0 {
         None
     } else {
-        Some(Witness::new(value))
+        Some(Witness::from_proof(value, NonZero))
     }
 }
 

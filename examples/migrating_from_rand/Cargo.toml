@@ -5,4 +5,4 @@ edition = "2024"
 publish = false
 
 [dependencies]
-tpt-zero-formal = { path = "../../crates/tpt-zero-formal", features = ["layer2"] }
+out-zero-formal = { path = "../../crates/out-zero-formal", features = ["layer2"] }

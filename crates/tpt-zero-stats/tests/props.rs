@@ -41,6 +41,9 @@ proptest! {
     fn mean_matches_manual_sum(data in prop::collection::vec(any::<f64>().prop_filter("finite", |x| x.is_finite()), 1..50)) {
         let n = data.len() as f64;
         let sum: f64 = data.iter().copied().sum();
+        // `f64` summation overflows to +/-inf for large-magnitude inputs; the
+        // `mean == sum/n` identity is only well-defined when the sum is finite.
+        prop_assume!(sum.is_finite());
         prop_assert!((mean(&data).unwrap() - sum / n).abs() < 1e-6 * (1.0 + sum.abs()));
     }
 }

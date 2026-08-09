@@ -1,8 +1,8 @@
-# tpt-zero-formal
+# out-zero-formal
 
-[![crates.io](https://img.shields.io/crates/v/tpt-zero-formal.svg)](https://crates.io/crates/tpt-zero-formal)
-[![docs.rs](https://docs.rs/tpt-zero-formal/badge.svg)](https://docs.rs/tpt-zero-formal)
-[![license](https://img.shields.io/crates/l/tpt-zero-formal.svg)](#license)
+[![crates.io](https://img.shields.io/crates/v/out-zero-formal.svg)](https://crates.io/crates/out-zero-formal)
+[![docs.rs](https://docs.rs/out-zero-formal/badge.svg)](https://docs.rs/out-zero-formal)
+[![license](https://img.shields.io/crates/l/out-zero-formal.svg)](#license)
 
 Zero-dependency, `no_std` formal-methods and numerical toolkit — the umbrella
 crate for the [tpt-zero-formal](https://github.com/tpt-solutions/tpt-zero-formal)
@@ -13,7 +13,7 @@ share a name across crates (for example `Distribution`, `Normal`, and
 `Witness`) no longer collide at the top level.
 
 ```rust
-use tpt_zero_formal::prelude::*;
+use out_zero_formal::prelude::*;
 
 let v = Tensor::<f64, 3>::from_fn(|i| i as f64);
 let _ = (v.get(0), Normal::standard());
@@ -33,7 +33,7 @@ The modules are also individually selectable (e.g. `prob`, `linalg`).
 ## Install
 
 ```sh
-cargo add tpt-zero-formal --features "layer2,layer3"
+cargo add out-zero-formal --features "layer2,layer3"
 ```
 
 ## License

@@ -23,6 +23,8 @@ name = "tpt_zero_smt_lite"
 
 [features]
 default = []
+alloc = []
+std = ["alloc"]
 
 [lints]
 workspace = true

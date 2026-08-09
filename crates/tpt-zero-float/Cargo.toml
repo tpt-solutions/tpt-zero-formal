@@ -1,5 +1,5 @@
 [package]
-name = "out-zero-float"
+name = "tpt-zero-float"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -12,14 +12,14 @@ description = "Verified no_std f64 sqrt/exp/ln (subnormal-safe, no libm dependen
 readme = "README.md"
 keywords = ["math", "no-std", "floating-point", "sqrt", "transcendental"]
 categories = ["no-std", "algorithms", "mathematics", "science"]
-documentation = "https://docs.rs/out-zero-float"
+documentation = "https://docs.rs/tpt-zero-float"
 
 
 [package.metadata.docs.rs]
 all-features = true
 rustdoc-args = ["--cfg", "docsrs", "--generate-link-to-definition"]
 [lib]
-name = "out_zero_float"
+name = "tpt_zero_float"
 
 [lints]
 workspace = true

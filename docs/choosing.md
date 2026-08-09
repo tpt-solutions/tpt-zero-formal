@@ -23,8 +23,8 @@ see [`crate-selection.md`](crate-selection.md).
   refinement types, `out-zero-bounded` for range-bounded integers).
 - **…write design-by-contract `requires!` / `ensures!`** → `out-zero-contract`.
 - **…panic-free numeric casts** → `out-zero-safe-cast`.
-- **…everything, namespaced behind one dependency** → `tpt-zero-formal`
-  (umbrella) with `use tpt_zero_formal::prelude::*;`.
+- **…everything, namespaced behind one dependency** → `out-zero-formal`
+  (umbrella) with `use out_zero_formal::prelude::*;`.
 
 ## "Which dependency should I pick?"
 
@@ -43,11 +43,11 @@ see [`crate-selection.md`](crate-selection.md).
 
 ```toml
 [dependencies]
-tpt-zero-formal = { version = "0.1", features = ["layer2", "layer3"] }
+out-zero-formal = { version = "0.1", features = ["layer2", "layer3"] }
 ```
 
 ```rust
-use tpt_zero_formal::prelude::*;
+use out_zero_formal::prelude::*;
 
 let v = Tensor::<f64, 3>::from_fn(|i| (i as f64) - 1.0);
 assert_eq!(v.get(0), Some(&-1.0));

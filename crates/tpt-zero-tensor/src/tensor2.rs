@@ -61,9 +61,7 @@ impl<T, const R: usize, const C: usize> Tensor2<T, R, C> {
         F: FnMut(usize, usize) -> T,
     {
         Self {
-            rows: core::array::from_fn(|r| {
-                core::array::from_fn(|c| f(r, c))
-            }),
+            rows: core::array::from_fn(|r| core::array::from_fn(|c| f(r, c))),
         }
     }
 
@@ -325,9 +323,7 @@ impl<T, const R: usize, const C: usize> From<[[T; C]; R]> for Tensor2<T, R, C> {
     }
 }
 
-impl<T, const R: usize, const C: usize> core::ops::Index<(usize, usize)>
-    for Tensor2<T, R, C>
-{
+impl<T, const R: usize, const C: usize> core::ops::Index<(usize, usize)> for Tensor2<T, R, C> {
     type Output = T;
 
     fn index(&self, (row, col): (usize, usize)) -> &Self::Output {
@@ -335,9 +331,7 @@ impl<T, const R: usize, const C: usize> core::ops::Index<(usize, usize)>
     }
 }
 
-impl<T, const R: usize, const C: usize> core::ops::IndexMut<(usize, usize)>
-    for Tensor2<T, R, C>
-{
+impl<T, const R: usize, const C: usize> core::ops::IndexMut<(usize, usize)> for Tensor2<T, R, C> {
     fn index_mut(&mut self, (row, col): (usize, usize)) -> &mut Self::Output {
         &mut self.rows[row][col]
     }

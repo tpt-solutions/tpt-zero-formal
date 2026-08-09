@@ -2,7 +2,7 @@
 //! `no_std` tensor + linalg stack, with no heap allocation.
 #![no_std]
 
-use tpt_zero_formal::tensor::Tensor2;
+use out_zero_formal::tensor::Tensor2;
 
 /// State estimate `[position, velocity]` and its 2x2 covariance.
 pub struct Kalman2 {

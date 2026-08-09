@@ -1,5 +1,5 @@
 //! A conjugate-prior Bayesian update with zero dependencies.
-use tpt_zero_formal::prelude::*;
+use out_zero_formal::prelude::*;
 
 fn main() {
     // Beta(1,1) uniform prior on a coin's bias; observe 7 heads, 3 tails.

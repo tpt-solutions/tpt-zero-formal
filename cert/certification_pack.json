@@ -1,0 +1,357 @@
+{
+  "crates": [
+
+    {
+      "name": "out-zero-assert-const",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": false,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 0,
+      "requirements": []
+    },
+    {
+      "name": "out-zero-bounded",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": false,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 45,
+      "requirements": []
+    },
+    {
+      "name": "out-zero-contract",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": false,
+      "dependencies": [],
+      "contracts": 17,
+      "unsafe_blocks": 0,
+      "panic_sites": 0,
+      "requirements": ["SRS-ALT-014"]
+    },
+    {
+      "name": "out-zero-formal",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": false,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 0,
+      "requirements": []
+    },
+    {
+      "name": "out-zero-loop-inv",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": false,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 0,
+      "requirements": []
+    },
+    {
+      "name": "out-zero-newtype",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": false,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 0,
+      "requirements": []
+    },
+    {
+      "name": "out-zero-phantom",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": false,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 0,
+      "requirements": []
+    },
+    {
+      "name": "out-zero-postcond",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": false,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 0,
+      "requirements": []
+    },
+    {
+      "name": "out-zero-precond",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": false,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 2,
+      "requirements": []
+    },
+    {
+      "name": "out-zero-refinement",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": false,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 18,
+      "requirements": []
+    },
+    {
+      "name": "out-zero-safe-cast",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": false,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 0,
+      "requirements": []
+    },
+    {
+      "name": "out-zero-type-level",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": false,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 0,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-bayes",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 21,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-decomp",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 3,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-dist",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 14,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-eigen",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 5,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-float",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 0,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-fsm",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 2,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-ghost",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 1,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-grad",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 0,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-invariant",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 0,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-linalg",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 2,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-markov",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 27,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-monte-carlo",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 0,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-prob",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 15,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-rand",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 0,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-sampler",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 5,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-smt-lite",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 12,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-solver",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 16,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-stats",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 7,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-tensor",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 4,
+      "requirements": []
+    },
+    {
+      "name": "tpt-zero-witness",
+      "version": "0.1.0",
+      "rust-version": "1.85",
+      "published": true,
+      "dependencies": [],
+      "contracts": 0,
+      "unsafe_blocks": 0,
+      "panic_sites": 1,
+      "requirements": []
+    }
+  ]
+}

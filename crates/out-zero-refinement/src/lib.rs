@@ -294,7 +294,7 @@ impl<T, P: Predicate<T>> From<Refined<T, P>> for RefinedInner<T> {
     }
 }
 
-/// A [`Proof`](tpt_zero_witness::Proof) that a value satisfied the predicate
+/// A [`Proof`] that a value satisfied the predicate
 /// `P`.
 ///
 /// This is constructed *only* by [`Refined::into_witness`], which is itself

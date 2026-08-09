@@ -13,6 +13,7 @@ Part of the
 
 ```rust
 use tpt_zero_stats::{mean, variance, std_dev, percentile};
+use tpt_zero_float::sqrt;
 
 let data = [1.0, 2.0, 3.0, 4.0, 5.0];
 assert_eq!(mean(&data), Some(3.0));

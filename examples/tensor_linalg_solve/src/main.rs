@@ -1,6 +1,6 @@
 //! Solve a small linear system with the no_std tensor + solver stack.
-use tpt_zero_formal::prelude::*;
-use tpt_zero_formal::solver;
+use out_zero_formal::prelude::*;
+use out_zero_formal::solver;
 
 fn main() {
     // Solve A x = b for a symmetric positive-definite A via Cholesky.

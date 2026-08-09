@@ -25,7 +25,7 @@ name = "tpt_zero_monte_carlo"
 tpt-zero-rand = { path = "../tpt-zero-rand", version = "0.1.0" }
 tpt-zero-sampler = { path = "../tpt-zero-sampler", version = "0.1.0" }
 tpt-zero-stats = { path = "../tpt-zero-stats", version = "0.1.0" }
-out-zero-float = { path = "../out-zero-float", version = "0.1.0" }
+tpt-zero-float = { path = "../tpt-zero-float", version = "0.1.0" }
 
 [features]
 default = []

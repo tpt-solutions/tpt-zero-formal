@@ -73,6 +73,14 @@ concepts but none are zero-dependency):
 |---|---|
 | `tpt-zero-witness` | Witness types that carry proofs of properties |
 
+### Math primitives
+
+**Published:**
+
+| Crate | Purpose |
+|---|---|
+| `tpt-zero-float` | Verified `no_std` `sqrt` / `exp` / `ln` (subnormal-safe) |
+
 **Internal-only** (not published — a zero-dep / `no_std` equivalent already
 exists, or the crate is too thin to stand alone):
 
@@ -95,5 +103,5 @@ exists, or the crate is too thin to stand alone):
   proof-carrying state, `tpt-zero-invariant` / `tpt-zero-fsm` for state machines,
   and `out-zero-contract` / `out-zero-bounded` / `out-zero-safe-cast` for
   contract and bound checks (kept internal by design).
-- Want everything namespaced behind one dependency? Use the `tpt-zero-formal`
+- Want everything namespaced behind one dependency? Use the `out-zero-formal`
   umbrella crate, which re-exports every layer and groups them by feature.

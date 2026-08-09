@@ -13,12 +13,12 @@ with zero allocation. Part of the
 ```rust
 use tpt_zero_tensor::{Tensor, Tensor2};
 
-let a = Tensor::from_fn(|i| i as f64);
-let b = Tensor::from_fn(|i| (i * 2) as f64);
+let a: Tensor<f64, 3> = Tensor::from_fn(|i| i as f64);
+let b: Tensor<f64, 3> = Tensor::from_fn(|i| (i * 2) as f64);
 let sum = a.add(&b);
-assert_eq!(sum.get(1), Some(&2.0));
+assert_eq!(sum.get(1), Some(&3.0));
 
-let m = Tensor2::from_fn(|r, c| (r * 10 + c) as i32);
+let m: Tensor2<i32, 3, 3> = Tensor2::from_fn(|r, c| (r * 10 + c) as i32);
 let t = m.transpose();
 assert_eq!(t.get(1, 0), Some(&1));
 ```

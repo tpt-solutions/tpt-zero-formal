@@ -1,7 +1,5 @@
 # out-zero-assert-const
 
-[![crates.io](https://img.shields.io/crates/v/out-zero-assert-const.svg)](https://crates.io/crates/out-zero-assert-const)
-[![docs.rs](https://docs.rs/out-zero-assert-const/badge.svg)](https://docs.rs/out-zero-assert-const)
 [![license](https://img.shields.io/crates/l/out-zero-assert-const.svg)](#license)
 
 Compile-time assertion macros and `const fn` helpers for `no_std` const
@@ -33,11 +31,21 @@ that is actually used (e.g. every distinct `BoundedInt<MIN, MAX>` pair).
 
 This crate builds with `--no-default-features` (pure `core`, no `alloc`).
 
-## Install
+## Status: not published
 
-```sh
-cargo add out-zero-assert-const
-```
+This crate is **not published to crates.io**. The `tpt-zero-formal` project
+does not publish a crate unless it is more useful than what is already
+available, and for this need a more complete, widely-used alternative already
+exists.
+
+**Use [`static_assertions`](https://crates.io/crates/static_assertions) instead.** It provides a broader, actively maintained set of compile-time assertion macros (`const_assert!`, `assert_eq_size!`, type and trait assertions, and more).
+
+`out-zero-assert-const` is kept internal to the workspace because it is a zero-dependency,
+`no_std` building block used by other crates here. If you specifically need
+`no_std` and zero external dependencies, depend on
+[`out-zero-formal`](https://crates.io/crates/out-zero-formal) (which re-exports
+this functionality) rather than adding this crate directly.
+
 
 ## License
 

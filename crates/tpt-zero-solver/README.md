@@ -13,6 +13,7 @@ solves, and Jacobi/Gauss-Seidel iteration over fixed-size tensors. Part of the
 ```rust
 use tpt_zero_solver::{solve_gaussian, solve_cholesky};
 use tpt_zero_tensor::{Tensor, Tensor2};
+use tpt_zero_linalg::mat_vec_mul;
 
 let a = Tensor2::from([[2.0, 1.0], [1.0, 3.0]]);
 let b = Tensor::from([5.0, 10.0]);
@@ -22,7 +23,7 @@ assert!((x[0] - 1.0).abs() < 1e-9);
 
 let spd = Tensor2::from([[4.0, 1.0], [1.0, 3.0]]);
 let y = solve_cholesky(&spd, &Tensor::from([1.0, 2.0])).unwrap();
-let got = spd.mat_vec_mul(&y);
+let got = mat_vec_mul(&spd, &y);
 assert!((got[0] - 1.0).abs() < 1e-9);
 ```
 

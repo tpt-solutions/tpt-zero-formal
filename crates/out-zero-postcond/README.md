@@ -1,7 +1,5 @@
 # out-zero-postcond
 
-[![crates.io](https://img.shields.io/crates/v/out-zero-postcond.svg)](https://crates.io/crates/out-zero-postcond)
-[![docs.rs](https://docs.rs/out-zero-postcond/badge.svg)](https://docs.rs/out-zero-postcond)
 [![license](https://img.shields.io/crates/l/out-zero-postcond.svg)](#license)
 
 Postcondition checking helpers for `no_std`. Part of the
@@ -36,11 +34,21 @@ end of a function, and [`check`] always evaluates regardless of build profile.
 
 This crate builds with `--no-default-features` (pure `core`, no `alloc`).
 
-## Install
+## Status: not published
 
-```sh
-cargo add out-zero-postcond
-```
+This crate is **not published to crates.io**. The `tpt-zero-formal` project
+does not publish a crate unless it is more useful than what is already
+available, and for this need a more complete, widely-used alternative already
+exists.
+
+**Use [`contracts`](https://crates.io/crates/contracts) instead.** It is a more complete design-by-contract toolkit that also covers postcondition checking.
+
+`out-zero-postcond` is kept internal to the workspace because it is a zero-dependency,
+`no_std` building block used by other crates here. If you specifically need
+`no_std` and zero external dependencies, depend on
+[`out-zero-formal`](https://crates.io/crates/out-zero-formal) (which re-exports
+this functionality) rather than adding this crate directly.
+
 
 ## License
 

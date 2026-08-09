@@ -24,7 +24,7 @@ use tpt_zero_tensor::{Tensor, Tensor2};
 /// Computes the square root of `x >= 0.0`.
 ///
 /// Returns `f64::NAN` for negative inputs and for `f64::NAN`. The
-/// implementation lives in [`out_zero_float`]; it is subnormal-safe and uses a
+/// implementation lives in [`tpt_zero_float`]; it is subnormal-safe and uses a
 /// relative convergence tolerance, so it remains accurate for both tiny and
 /// huge magnitudes.
 ///
@@ -39,7 +39,7 @@ use tpt_zero_tensor::{Tensor, Tensor2};
 /// ```
 #[must_use]
 pub fn sqrt(x: f64) -> f64 {
-    out_zero_float::sqrt(x)
+    tpt_zero_float::sqrt(x)
 }
 
 /// Returns the Euclidean (L2) norm of `v`: `sqrt(Î£ v[i]Â²)`.

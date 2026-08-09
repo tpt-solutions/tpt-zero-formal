@@ -3,9 +3,9 @@
 //! into: design-by-contract assertions plus refinement types.
 #![no_std]
 
-use tpt_zero_formal::bounded::BoundedInt;
-use tpt_zero_formal::contract::{ensures, requires};
-use tpt_zero_formal::refinement::{Predicate, Refined};
+use out_zero_formal::bounded::BoundedInt;
+use out_zero_formal::contract::{ensures, requires};
+use out_zero_formal::refinement::{Predicate, Refined};
 
 /// Predicate: a device port is "open" (its value is non-zero).
 pub struct PortOpen;

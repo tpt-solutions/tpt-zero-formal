@@ -25,11 +25,11 @@ microservices and AI systems.
 Add the umbrella crate and pick the layers you need:
 
 ```sh
-cargo add tpt-zero-formal --features "layer2,layer3"
+cargo add out-zero-formal --features "layer2,layer3"
 ```
 
 ```rust
-use tpt_zero_formal::prelude::*;
+use out_zero_formal::prelude::*;
 
 // Fixed-size tensor math...
 let v = Tensor::<f64, 3>::from_fn(|i| (i as f64) - 1.0); // [-1.0, 0.0, 1.0]
@@ -59,8 +59,11 @@ assert!((posterior.mean() - 8.0 / 12.0).abs() < 1e-12);
 The workspace is layered so each crate depends only on the layer(s) below it. The
 `out-zero-*` crates are internal, `publish = false` implementation details (a
 zero-dep / `no_std` equivalent already exists, or the crate is too thin to stand
-alone). The full published-vs-internal breakdown, with the closest
-crates.io alternatives, lives in [`docs/crate-selection.md`](docs/crate-selection.md).
+alone). `tpt-zero-float` is a published `tpt-zero-*` crate (the released
+`tpt-zero-*` crates depend on it for verified `no_std` math; the closest
+alternative is `libm`). The full published-vs-internal breakdown, with the
+closest crates.io alternatives, lives in
+[`docs/crate-selection.md`](docs/crate-selection.md).
 
 | Layer | Crates |
 |---|---|
@@ -68,7 +71,7 @@ crates.io alternatives, lives in [`docs/crate-selection.md`](docs/crate-selectio
 | **1 — proof-carrying types** | `bounded`, `precond`, `postcond`, `ghost`, `refinement` |
 | **2 — data & numerics** | `rand`, `stats`, `tensor`, `linalg`, `prob`, `sampler` |
 | **3 — algorithms** | `eigen`, `grad`, `solver`, `decomp`, `monte-carlo`, `bayes`, `dist`, `markov`, `fsm`, `contract`, `invariant`, `loop-inv` |
-| **4 — umbrella** | `tpt-zero-formal` |
+| **4 — umbrella** | `out-zero-formal` |
 
 ## Building
 

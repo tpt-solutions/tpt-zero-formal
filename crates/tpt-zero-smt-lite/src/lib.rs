@@ -1,8 +1,10 @@
 #![doc = include_str!("../README.md")]
-
 #![no_std]
 #![warn(missing_docs)]
 #![forbid(unsafe_code)]
+
+#[cfg(feature = "alloc")]
+extern crate alloc;
 
 /// A variable identifier.
 ///
@@ -127,30 +129,30 @@ impl From<&[(i64, Var)]> for LinearTerms {
     }
 }
 
-    /// A single constraint: either a boolean expression that must hold, or a
-    /// pseudo-boolean (0/1) linear relation that must hold over the boolean
-    /// assignment (each variable read as `1`/`0`).
-    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-    pub enum Constraint {
-        /// A boolean expression that must evaluate to `true`.
-        Bool(Expr),
-        /// A pseudo-boolean equality `sum(coeff * var) == rhs` that must hold,
-        /// where each `var` is read as `1` (true) or `0` (false).
-        PbEq {
-            /// The sum of linear terms.
-            terms: LinearTerms,
-            /// The required right-hand side value.
-            rhs: i64,
-        },
-        /// A pseudo-boolean inequality `sum(coeff * var) <= rhs` that must hold,
-        /// where each `var` is read as `1` (true) or `0` (false).
-        PbLeq {
-            /// The sum of linear terms.
-            terms: LinearTerms,
-            /// The upper bound for the right-hand side value.
-            rhs: i64,
-        },
-    }
+/// A single constraint: either a boolean expression that must hold, or a
+/// pseudo-boolean (0/1) linear relation that must hold over the boolean
+/// assignment (each variable read as `1`/`0`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Constraint {
+    /// A boolean expression that must evaluate to `true`.
+    Bool(Expr),
+    /// A pseudo-boolean equality `sum(coeff * var) == rhs` that must hold,
+    /// where each `var` is read as `1` (true) or `0` (false).
+    PbEq {
+        /// The sum of linear terms.
+        terms: LinearTerms,
+        /// The required right-hand side value.
+        rhs: i64,
+    },
+    /// A pseudo-boolean inequality `sum(coeff * var) <= rhs` that must hold,
+    /// where each `var` is read as `1` (true) or `0` (false).
+    PbLeq {
+        /// The sum of linear terms.
+        terms: LinearTerms,
+        /// The upper bound for the right-hand side value.
+        rhs: i64,
+    },
+}
 
 /// A collection of [`Constraint`]s together with an arena of boolean
 /// expression nodes and the number of variables they range over.
@@ -438,10 +440,7 @@ impl ConstraintSet {
             for (i, slot) in bools.iter_mut().enumerate().take(n) {
                 *slot = (mask >> i) & 1 == 1;
             }
-            let witness = Witness {
-                bools,
-                num_vars: n,
-            };
+            let witness = Witness { bools, num_vars: n };
             if self.iter().all(|c| c.holds(self, &bools[..n])) {
                 return Some(witness);
             }
@@ -801,6 +800,238 @@ mod tests {
                 let e = cs.not(cs.not(cs.var(Var(0))));
                 prop_assert_eq!(cs.eval(e, &assign), a);
             }
+        }
+    }
+}
+
+/// Export of a [`ConstraintSet`] to external verification tooling.
+///
+/// [`tpt-zero-smt-lite`] is a zero-dependency, heap-free pseudo-boolean
+/// solver. The [`export`] module translates a [`ConstraintSet`] into
+/// industry-standard surface languages so the *same* constraints can be
+/// re-checked by an SMT solver (SMT-LIB 2.6) or a deductive proof assistant
+/// (Why3), giving independent confirmation of the in-crate result.
+///
+/// This module is only available when the `alloc` feature is enabled (string
+/// output requires a heap).
+#[cfg(feature = "alloc")]
+pub mod export {
+    #![allow(clippy::all, clippy::pedantic)]
+
+    use super::*;
+    use alloc::format;
+    use alloc::string::{String, ToString};
+
+    /// The backend surface language a constraint set is exported to.
+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    pub enum Target {
+        /// SMT-LIB 2.6 script (logic `QF_LIA`); pseudo-boolean sums are encoded
+        /// via `(ite v true 1 0)`.
+        SmtLib,
+        /// Why3 `module` using `bool.Bool` and `int.Int`.
+        Why3,
+    }
+
+    impl Target {
+        fn not(self, inner: &str) -> String {
+            format!("(not {inner})")
+        }
+        fn and(self, l: &str, r: &str) -> String {
+            format!("(and {l} {r})")
+        }
+        fn or(self, l: &str, r: &str) -> String {
+            format!("(or {l} {r})")
+        }
+        fn implies(self, l: &str, r: &str) -> String {
+            match self {
+                Target::SmtLib => format!("(=> {l} {r})"),
+                Target::Why3 => format!("(-> {l} {r})"),
+            }
+        }
+    }
+
+    /// Renders a boolean expression `e` of `cs` into `out` for `target`.
+    fn render_expr(cs: &ConstraintSet, e: Expr, target: Target, out: &mut String) {
+        let node = cs
+            .nodes
+            .get(usize::from(e.node))
+            .and_then(|c| c.get())
+            .unwrap_or(Node::False);
+        match node {
+            Node::True => out.push_str("true"),
+            Node::False => out.push_str("false"),
+            Node::Var(v) => {
+                out.push_str("v");
+                out.push_str(&v.0.to_string());
+            }
+            Node::Not(x) => {
+                let mut inner = String::new();
+                render_expr(cs, Expr { node: x }, target, &mut inner);
+                let s = target.not(&inner);
+                out.push_str(&s);
+            }
+            Node::And(l, r) => {
+                let mut ls = String::new();
+                let mut rs = String::new();
+                render_expr(cs, Expr { node: l }, target, &mut ls);
+                render_expr(cs, Expr { node: r }, target, &mut rs);
+                out.push_str(&target.and(&ls, &rs));
+            }
+            Node::Or(l, r) => {
+                let mut ls = String::new();
+                let mut rs = String::new();
+                render_expr(cs, Expr { node: l }, target, &mut ls);
+                render_expr(cs, Expr { node: r }, target, &mut rs);
+                out.push_str(&target.or(&ls, &rs));
+            }
+            Node::Implies(l, r) => {
+                let mut ls = String::new();
+                let mut rs = String::new();
+                render_expr(cs, Expr { node: l }, target, &mut ls);
+                render_expr(cs, Expr { node: r }, target, &mut rs);
+                out.push_str(&target.implies(&ls, &rs));
+            }
+        }
+    }
+
+    /// Renders a pseudo-boolean sum `sum(coeff * var)` into an integer
+    /// expression for `target`, where each boolean variable is `1` or `0`.
+    fn render_pb_sum(terms: &LinearTerms, target: Target) -> String {
+        let mut parts: alloc::vec::Vec<String> = alloc::vec::Vec::new();
+        for t in terms.iter() {
+            let v = format!("v{}", t.var.0);
+            let term = match target {
+                Target::SmtLib => format!("(* {} (ite {} true 1 0))", t.coeff, v),
+                Target::Why3 => format!("(* {} (if {} then 1 else 0))", t.coeff, v),
+            };
+            parts.push(term);
+        }
+        format!("(+ {})", parts.join(" "))
+    }
+
+    /// Renders a single constraint into `out`.
+    fn render_constraint(
+        cs: &ConstraintSet,
+        c: Constraint,
+        idx: usize,
+        target: Target,
+        out: &mut String,
+    ) {
+        match c {
+            Constraint::Bool(e) => {
+                let mut body = String::new();
+                render_expr(cs, e, target, &mut body);
+                match target {
+                    Target::SmtLib => out.push_str(&format!("(assert {body})\n")),
+                    Target::Why3 => out.push_str(&format!("  axiom c{idx}: {body}\n")),
+                }
+            }
+            Constraint::PbEq { terms, rhs } => {
+                let sum = render_pb_sum(&terms, target);
+                match target {
+                    Target::SmtLib => out.push_str(&format!("(assert (= {sum} {rhs}))\n")),
+                    Target::Why3 => out.push_str(&format!("  axiom c{idx}: {sum} = {rhs}\n")),
+                }
+            }
+            Constraint::PbLeq { terms, rhs } => {
+                let sum = render_pb_sum(&terms, target);
+                match target {
+                    Target::SmtLib => out.push_str(&format!("(assert (<= {sum} {rhs}))\n")),
+                    Target::Why3 => out.push_str(&format!("  axiom c{idx}: {sum} <= {rhs}\n")),
+                }
+            }
+        }
+    }
+
+    /// Exports `cs` to the chosen `target` as a `String`.
+    ///
+    /// For [`Target::SmtLib`] the result is a complete, runnable SMT-LIB 2.6
+    /// script (declares the variables, asserts every constraint, then emits
+    /// `check-sat`/`get-model`). For [`Target::Why3`] the result is a `module`
+    /// with `val` declarations for each variable and one `axiom` per
+    /// constraint.
+    #[must_use]
+    pub fn to_string(cs: &ConstraintSet, target: Target) -> String {
+        let mut out = String::new();
+        match target {
+            Target::SmtLib => {
+                out.push_str("; Generated by tpt-zero-smt-lite\n");
+                out.push_str("(set-logic QF_LIA)\n");
+                for i in 0..cs.num_vars {
+                    out.push_str(&format!("(declare-fun v{i} () Bool)\n"));
+                }
+                for (idx, c) in cs.iter().enumerate() {
+                    render_constraint(cs, c, idx, target, &mut out);
+                }
+                out.push_str("(check-sat)\n");
+                out.push_str("(get-model)\n");
+            }
+            Target::Why3 => {
+                out.push_str("(* Generated by tpt-zero-smt-lite *)\n");
+                out.push_str("module Exported\n");
+                out.push_str("  use bool.Bool\n");
+                out.push_str("  use int.Int\n\n");
+                for i in 0..cs.num_vars {
+                    out.push_str(&format!("  val v{i}: bool\n"));
+                }
+                out.push('\n');
+                for (idx, c) in cs.iter().enumerate() {
+                    render_constraint(cs, c, idx, target, &mut out);
+                }
+                out.push_str("end\n");
+            }
+        }
+        out
+    }
+
+    /// Exports `cs` as an SMT-LIB 2.6 script. See [`to_string`].
+    #[must_use]
+    pub fn to_smtlib(cs: &ConstraintSet) -> String {
+        to_string(cs, Target::SmtLib)
+    }
+
+    /// Exports `cs` as a Why3 module. See [`to_string`].
+    #[must_use]
+    pub fn to_why3(cs: &ConstraintSet) -> String {
+        to_string(cs, Target::Why3)
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        fn sample() -> ConstraintSet {
+            let cs = ConstraintSet::new(2);
+            let a = cs.var(Var(0));
+            let b = cs.var(Var(1));
+            let _ = cs.add_bool(cs.implies(a, b));
+            let _ = cs.pb_eq(&[(1, Var(0)), (1, Var(1))], 1);
+            let _ = cs.pb_leq(&[(2, Var(0))], 1);
+            cs
+        }
+
+        #[test]
+        fn smtlib_is_runnable_shape() {
+            let s = to_smtlib(&sample());
+            assert!(s.contains("(set-logic QF_LIA)"));
+            assert!(s.contains("(declare-fun v0 () Bool)"));
+            assert!(s.contains("(=> v0 v1)"));
+            assert!(
+                s.contains("(assert (= (+ (* 1 (ite v0 true 1 0)) (* 1 (ite v1 true 1 0))) 1))")
+            );
+            assert!(s.contains("(check-sat)"));
+        }
+
+        #[test]
+        fn why3_has_module_and_axioms() {
+            let s = to_why3(&sample());
+            assert!(s.contains("module Exported"));
+            assert!(s.contains("use int.Int"));
+            assert!(s.contains("val v0: bool"));
+            assert!(s.contains("axiom c0: (-> v0 v1)"));
+            assert!(s.contains(
+                "axiom c1: (+ (* 1 (if v0 then 1 else 0)) (* 1 (if v1 then 1 else 0))) = 1"
+            ));
         }
     }
 }

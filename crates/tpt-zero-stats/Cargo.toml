@@ -25,7 +25,7 @@ name = "tpt_zero_stats"
 default = []
 
 [dependencies]
-out-zero-float = { path = "../out-zero-float", version = "0.1.0" }
+tpt-zero-float = { path = "../tpt-zero-float", version = "0.1.0" }
 
 [lints]
 workspace = true
